@@ -55,6 +55,50 @@ Object.keys(defaults).forEach(id => {
   });
 })();
 
+// ---- 會員快速帶入 ----
+(function fillMembers(){
+  const sel = document.getElementById('memberSelect');
+  if (!sel) return;
+  const blank = document.createElement('option');
+  blank.value = ''; blank.textContent = '— 選擇會員自動帶入 —';
+  sel.appendChild(blank);
+  (window.BNI_MEMBERS || [])
+    .slice()
+    .sort((a,b) => a.name.localeCompare(b.name, 'zh-Hant'))
+    .forEach((m, i) => {
+      // 用 name 當索引找回原陣列位置
+      const o = document.createElement('option');
+      o.value = m.name;
+      o.textContent = m.name + '（' + m.specialty + '）';
+      sel.appendChild(o);
+    });
+  sel.addEventListener('change', () => {
+    const m = (window.BNI_MEMBERS || []).find(x => x.name === sel.value);
+    if (!m) return;
+    applyMember(m);
+  });
+})();
+
+function applyMember(m){
+  document.getElementById('name').value = m.name || '';
+  document.getElementById('role').value = m.specialty || '';
+  document.getElementById('specialty').value = m.specialty || '';
+  // 同步專業別下拉
+  const spSel = document.getElementById('specialtySelect');
+  const opt = [...spSel.options].find(o => o.value === m.specialty);
+  spSel.value = opt ? m.specialty : '';
+  // 口號 → 副標
+  if (m.slogan) document.getElementById('sloganSub').value = m.slogan;
+  // 想要引薦的對象 → 一般引薦（前 3 項）
+  const gInputs = document.querySelectorAll('#general input');
+  gInputs.forEach((inp, i) => { inp.value = (m.referrals && m.referrals[i]) || ''; });
+  // 代表性客戶（若有）
+  const cInputs = document.querySelectorAll('#clients input');
+  cInputs.forEach((inp, i) => { inp.value = (m.clients && m.clients[i]) || ''; });
+  render();
+  saveData();
+}
+
 // ---- 讀取一組三格值 ----
 function readTriple(id){
   return [...document.querySelectorAll('#' + id + ' input')]
