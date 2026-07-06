@@ -55,48 +55,102 @@ Object.keys(defaults).forEach(id => {
   });
 })();
 
-// ---- 會員快速帶入 ----
-(function fillMembers(){
+// ---- 會員快速選擇（從名冊 Store 帶入並進入編輯） ----
+let currentMember = null;   // 目前正在編輯的名冊會員（null = 尚未對應名冊）
+
+function buildMemberSelect(){
   const sel = document.getElementById('memberSelect');
   if (!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = '';
   const blank = document.createElement('option');
   blank.value = ''; blank.textContent = '— 選擇會員自動帶入 —';
   sel.appendChild(blank);
-  (window.BNI_MEMBERS || [])
-    .slice()
-    .sort((a,b) => a.name.localeCompare(b.name, 'zh-Hant'))
-    .forEach((m, i) => {
-      // 用 name 當索引找回原陣列位置
-      const o = document.createElement('option');
-      o.value = m.name;
-      o.textContent = m.name + '（' + m.specialty + '）';
-      sel.appendChild(o);
-    });
-  sel.addEventListener('change', () => {
-    const m = (window.BNI_MEMBERS || []).find(x => x.name === sel.value);
-    if (!m) return;
-    applyMember(m);
+  Store.getAllSorted().forEach(m => {
+    const o = document.createElement('option');
+    o.value = m.id;
+    o.textContent = m.name + '（' + (m.specialty || '') + '）';
+    sel.appendChild(o);
   });
-})();
+  if (prev) sel.value = prev;
+}
 
-function applyMember(m){
+document.getElementById('memberSelect').addEventListener('change', e => {
+  const m = Store.getById(e.target.value);
+  if (m) loadMemberIntoEditor(m);
+});
+
+// 把一位名冊會員載入左側編輯表單
+function loadMemberIntoEditor(m){
+  currentMember = m;
   document.getElementById('name').value = m.name || '';
-  document.getElementById('role').value = m.specialty || '';
+  document.getElementById('role').value = m.role || m.specialty || '';
   document.getElementById('specialty').value = m.specialty || '';
-  // 同步專業別下拉
+  document.getElementById('sloganMain').value = m.sloganMain || '';
+  document.getElementById('sloganSub').value = m.sloganSub || m.slogan || '';
+  document.getElementById('usp').value = m.usp || '';
   const spSel = document.getElementById('specialtySelect');
   const opt = [...spSel.options].find(o => o.value === m.specialty);
   spSel.value = opt ? m.specialty : '';
-  // 口號 → 副標
-  if (m.slogan) document.getElementById('sloganSub').value = m.slogan;
-  // 想要引薦的對象 → 一般引薦（前 3 項）
-  const gInputs = document.querySelectorAll('#general input');
-  gInputs.forEach((inp, i) => { inp.value = (m.referrals && m.referrals[i]) || ''; });
-  // 代表性客戶（若有）
-  const cInputs = document.querySelectorAll('#clients input');
-  cInputs.forEach((inp, i) => { inp.value = (m.clients && m.clients[i]) || ''; });
+  applyTriple('partners', m.partners);
+  applyTriple('general',  m.general || m.referrals);
+  applyTriple('ideal',    m.ideal);
+  applyTriple('dream',    m.dream);
+  applyTriple('clients',  m.clients);
+  photoDataUrl = m.photo || '';
+  const thumb = document.getElementById('thumb');
+  if (photoDataUrl) thumb.src = photoDataUrl; else thumb.removeAttribute('src');
+  updateEditingBanner();
   render();
-  saveData();
+}
+
+// 從目前表單讀成一個會員物件（保留既有 id/order/present）
+function readEditorAsMember(){
+  const base = currentMember || {};
+  return {
+    id: base.id || null,
+    order: base.order,
+    present: base.present !== false,
+    name: val('name'),
+    role: val('role'),
+    specialty: val('specialty'),
+    sloganMain: val('sloganMain'),
+    sloganSub: val('sloganSub'),
+    usp: val('usp'),
+    partners: readTriple('partners'),
+    general:  readTriple('general'),
+    ideal:    readTriple('ideal'),
+    dream:    readTriple('dream'),
+    clients:  readTriple('clients'),
+    photo: photoDataUrl
+  };
+}
+
+function blankMember(){
+  return { id:null, name:'', role:'', specialty:'', sloganMain:'', sloganSub:'', usp:'',
+           partners:['','',''], general:['','',''], ideal:['','',''], dream:['','',''],
+           clients:['','',''], photo:'', present:true };
+}
+
+async function saveEditorToRoster(){
+  const m = readEditorAsMember();
+  if (!m.name.trim()){ alert('請先填寫姓名，才能儲存到名冊'); return; }
+  const id = await Store.upsert(m);
+  currentMember = Store.getById(id) || m;
+  updateEditingBanner();
+  flashSaved('✓ 已儲存到名冊');
+}
+
+function updateEditingBanner(){
+  const el = document.getElementById('editingBanner');
+  if (!el) return;
+  if (currentMember && currentMember.id){
+    el.innerHTML = '正在編輯名冊會員：<b>' + (currentMember.name || '(未命名)') + '</b>';
+    el.style.display = '';
+  } else {
+    el.innerHTML = '目前為草稿（尚未存入名冊）';
+    el.style.display = '';
+  }
 }
 
 // ---- 讀取一組三格值 ----
@@ -237,13 +291,31 @@ function loadData(){
 }
 
 let flashTimer = null;
-function flashSaved(){
+function flashSaved(msg){
   const el = document.getElementById('saveStatus');
   if (!el) return;
-  el.textContent = '✓ 已自動儲存';
+  el.textContent = msg || '✓ 已自動儲存';
   el.style.opacity = '1';
   clearTimeout(flashTimer);
-  flashTimer = setTimeout(() => { el.style.opacity = '0'; }, 1500);
+  flashTimer = setTimeout(() => { el.style.opacity = '0'; }, 1800);
+}
+
+// 壓縮上傳照片，避免存進雲端/瀏覽器時過大
+function compressImage(dataUrl, maxW, quality){
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      if (w > maxW){ h = Math.round(h * maxW / w); w = maxW; }
+      const cv = document.createElement('canvas');
+      cv.width = w; cv.height = h;
+      cv.getContext('2d').drawImage(img, 0, 0, w, h);
+      try { resolve(cv.toDataURL('image/jpeg', quality)); }
+      catch(e){ resolve(dataUrl); }
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
 }
 
 // 任一欄位變動 → 存檔（延遲避免頻繁寫入）
@@ -260,8 +332,8 @@ document.getElementById('photo').addEventListener('change', e => {
   const f = e.target.files[0];
   if (!f) return;
   const r = new FileReader();
-  r.onload = ev => {
-    photoDataUrl = ev.target.result;
+  r.onload = async ev => {
+    photoDataUrl = await compressImage(ev.target.result, 640, 0.82);
     document.getElementById('thumb').src = photoDataUrl;
     render();
     saveData();
@@ -351,8 +423,49 @@ document.getElementById('reset').addEventListener('click', () => {
   render();
 });
 
-// 開啟頁面時，若瀏覽器有存過範本就自動帶入（覆蓋預設值）
-loadData();
+/* ============ 檢視切換（個人編輯 / 本週簡報） ============ */
+let currentView = 'editor';
+function showView(name){
+  currentView = name;
+  document.getElementById('view-editor').style.display = (name === 'editor') ? '' : 'none';
+  document.getElementById('view-roster').style.display = (name === 'roster') ? '' : 'none';
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === name);
+  });
+  if (name === 'roster' && typeof renderRoster === 'function') renderRoster();
+}
+document.querySelectorAll('.nav-btn').forEach(b => {
+  b.addEventListener('click', () => showView(b.dataset.view));
+});
 
-render();
-switchFmt('edm');
+// 編輯區「儲存到名冊」按鈕
+const saveRosterBtn = document.getElementById('saveToRoster');
+if (saveRosterBtn) saveRosterBtn.addEventListener('click', saveEditorToRoster);
+
+/* ============ 啟動 ============ */
+(async function init(){
+  await Store.init();
+  buildMemberSelect();
+  Store.onChange(() => {
+    buildMemberSelect();
+    if (currentView === 'roster' && typeof renderRoster === 'function') renderRoster();
+    // 若正在編輯的會員被雲端更新，同步 currentMember 參照
+    if (currentMember && currentMember.id){
+      const fresh = Store.getById(currentMember.id);
+      if (fresh) currentMember = fresh;
+    }
+    updateCloudBadge();
+  });
+  loadData();            // 還原個人草稿（個人卡片用途）
+  render();
+  switchFmt('edm');
+  updateEditingBanner();
+  updateCloudBadge();
+})();
+
+function updateCloudBadge(){
+  const el = document.getElementById('cloudBadge');
+  if (!el) return;
+  if (Store.mode === 'cloud'){ el.textContent = '☁ 雲端同步中'; el.style.color = '#2e9e5b'; }
+  else { el.textContent = '💾 本機儲存（未接雲端）'; el.style.color = '#b8912f'; }
+}

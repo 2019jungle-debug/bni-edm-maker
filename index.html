@@ -159,6 +159,43 @@
   .zoom-controls{display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:12px;}
   .zoom-controls button{border:1px solid var(--line);background:#fff;border-radius:6px;width:30px;height:30px;cursor:pointer;font-size:16px;}
   @media(max-width:1000px){.preview-wrap{position:static;}}
+
+  /* ---------- header nav ---------- */
+  .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+  .topnav{display:flex;gap:6px;}
+  .nav-btn{border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;border-radius:20px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .nav-btn.active{background:#fff;color:var(--red);border-color:#fff;}
+  .cloud-badge{font-size:12px;font-weight:700;background:rgba(255,255,255,.9);padding:2px 10px;border-radius:12px;}
+
+  .editing-banner{margin-top:14px;font-size:12.5px;background:#eef4ff;border:1px solid #cddcff;color:#33507a;border-radius:7px;padding:7px 10px;}
+  .btn-save{background:#2e9e5b;color:#fff;}
+  .btn-save:hover{background:#247c48;}
+
+  /* ---------- roster ---------- */
+  .roster-panel{max-width:1000px;margin:0 auto;}
+  .roster-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:16px;}
+  .roster-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .roster-list{display:flex;flex-direction:column;gap:6px;}
+  .roster-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fafafa;}
+  .roster-row.dragging{opacity:.4;}
+  .roster-row.drop-hint{border-color:var(--gold);background:#fff8ec;}
+  .roster-row .drag{cursor:grab;color:#bbb;font-size:16px;}
+  .roster-row .ord{width:26px;text-align:center;font-weight:800;color:var(--red);}
+  .roster-row .present{display:flex;align-items:center;gap:3px;font-size:12px;color:#666;white-space:nowrap;}
+  .roster-row .rname{font-weight:700;min-width:90px;}
+  .roster-row .rspec{color:#777;font-size:13px;flex:1;}
+  .roster-row .ract{display:flex;gap:4px;}
+  .roster-row .ract button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:4px 9px;font-size:12px;cursor:pointer;font-family:inherit;}
+  .roster-row .ract button.del{color:#d9534f;border-color:#eab;}
+  .roster-row .ract button.del:hover{background:#d9534f;color:#fff;}
+
+  /* ---------- progress overlay ---------- */
+  #progressOverlay{position:fixed;inset:0;background:rgba(20,20,25,.78);display:none;align-items:center;justify-content:center;z-index:9999;}
+  #progressOverlay .pbox{background:#fff;border-radius:12px;padding:26px 34px;width:min(90vw,420px);text-align:center;}
+  #progressOverlay .ptitle{font-size:16px;font-weight:800;color:var(--red);margin-bottom:14px;}
+  #progressOverlay .pbar{height:12px;background:#eee;border-radius:6px;overflow:hidden;}
+  #progressOverlay .pfill{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--red));transition:width .2s;}
+  #progressOverlay .ptext{margin-top:10px;font-size:13px;color:#555;}
 </style>
 </head>
 <body>
@@ -167,10 +204,17 @@
     <h1>BNI 富鼎分會 · 個人 EDM 即時製作工具</h1>
     <div class="sub">填寫左側欄位 → 右側即時預覽 → 下載 PNG 圖檔</div>
   </div>
-  <div class="sub">富鼎富鼎 · 又富又鼎</div>
+  <div class="header-right">
+    <nav class="topnav">
+      <button class="nav-btn active" data-view="editor">個人編輯</button>
+      <button class="nav-btn" data-view="roster">本週例會簡報</button>
+    </nav>
+    <div id="cloudBadge" class="cloud-badge">💾 本機儲存</div>
+  </div>
 </header>
 
-<div class="layout">
+<!-- ================= 檢視一：個人編輯 ================= -->
+<div id="view-editor" class="layout">
   <!-- ================= FORM ================= -->
   <div class="panel">
     <h2>① 基本資料</h2>
@@ -240,12 +284,15 @@
       <textarea id="usp" placeholder="用一兩句話說明您與眾不同之處">結合心理諮商專業與職涯設計，用科學方法幫助每個人找到職業生涯的心之所嚮。</textarea>
     </div>
 
+    <div id="editingBanner" class="editing-banner"></div>
+
     <div class="actions">
       <button class="btn btn-primary" id="download">⬇ 下載 EDM (PNG)</button>
+      <button class="btn btn-save" id="saveToRoster">💾 儲存到名冊</button>
       <button class="btn btn-ghost" id="reset">清空重填</button>
       <span id="saveStatus" style="font-size:12px;color:#2e9e5b;opacity:0;transition:opacity .3s;align-self:center;">✓ 已自動儲存</span>
     </div>
-    <div class="hint" style="margin-top:6px;">✏️ 您填的內容會自動存在這台裝置的瀏覽器，下次打開自動帶入。</div>
+    <div class="hint" style="margin-top:6px;">✏️ 個人內容會自動存在本裝置瀏覽器；按「儲存到名冊」則會存入共享名冊，供本週例會簡報使用。</div>
   </div>
 
   <!-- ================= PREVIEW ================= -->
@@ -356,9 +403,38 @@
   </div>
 </div>
 
+<!-- ================= 檢視二：本週例會簡報名冊 ================= -->
+<div id="view-roster" style="display:none;padding:24px;">
+  <div class="panel roster-panel">
+    <div class="roster-head">
+      <div>
+        <h2 style="margin:0;">本週例會簡報名冊</h2>
+        <div class="hint">拖曳 ⠿ 或用 ↑↓ 調整<b>出場順序</b>；勾選「出場」決定本週要不要上台。共 <b id="rosterCount">0</b> 位，本週出場 <b id="presentCount">0</b> 位。</div>
+      </div>
+      <div class="roster-tools">
+        <button class="btn btn-ghost" id="newMemberBtn">＋ 新增會員</button>
+        <button class="btn btn-ghost" id="exportBtn">匯出 JSON</button>
+        <button class="btn btn-ghost" id="importBtn">匯入 JSON</button>
+        <input type="file" id="importFile" accept="application/json" style="display:none;">
+        <button class="btn btn-primary" id="downloadPPTBtn">⬇ 下載本週 PPT（每人形象頁＋介紹頁）</button>
+      </div>
+    </div>
+    <div id="rosterList" class="roster-list"></div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<!-- Firebase（若要啟用雲端，取消下面註解並填入 firebase-config.js） -->
+<!--
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+-->
 <script src="specialties.js"></script>
 <script src="members.js"></script>
+<script src="store.js"></script>
 <script src="app.js"></script>
+<script src="roster.js"></script>
 </body>
 </html>

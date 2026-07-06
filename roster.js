@@ -1,0 +1,181 @@
+/* ============ 本週例會名冊管理 + 一鍵產生 PPT ============ */
+
+function escapeHtml(s){
+  return String(s || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+function dateStamp(){
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  return d.getFullYear() + p(d.getMonth()+1) + p(d.getDate());
+}
+function nextFrame(){ return new Promise(r => requestAnimationFrame(() => setTimeout(r, 0))); }
+
+let dragId = null;
+
+function renderRoster(){
+  const wrap = document.getElementById('rosterList');
+  if (!wrap) return;
+  const list = Store.getAllSorted();
+  document.getElementById('rosterCount').textContent = list.length;
+  document.getElementById('presentCount').textContent = list.filter(m => m.present !== false).length;
+
+  wrap.innerHTML = '';
+  list.forEach((m, idx) => {
+    const row = document.createElement('div');
+    row.className = 'roster-row';
+    row.draggable = true;
+    row.dataset.id = m.id;
+    row.innerHTML =
+      '<span class="drag" title="拖曳調整順序">⠿</span>' +
+      '<span class="ord">' + (idx+1) + '</span>' +
+      '<label class="present"><input type="checkbox" ' + (m.present !== false ? 'checked' : '') + '><span>出場</span></label>' +
+      '<span class="rname">' + escapeHtml(m.name || '(未命名)') + '</span>' +
+      '<span class="rspec">' + escapeHtml(m.specialty || '') + '</span>' +
+      '<span class="ract">' +
+        '<button data-act="up" title="上移">↑</button>' +
+        '<button data-act="down" title="下移">↓</button>' +
+        '<button data-act="edit">編輯</button>' +
+        '<button data-act="del" class="del">刪除</button>' +
+      '</span>';
+
+    row.querySelector('.present input').addEventListener('change', e => Store.setPresent(m.id, e.target.checked));
+    row.querySelector('[data-act=up]').addEventListener('click', () => moveMember(m.id, -1));
+    row.querySelector('[data-act=down]').addEventListener('click', () => moveMember(m.id, +1));
+    row.querySelector('[data-act=edit]').addEventListener('click', () => { loadMemberIntoEditor(Store.getById(m.id)); showView('editor'); });
+    row.querySelector('[data-act=del]').addEventListener('click', () => {
+      if (confirm('確定刪除「' + (m.name || '此會員') + '」？')) Store.remove(m.id);
+    });
+
+    row.addEventListener('dragstart', () => { dragId = m.id; row.classList.add('dragging'); });
+    row.addEventListener('dragend',   () => row.classList.remove('dragging'));
+    row.addEventListener('dragover',  e => { e.preventDefault(); row.classList.add('drop-hint'); });
+    row.addEventListener('dragleave', () => row.classList.remove('drop-hint'));
+    row.addEventListener('drop', e => { e.preventDefault(); row.classList.remove('drop-hint'); onDrop(m.id); });
+
+    wrap.appendChild(row);
+  });
+}
+
+function moveMember(id, dir){
+  const ids = Store.getAllSorted().map(m => m.id);
+  const i = ids.indexOf(id), j = i + dir;
+  if (j < 0 || j >= ids.length) return;
+  ids.splice(i, 1); ids.splice(j, 0, id);
+  Store.reorder(ids);
+}
+
+function onDrop(targetId){
+  if (!dragId || dragId === targetId) return;
+  const ids = Store.getAllSorted().map(m => m.id);
+  ids.splice(ids.indexOf(dragId), 1);
+  ids.splice(ids.indexOf(targetId), 0, dragId);
+  Store.reorder(ids);
+  dragId = null;
+}
+
+/* ---------- 進度遮罩 ---------- */
+function showProgress(title){
+  let ov = document.getElementById('progressOverlay');
+  if (!ov){
+    ov = document.createElement('div');
+    ov.id = 'progressOverlay';
+    ov.innerHTML = '<div class="pbox"><div class="ptitle"></div><div class="pbar"><div class="pfill"></div></div><div class="ptext"></div></div>';
+    document.body.appendChild(ov);
+  }
+  ov.style.display = 'flex';
+  ov.querySelector('.ptitle').textContent = title || '處理中…';
+  ov.querySelector('.pfill').style.width = '0%';
+  ov.querySelector('.ptext').textContent = '';
+  return ov;
+}
+function setProgress(ov, done, total){
+  const pct = Math.round(done / total * 100);
+  ov.querySelector('.pfill').style.width = pct + '%';
+  ov.querySelector('.ptext').textContent = done + ' / ' + total + ' 位會員（' + (done*2) + ' 張投影片）';
+}
+function hideProgress(ov){ if (ov) ov.style.display = 'none'; }
+
+/* ---------- 一鍵產生本週 PPT ---------- */
+async function generatePPT(){
+  const list = Store.getAllSorted().filter(m => m.present !== false);
+  if (!list.length){ alert('名冊中沒有勾選「出場」的會員'); return; }
+  if (typeof PptxGenJS === 'undefined'){ alert('PPT 元件尚未載入，請重新整理後再試'); return; }
+
+  const overlay = showProgress('產生本週例會 PPT 中…');
+  const savedView = currentView;
+  const savedMember = currentMember;
+  const savedActive = activeFmt;
+
+  // 讓編輯區可被擷取（藏在遮罩後面）
+  document.getElementById('view-editor').style.display = '';
+  document.getElementById('view-roster').style.display = 'none';
+  const hero = document.getElementById('hero');
+  const intro = document.getElementById('intro');
+
+  const pptx = new PptxGenJS();
+  pptx.defineLayout({ name:'W16x9', width:13.333, height:7.5 });
+  pptx.layout = 'W16x9';
+
+  try {
+    for (let i = 0; i < list.length; i++){
+      loadMemberIntoEditor(list[i]);
+      await nextFrame();
+
+      hero.style.display = ''; intro.style.display = 'none'; hero.style.zoom = 1;
+      let c = await html2canvas(hero, { scale:2, useCORS:true, backgroundColor:'#ffffff' });
+      pptx.addSlide().addImage({ data: c.toDataURL('image/png'), x:0, y:0, w:13.333, h:7.5 });
+
+      intro.style.display = ''; hero.style.display = 'none'; intro.style.zoom = 1;
+      c = await html2canvas(intro, { scale:2, useCORS:true, backgroundColor:'#ffffff' });
+      pptx.addSlide().addImage({ data: c.toDataURL('image/png'), x:0, y:0, w:13.333, h:7.5 });
+
+      setProgress(overlay, i+1, list.length);
+    }
+    await pptx.writeFile({ fileName: 'BNI富鼎_本週例會_' + dateStamp() + '.pptx' });
+  } catch(e){
+    alert('產生 PPT 失敗：' + e.message);
+    console.error(e);
+  } finally {
+    if (savedMember) loadMemberIntoEditor(savedMember); else { currentMember = null; render(); }
+    switchFmt(savedActive);
+    showView(savedView);
+    hideProgress(overlay);
+  }
+}
+
+/* ---------- 匯出 / 匯入 JSON ---------- */
+function exportRoster(){
+  const blob = new Blob([Store.exportJSON()], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'BNI富鼎_名冊_' + dateStamp() + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importRoster(file){
+  const r = new FileReader();
+  r.onload = async ev => {
+    try { await Store.importJSON(ev.target.result); alert('匯入完成'); }
+    catch(e){ alert('匯入失敗：' + e.message); }
+  };
+  r.readAsText(file);
+}
+
+/* ---------- 綁定按鈕 ---------- */
+(function wireRoster(){
+  const nb = document.getElementById('newMemberBtn');
+  if (nb) nb.addEventListener('click', () => { loadMemberIntoEditor(blankMember()); showView('editor'); window.scrollTo(0,0); });
+
+  const dp = document.getElementById('downloadPPTBtn');
+  if (dp) dp.addEventListener('click', generatePPT);
+
+  const ex = document.getElementById('exportBtn');
+  if (ex) ex.addEventListener('click', exportRoster);
+
+  const imBtn = document.getElementById('importBtn');
+  const imInput = document.getElementById('importFile');
+  if (imBtn && imInput){
+    imBtn.addEventListener('click', () => imInput.click());
+    imInput.addEventListener('change', e => { if (e.target.files[0]) importRoster(e.target.files[0]); });
+  }
+})();
