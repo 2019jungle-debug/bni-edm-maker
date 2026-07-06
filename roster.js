@@ -188,9 +188,63 @@ function importRoster(file){
 }
 
 /* ---------- 綁定按鈕 ---------- */
+function openAddMember(){
+  document.getElementById('addName').value = '';
+  document.getElementById('addSpec').value = '';
+  document.getElementById('addStatus').textContent = '';
+  // 填入專業別選單（datalist）
+  const dl = document.getElementById('specDatalist');
+  if (dl && !dl.dataset.filled){
+    (window.BNI_SPECIALTIES || []).forEach(g => g.items.forEach(it => {
+      const o = document.createElement('option'); o.value = it; dl.appendChild(o);
+    }));
+    dl.dataset.filled = '1';
+  }
+  document.getElementById('addMemberModal').classList.add('show');
+  setTimeout(() => document.getElementById('addName').focus(), 50);
+}
+function closeAddMember(){ document.getElementById('addMemberModal').classList.remove('show'); }
+
+function buildNewMember(){
+  const name = document.getElementById('addName').value.trim();
+  const spec = document.getElementById('addSpec').value.trim();
+  if (!name){ document.getElementById('addName').focus(); alert('請輸入姓名'); return null; }
+  const m = blankMember();
+  m.name = name;
+  m.specialty = spec;
+  m.role = spec;
+  return m;
+}
+
 (function wireRoster(){
   const nb = document.getElementById('newMemberBtn');
-  if (nb) nb.addEventListener('click', () => { loadMemberIntoEditor(blankMember()); showView('editor'); window.scrollTo(0,0); });
+  if (nb) nb.addEventListener('click', openAddMember);
+
+  document.getElementById('addClose').addEventListener('click', closeAddMember);
+  document.getElementById('addCancel').addEventListener('click', closeAddMember);
+  document.getElementById('addMemberModal').addEventListener('click', e => { if (e.target.id === 'addMemberModal') closeAddMember(); });
+
+  // 快速建立：加入名冊，停留在名冊頁
+  document.getElementById('addCreate').addEventListener('click', async () => {
+    const m = buildNewMember(); if (!m) return;
+    await Store.upsert(m);
+    document.getElementById('addStatus').textContent = '✓ 已新增：' + m.name;
+    document.getElementById('addName').value = '';
+    document.getElementById('addSpec').value = '';
+    document.getElementById('addName').focus();
+    if (typeof renderRoster === 'function') renderRoster();
+  });
+
+  // 建立並前往完整編輯頁
+  document.getElementById('addCreateEdit').addEventListener('click', async () => {
+    const m = buildNewMember(); if (!m) return;
+    const id = await Store.upsert(m);
+    closeAddMember();
+    const fresh = Store.getById(id) || m;
+    loadMemberIntoEditor(fresh);
+    showView('editor');
+    window.scrollTo(0, 0);
+  });
 
   const dp = document.getElementById('downloadPPTBtn');
   if (dp) dp.addEventListener('click', generatePPT);

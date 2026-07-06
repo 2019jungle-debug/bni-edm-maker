@@ -652,6 +652,28 @@
   </div>
 </div>
 
+<!-- ================= 新增會員彈出視窗 ================= -->
+<div id="addMemberModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box" style="width:min(94vw,420px);">
+    <div class="modal-head">
+      <span>＋ 新增會員</span>
+      <button id="addClose" class="modal-x" type="button">✕</button>
+    </div>
+    <div class="field"><label>姓名 <span style="color:#d9534f;">*</span></label><input id="addName" type="text" placeholder="例：王小明"></div>
+    <div class="field"><label>專業別</label>
+      <input id="addSpec" type="text" list="specDatalist" placeholder="輸入或從清單選（可留空）">
+      <datalist id="specDatalist"></datalist>
+    </div>
+    <div class="hint" style="margin-bottom:10px;">建立後會出現在名冊，可再按「編輯」補齊照片、標語、引薦等完整資料。</div>
+    <div class="modal-actions" style="flex-wrap:wrap;">
+      <button class="btn btn-primary" id="addCreate" type="button">✓ 快速建立</button>
+      <button class="btn btn-ghost" id="addCreateEdit" type="button">建立並前往完整編輯</button>
+      <button class="btn btn-ghost" id="addCancel" type="button">取消</button>
+      <span id="addStatus" style="font-size:12px;color:#2e9e5b;align-self:center;"></span>
+    </div>
+  </div>
+</div>
+
 <!-- ================= 宣傳文彈出視窗 ================= -->
 <div id="promoModal" class="modal-overlay" style="display:none;">
   <div class="modal-box">
@@ -673,11 +695,11 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=8"></script>
-<script src="specialties.js?v=8"></script>
-<script src="members.js?v=8"></script>
-<script src="store.js?v=8"></script>
-<script src="app.js?v=8"></script>
-<script src="roster.js?v=8"></script>
+<script src="firebase-config.js?v=9"></script>
+<script src="specialties.js?v=9"></script>
+<script src="members.js?v=9"></script>
+<script src="store.js?v=9"></script>
+<script src="app.js?v=9"></script>
+<script src="roster.js?v=9"></script>
 </body>
 </html>
