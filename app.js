@@ -234,6 +234,7 @@ function paintTemplate(root, d){
 
 function render(){
   const d = currentData();
+  paintTemplate(document.getElementById('tplRed'), d);
   paintTemplate(document.getElementById('tplDark'), d);
   paintTemplate(document.getElementById('tplNavy'), d);
   paintTemplate(document.getElementById('tplGreen'), d);
@@ -401,14 +402,15 @@ document.getElementById('removePhoto').addEventListener('click', () => {
 
 /* ============ 版面切換 / 縮放 / 下載 ============ */
 const FORMATS = {
+  tplRed:   { w:600, h:849, label:'經典紅',  zoom:1 },
   tplDark:  { w:600, h:849, label:'深金聚光', zoom:1 },
   tplNavy:  { w:600, h:849, label:'深藍典雅', zoom:1 },
   tplGreen: { w:600, h:849, label:'綠意自然', zoom:1 },
   hero:     { w:960, h:540, label:'形象頁',  zoom:1 },
   intro:    { w:960, h:540, label:'介紹頁',  zoom:1 }
 };
-let activeFmt = 'tplDark';
-let zoom = FORMATS.tplDark.zoom;
+let activeFmt = 'tplRed';
+let zoom = FORMATS.tplRed.zoom;
 
 function activeEl(){ return document.getElementById(activeFmt); }
 
@@ -509,7 +511,7 @@ if (saveRosterBtn) saveRosterBtn.addEventListener('click', saveEditorToRoster);
   });
   loadData();            // 還原個人草稿（個人卡片用途）
   render();
-  switchFmt('tplDark');
+  switchFmt('tplRed');
   updateEditingBanner();
   updateCloudBadge();
 })();

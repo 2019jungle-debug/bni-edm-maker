@@ -208,6 +208,30 @@
   .tpl-photo.empty{display:flex;align-items:center;justify-content:center;font-size:15px;}
   .ref-row.hide,.ref-item.hide{display:none !important;}
 
+  /* ---------- 模板〇：經典紅 ---------- */
+  .tpl-red{background:linear-gradient(160deg,#fcfcfc 0%,#eceef0 100%);color:#2b2b2b;}
+  .tr-bg{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;}
+  .tr-brand{left:auto;right:34px;text-align:right;}
+  .tr-photo{position:absolute;top:16px;left:150px;width:300px;height:452px;z-index:4;}
+  .tr-photo.empty{display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.05);color:#999;border-radius:4px;}
+  .tr-role{position:absolute;top:198px;right:36px;z-index:5;font-size:22px;font-weight:700;color:var(--gold);text-align:right;}
+  .tr-name{position:absolute;top:226px;right:36px;z-index:5;font-size:48px;color:#2b2b2b;text-align:right;}
+  .tr-slogan{position:absolute;top:452px;left:50px;right:110px;z-index:5;font-size:33px;font-weight:800;line-height:1.34;color:#222;}
+  .tr-slogan div:last-child{text-indent:1.1em;}
+  .tr-refs{position:absolute;left:50px;top:570px;z-index:5;}
+  .tr-refs::before{content:"◆";position:absolute;top:-24px;left:2px;color:var(--gold);font-size:13px;}
+  .tr-refs .ref-row{display:flex;align-items:baseline;gap:8px;font-size:15px;line-height:1.55;}
+  .tr-refs .lbl{color:#333;font-weight:700;letter-spacing:3px;white-space:nowrap;}
+  .tr-refs .bar{color:var(--gold);}
+  .tr-refs .val{color:#333;}
+  .tr-date{position:absolute;left:50px;bottom:54px;z-index:5;font-size:58px;font-weight:800;color:var(--gold);line-height:1;}
+  .tr-date small{font-size:22px;color:#b8912f;}
+  .tr-date .time{font-size:18px;color:#a98f4e;font-weight:600;margin-top:8px;letter-spacing:1px;}
+  .tr-notes{position:absolute;right:36px;bottom:58px;width:250px;z-index:5;}
+  .tr-notes::before{content:"◆";position:absolute;top:-22px;right:2px;color:var(--gold);font-size:12px;}
+  .tr-notes ul{margin:0;padding:0;list-style:none;}
+  .tr-notes li{font-size:14px;line-height:2;color:#333;}
+
   /* ---------- 模板一：深金聚光 ---------- */
   .tpl-dark{background:radial-gradient(120% 60% at 50% 0%,#3a2f1c 0%,#1a1509 45%,#0d0b06 100%);color:#f0e6d2;}
   .td-glow{position:absolute;top:-140px;left:50%;transform:translateX(-50%);width:520px;height:420px;background:radial-gradient(ellipse at center,rgba(255,214,130,.45),transparent 70%);z-index:1;}
@@ -405,7 +429,8 @@
   <!-- ================= PREVIEW ================= -->
   <div class="preview-wrap">
     <div class="fmt-tabs">
-      <button class="fmt-tab active" data-fmt="tplDark">深金聚光</button>
+      <button class="fmt-tab active" data-fmt="tplRed">經典紅</button>
+      <button class="fmt-tab" data-fmt="tplDark">深金聚光</button>
       <button class="fmt-tab" data-fmt="tplNavy">深藍典雅</button>
       <button class="fmt-tab" data-fmt="tplGreen">綠意自然</button>
       <button class="fmt-tab" data-fmt="hero">形象頁 16:9</button>
@@ -417,6 +442,34 @@
       <button id="zoomIn">+</button>
     </div>
     <div class="preview-scale">
+      <!-- ========== 模板〇：經典紅 (A4 直式) ========== -->
+      <div id="tplRed" class="canvas tpl tpl-red">
+        <svg class="tr-bg" viewBox="0 0 600 849" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 -5 L235 -5 C150 155 55 175 305 255 C70 305 40 255 -5 335 Z" fill="#c9202a"/>
+          <path d="M606 118 C425 300 470 520 606 560 L606 118 Z" fill="#c9202a"/>
+          <path d="M-5 352 C120 332 245 420 345 360 C235 452 90 470 -5 452 Z" fill="#e2e2e2"/>
+          <path d="M300 470 C420 440 520 500 606 470 L606 520 C520 545 410 500 300 528 Z" fill="#efefef"/>
+        </svg>
+        <div class="tpl-brand tr-brand">
+          <div class="fd">富鼎分會<small>FU DING</small></div>
+          <div class="bni">BNI 鈦金名人堂</div>
+        </div>
+        <div class="tr-photo tpl-photo empty" data-photo="形象照"><span>形象照</span></div>
+        <div class="tr-role" data-f="role"></div>
+        <div class="tr-name hand" data-f="name"></div>
+        <div class="tr-slogan"><div data-f="main"></div><div data-f="sub"></div></div>
+        <div class="tr-refs" data-block="referrals">
+          <div class="ref-row"><span class="lbl">合作對象</span><span class="bar">｜</span><span class="val" data-inline="partners"></span></div>
+          <div class="ref-row"><span class="lbl">一般引薦</span><span class="bar">｜</span><span class="val" data-inline="general"></span></div>
+          <div class="ref-row"><span class="lbl">理想引薦</span><span class="bar">｜</span><span class="val" data-inline="ideal"></span></div>
+          <div class="ref-row"><span class="lbl">夢幻引薦</span><span class="bar">｜</span><span class="val" data-inline="dream"></span></div>
+          <div class="ref-row" data-block="clients"><span class="lbl">代表客戶</span><span class="bar">｜</span><span class="val" data-inline="clients"></span></div>
+          <div class="ref-row" data-block="clients"><span class="lbl">獨特主張</span><span class="bar">｜</span><span class="val" data-f="usp"></span></div>
+        </div>
+        <div class="tr-date"><span data-f="date"></span> <small data-f="day"></small><div class="time" data-f="time"></div></div>
+        <div class="tr-notes"><ul><li data-f="note1"></li><li data-f="note2"></li><li data-f="place"></li></ul></div>
+      </div>
+
       <!-- ========== 模板一：深金聚光 (portrait) ========== -->
       <div id="tplDark" class="canvas tpl tpl-dark">
         <div class="td-glow"></div>
@@ -568,11 +621,11 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=4"></script>
-<script src="specialties.js?v=4"></script>
-<script src="members.js?v=4"></script>
-<script src="store.js?v=4"></script>
-<script src="app.js?v=4"></script>
-<script src="roster.js?v=4"></script>
+<script src="firebase-config.js?v=5"></script>
+<script src="specialties.js?v=5"></script>
+<script src="members.js?v=5"></script>
+<script src="store.js?v=5"></script>
+<script src="app.js?v=5"></script>
+<script src="roster.js?v=5"></script>
 </body>
 </html>
