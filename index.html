@@ -65,7 +65,9 @@
   /* ---------- PREVIEW ---------- */
   .preview-wrap{flex:1 1 420px;position:sticky;top:24px;}
   .preview-scale{
-    display:flex;justify-content:center;
+    display:flex;justify-content:safe center;
+    overflow:auto;max-height:calc(100vh - 170px);
+    padding-bottom:8px;
   }
   /* The actual EDM canvas — fixed A-portrait-ish ratio */
   #edm{

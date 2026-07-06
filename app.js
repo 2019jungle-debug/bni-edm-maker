@@ -280,9 +280,9 @@ document.getElementById('removePhoto').addEventListener('click', () => {
 
 /* ============ 版面切換 / 縮放 / 下載 ============ */
 const FORMATS = {
-  edm:   { w:600, h:849, label:'EDM',  zoom:0.7 },
-  hero:  { w:960, h:540, label:'形象頁', zoom:0.55 },
-  intro: { w:960, h:540, label:'介紹頁', zoom:0.55 }
+  edm:   { w:600, h:849, label:'EDM',  zoom:1 },
+  hero:  { w:960, h:540, label:'形象頁', zoom:1 },
+  intro: { w:960, h:540, label:'介紹頁', zoom:1 }
 };
 let activeFmt = 'edm';
 let zoom = FORMATS.edm.zoom;
@@ -291,9 +291,8 @@ function activeEl(){ return document.getElementById(activeFmt); }
 
 function applyZoom(){
   const el = activeEl();
-  const f = FORMATS[activeFmt];
-  el.style.transform = 'scale(' + zoom + ')';
-  el.parentElement.style.height = (f.h * zoom) + 'px';
+  // 用 CSS zoom（會撐開版面尺寸），超出寬度時預覽區可左右捲動
+  el.style.zoom = zoom;
   document.getElementById('zoomLabel').textContent = '縮放 ' + Math.round(zoom * 100) + '%';
 }
 
@@ -316,28 +315,27 @@ document.querySelectorAll('.fmt-tab').forEach(b => {
   b.addEventListener('click', () => switchFmt(b.dataset.fmt));
 });
 
-document.getElementById('zoomIn').onclick  = () => { zoom = Math.min(1, zoom + 0.1); applyZoom(); };
+document.getElementById('zoomIn').onclick  = () => { zoom = Math.min(1.5, zoom + 0.1); applyZoom(); };
 document.getElementById('zoomOut').onclick = () => { zoom = Math.max(0.3, zoom - 0.1); applyZoom(); };
 
 // ---- 下載目前版面 PNG ----
 document.getElementById('download').addEventListener('click', () => {
   const el = activeEl();
   const f = FORMATS[activeFmt];
-  const prev = el.style.transform;
-  el.style.transform = 'scale(1)';           // 用原始解析度輸出
-  el.parentElement.style.height = f.h + 'px';
+  const prev = el.style.zoom;
+  el.style.zoom = 1;                          // 用原始解析度輸出
   html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff' })
     .then(canvas => {
       const a = document.createElement('a');
       a.download = (val('name') || 'BNI') + '_' + f.label + '.png';
       a.href = canvas.toDataURL('image/png');
       a.click();
-      el.style.transform = prev;
+      el.style.zoom = prev;
       applyZoom();
     })
     .catch(err => {
       alert('下載失敗：' + err.message);
-      el.style.transform = prev;
+      el.style.zoom = prev;
       applyZoom();
     });
 });
