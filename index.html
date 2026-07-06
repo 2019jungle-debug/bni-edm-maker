@@ -219,7 +219,7 @@
   .tr-bg{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;}
   .tr-brand{left:auto;right:34px;text-align:right;}
   .tr-photo{position:absolute;top:16px;left:150px;width:300px;height:452px;z-index:4;}
-  .tr-photo.empty{display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.05);color:#999;border-radius:4px;}
+  .tr-photo.empty{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.35);color:#b0b0b0;border:1px dashed #cfcfcf;border-radius:6px;}
   .tr-role{position:absolute;top:198px;right:36px;z-index:5;font-size:22px;font-weight:700;color:var(--gold);text-align:right;}
   .tr-name{position:absolute;top:226px;right:36px;z-index:5;font-size:48px;color:#2b2b2b;text-align:right;}
   .tr-slogan{position:absolute;top:452px;left:50px;right:110px;z-index:5;font-size:33px;font-weight:800;line-height:1.34;color:#222;}
@@ -305,6 +305,14 @@
   .tg-foot .tg-date .time{font-size:15px;color:#556;font-weight:600;margin-top:4px;}
   .tg-foot ul{margin:0;padding-left:18px;}
   .tg-foot li{font-size:14px;line-height:1.75;color:#3a3a3a;}
+
+  /* ---------- 產業鏈分隔頁 16:9 ---------- */
+  #dividerSlide{width:960px;height:540px;background:#f7f7f7;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18);transform-origin:top center;}
+  #dividerSlide .dv-top{position:absolute;top:0;left:0;right:0;height:150px;background:linear-gradient(120deg,var(--red-dark),var(--red));clip-path:polygon(0 0,100% 0,100% 62%,0 100%);}
+  #dividerSlide .dv-bottom{position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(120deg,var(--red),var(--red-dark));clip-path:polygon(0 40%,100% 0,100% 100%,0 100%);}
+  #dividerSlide .dv-brand{position:absolute;top:46px;left:0;right:0;text-align:center;color:#fff;font-size:20px;letter-spacing:3px;font-weight:700;z-index:5;}
+  #dividerSlide .dv-team{position:absolute;top:44%;left:0;right:0;transform:translateY(-50%);text-align:center;font-size:64px;font-weight:800;color:var(--red-dark);z-index:5;}
+  #dividerSlide .dv-sub{position:absolute;top:60%;left:0;right:0;text-align:center;font-size:26px;color:var(--gold);font-weight:700;z-index:5;}
 
   /* ---------- progress overlay ---------- */
   #progressOverlay{position:fixed;inset:0;background:rgba(20,20,25,.78);display:none;align-items:center;justify-content:center;z-index:9999;}
@@ -412,6 +420,13 @@
     <div class="field"><label>備註二</label><input id="evNote2" type="text" value="入席費 NT.800 元 / 請準備名片50張"></div>
     <div class="field"><label>地點</label><input id="evPlace" type="text" value="高雄福華飯店7F金龍廳"></div>
 
+    <h2 style="margin-top:24px;">⑥ 宣傳文（依上方資料自動生成）</h2>
+    <div class="actions" style="margin-bottom:8px;">
+      <button class="btn btn-primary" id="genPromoBtn" type="button">✨ 生成宣傳文</button>
+      <button class="btn btn-ghost" id="copyPromoBtn" type="button">📋 複製</button>
+    </div>
+    <textarea id="promoOut" placeholder="按「生成宣傳文」會依姓名／專業別／標語／引薦／活動資訊，套用富鼎宣傳文格式並加上 emoji。" style="min-height:220px;font-size:13px;line-height:1.7;"></textarea>
+
     <div id="editingBanner" class="editing-banner"></div>
 
     <div class="actions">
@@ -442,10 +457,14 @@
       <!-- ========== 模板〇：經典紅 (A4 直式) ========== -->
       <div id="tplRed" class="canvas tpl tpl-red">
         <svg class="tr-bg" viewBox="0 0 600 849" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 -5 L235 -5 C150 155 55 175 305 255 C70 305 40 255 -5 335 Z" fill="#c9202a"/>
-          <path d="M606 118 C425 300 470 520 606 560 L606 118 Z" fill="#c9202a"/>
-          <path d="M-5 352 C120 332 245 420 345 360 C235 452 90 470 -5 452 Z" fill="#e2e2e2"/>
-          <path d="M300 470 C420 440 520 500 606 470 L606 520 C520 545 410 500 300 528 Z" fill="#efefef"/>
+          <!-- 左上主紅弧 -->
+          <path d="M0 0 L250 0 C180 150 130 270 235 360 C120 405 55 335 0 400 Z" fill="#c9202a"/>
+          <!-- 金色細線點綴 -->
+          <path d="M258 0 C190 150 138 268 240 358" stroke="#cfa94d" stroke-width="3" fill="none" opacity=".85"/>
+          <!-- 右側紅弧（避開姓名，位於照片右側中段） -->
+          <path d="M600 315 C485 400 490 520 600 560 L600 315 Z" fill="#c9202a"/>
+          <!-- 底部淺灰層次 -->
+          <path d="M0 726 C180 700 360 762 600 706 L600 849 L0 849 Z" fill="#ededed"/>
         </svg>
         <div class="tpl-brand tr-brand">
           <div class="fd">富鼎分會<small>FU DING</small></div>
@@ -589,6 +608,14 @@
         </div>
         <div class="intro-foot">富鼎富鼎 · 又富又鼎</div>
       </div>
+
+      <!-- ---------- 產業鏈分隔頁（PPT 用，平時隱藏） ---------- -->
+      <div id="dividerSlide" class="canvas" style="display:none;">
+        <div class="dv-top"></div><div class="dv-bottom"></div>
+        <div class="dv-brand">富鼎分會 · FU DING｜BNI 鈦金名人堂</div>
+        <div class="dv-team" id="dvTeam">產業鏈</div>
+        <div class="dv-sub" id="dvSub">請準備</div>
+      </div>
     </div>
   </div>
 </div>
@@ -618,11 +645,11 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=6"></script>
-<script src="specialties.js?v=6"></script>
-<script src="members.js?v=6"></script>
-<script src="store.js?v=6"></script>
-<script src="app.js?v=6"></script>
-<script src="roster.js?v=6"></script>
+<script src="firebase-config.js?v=7"></script>
+<script src="specialties.js?v=7"></script>
+<script src="members.js?v=7"></script>
+<script src="store.js?v=7"></script>
+<script src="app.js?v=7"></script>
+<script src="roster.js?v=7"></script>
 </body>
 </html>

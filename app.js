@@ -331,6 +331,59 @@ function setPhoto(id, placeholder){
 
 function val(id){ return document.getElementById(id).value.trim(); }
 
+/* ============ 產業鏈（團隊）對照 ============ */
+function teamOf(spec){
+  const groups = window.BNI_SPECIALTIES || [];
+  for (const g of groups){ if (g.items.includes(spec)) return g.group; }
+  return '';
+}
+
+/* ============ 宣傳文自動生成（套用富鼎格式 + emoji） ============ */
+function genPromo(){
+  const d = currentData();
+  const iso = val('evDate');
+  const yr = (iso.split('-')[0]) || '';
+  const dayChar = (d.day || '').replace('週', '');
+  const dateLine = (yr && d.date) ? (yr + '.' + d.date.replace('/', '.') + (dayChar ? ('（' + dayChar + '）') : '')) : (d.date || '');
+  const name = d.name || '（姓名）';
+  const spec = d.specialty || d.role || '';
+  const topic = [d.main, d.sub].filter(Boolean).join('');
+  const sloganLine = [d.main, d.sub].filter(Boolean).join('，');
+  const refs = [];
+  [d.partners, d.general, d.ideal, d.dream].forEach(a => (a || []).forEach(x => { if (x && !refs.includes(x)) refs.push(x); }));
+  const refLines = refs.length
+    ? refs.slice(0, 6).map((r, i) => '行業' + (i + 1) + '：' + r).join('\n')
+    : '（尚未填寫引薦對象）';
+  const intro = d.usp
+    ? d.usp
+    : ('本週由' + (spec ? spec + '代表 ' : '') + name + '，帶來精彩的專題分享，值得您把握！');
+
+  let s = '';
+  s += '🎬 富鼎鈦金名人堂專題簡報\n';
+  s += '📆 ' + dateLine + '\n';
+  s += '⏰ 早上 ' + (d.time || '06:30－09:30') + '\n';
+  s += '👉 地點：' + (d.place || '') + '\n\n';
+  if (topic) s += '📑 「' + topic + '」\n';
+  s += '🗣 ' + (spec ? spec + '－' : '') + name + '\n\n';
+  s += '✨ ' + intro + '\n\n';
+  if (sloganLine) s += '💯 Slogan：\n「' + sloganLine + '」\n\n';
+  s += '🗣 積極邀請合作的行業別：\n' + refLines + '\n\n';
+  s += '🔥 心動不如馬上行動，趕快手刀報名' + (d.date ? d.date + ' ' : '') + '專題簡報！\n';
+  s += '富鼎富鼎，又富又鼎 💪';
+  return s;
+}
+
+document.getElementById('genPromoBtn').addEventListener('click', () => {
+  document.getElementById('promoOut').value = genPromo();
+  flashSaved('✓ 已生成宣傳文');
+});
+document.getElementById('copyPromoBtn').addEventListener('click', async () => {
+  const t = document.getElementById('promoOut');
+  if (!t.value.trim()) t.value = genPromo();
+  try { await navigator.clipboard.writeText(t.value); flashSaved('✓ 已複製宣傳文'); }
+  catch(e){ t.select(); document.execCommand('copy'); flashSaved('✓ 已複製'); }
+});
+
 // 更新「星期（自動）」顯示
 function updateDayDisplay(){
   const el = document.getElementById('evDayDisplay');

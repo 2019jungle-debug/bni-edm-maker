@@ -8,7 +8,8 @@ function dateStamp(){
   const p = n => String(n).padStart(2,'0');
   return d.getFullYear() + p(d.getMonth()+1) + p(d.getDate());
 }
-function nextFrame(){ return new Promise(r => requestAnimationFrame(() => setTimeout(r, 0))); }
+// 用 setTimeout（非 requestAnimationFrame）確保分頁切到背景時仍會執行
+function nextFrame(){ return new Promise(r => setTimeout(r, 30)); }
 
 let dragId = null;
 
@@ -111,13 +112,36 @@ async function generatePPT(){
   document.getElementById('view-roster').style.display = 'none';
   const hero = document.getElementById('hero');
   const intro = document.getElementById('intro');
+  const divider = document.getElementById('dividerSlide');
+
+  // 效能優化：擷取時 html2canvas 會複製整份文件，先把不需擷取的重元件（表單、四種 EDM 模板）暫時隱藏
+  const hiddenEls = [document.querySelector('#view-editor .panel'),
+                     document.getElementById('tplRed'), document.getElementById('tplDark'),
+                     document.getElementById('tplNavy'), document.getElementById('tplGreen')];
+  const prevDisp = hiddenEls.map(el => el ? el.style.display : '');
+  hiddenEls.forEach(el => { if (el) el.style.display = 'none'; });
 
   const pptx = new PptxGenJS();
   pptx.defineLayout({ name:'W16x9', width:13.333, height:7.5 });
   pptx.layout = 'W16x9';
 
+  let prevTeam = null;
+
   try {
     for (let i = 0; i < list.length; i++){
+      // 產業鏈分隔頁：當團隊改變時插入一頁
+      const team = (typeof teamOf === 'function') ? teamOf(list[i].specialty) : '';
+      if (team && team !== prevTeam){
+        document.getElementById('dvTeam').textContent = team;
+        document.getElementById('dvSub').textContent = '產業服務鏈';
+        hero.style.display = 'none'; intro.style.display = 'none'; divider.style.display = ''; divider.style.zoom = 1;
+        await nextFrame();
+        const dc = await html2canvas(divider, { scale:2, useCORS:true, backgroundColor:'#ffffff' });
+        pptx.addSlide().addImage({ data: dc.toDataURL('image/png'), x:0, y:0, w:13.333, h:7.5 });
+        divider.style.display = 'none';
+        prevTeam = team;
+      }
+
       loadMemberIntoEditor(list[i]);
       await nextFrame();
 
@@ -136,6 +160,8 @@ async function generatePPT(){
     alert('產生 PPT 失敗：' + e.message);
     console.error(e);
   } finally {
+    divider.style.display = 'none';
+    hiddenEls.forEach((el, i) => { if (el) el.style.display = prevDisp[i]; });
     if (savedMember) loadMemberIntoEditor(savedMember); else { currentMember = null; render(); }
     switchFmt(savedActive);
     showView(savedView);
