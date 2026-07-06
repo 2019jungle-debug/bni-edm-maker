@@ -52,6 +52,8 @@
   .group-title{font-size:13px;font-weight:700;color:var(--gold);margin:18px 0 8px;border-bottom:1px dashed var(--line);padding-bottom:4px;}
   .photo-row{display:flex;align-items:center;gap:12px;}
   .photo-row .thumb{width:56px;height:56px;border-radius:8px;object-fit:cover;border:1px solid var(--line);background:#f0f0f0;flex:0 0 auto;}
+  .btn-remove{border:1px solid #d9534f;background:#fff;color:#d9534f;border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer;font-family:inherit;flex:0 0 auto;}
+  .btn-remove:hover{background:#d9534f;color:#fff;}
   .btn{
     display:inline-block;border:none;border-radius:8px;padding:11px 18px;
     font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;
@@ -140,6 +142,7 @@
       <div class="photo-row">
         <img id="thumb" class="thumb" alt="">
         <input type="file" id="photo" accept="image/*">
+        <button type="button" id="removePhoto" class="btn-remove">移除</button>
       </div>
       <div class="hint">建議直式、上半身、去背或純色背景效果最佳</div>
     </div>

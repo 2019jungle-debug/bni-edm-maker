@@ -246,6 +246,15 @@ document.getElementById('photo').addEventListener('change', e => {
   r.readAsDataURL(f);
 });
 
+// ---- 移除照片 ----
+document.getElementById('removePhoto').addEventListener('click', () => {
+  photoDataUrl = '';
+  document.getElementById('photo').value = '';
+  document.getElementById('thumb').removeAttribute('src');
+  render();
+  saveData();
+});
+
 // ---- 縮放 ----
 let zoom = 0.7;
 const edm = document.getElementById('edm');
