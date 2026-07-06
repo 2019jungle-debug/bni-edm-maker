@@ -373,6 +373,7 @@ function genPromo(){
   return s;
 }
 
+// 內嵌區塊（表單最下方）
 document.getElementById('genPromoBtn').addEventListener('click', () => {
   document.getElementById('promoOut').value = genPromo();
   flashSaved('✓ 已生成宣傳文');
@@ -380,8 +381,33 @@ document.getElementById('genPromoBtn').addEventListener('click', () => {
 document.getElementById('copyPromoBtn').addEventListener('click', async () => {
   const t = document.getElementById('promoOut');
   if (!t.value.trim()) t.value = genPromo();
-  try { await navigator.clipboard.writeText(t.value); flashSaved('✓ 已複製宣傳文'); }
-  catch(e){ t.select(); document.execCommand('copy'); flashSaved('✓ 已複製'); }
+  await copyText(t.value, () => flashSaved('✓ 已複製宣傳文'));
+});
+
+// 彈出視窗（預覽區旁的「✨ 宣傳文」按鈕）
+async function copyText(text, onOk){
+  try { await navigator.clipboard.writeText(text); onOk && onOk(); }
+  catch(e){ const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); onOk && onOk(); }
+}
+function openPromoModal(){
+  const txt = genPromo();
+  document.getElementById('promoModalText').value = txt;
+  document.getElementById('promoOut').value = txt;   // 同步內嵌區
+  document.getElementById('promoModalStatus').textContent = '';
+  document.getElementById('promoModal').classList.add('show');
+}
+function closePromoModal(){ document.getElementById('promoModal').classList.remove('show'); }
+document.getElementById('openPromoBtn').addEventListener('click', openPromoModal);
+document.getElementById('promoClose').addEventListener('click', closePromoModal);
+document.getElementById('promoModal').addEventListener('click', e => { if (e.target.id === 'promoModal') closePromoModal(); });
+document.getElementById('promoModalRegen').addEventListener('click', () => {
+  document.getElementById('promoModalText').value = genPromo();
+  document.getElementById('promoModalStatus').textContent = '已重新生成';
+});
+document.getElementById('promoModalCopy').addEventListener('click', () => {
+  copyText(document.getElementById('promoModalText').value, () => {
+    document.getElementById('promoModalStatus').textContent = '✓ 已複製，可貼到 LINE / FB';
+  });
 });
 
 // 更新「星期（自動）」顯示

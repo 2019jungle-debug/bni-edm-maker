@@ -314,6 +314,17 @@
   #dividerSlide .dv-team{position:absolute;top:44%;left:0;right:0;transform:translateY(-50%);text-align:center;font-size:64px;font-weight:800;color:var(--red-dark);z-index:5;}
   #dividerSlide .dv-sub{position:absolute;top:60%;left:0;right:0;text-align:center;font-size:26px;color:var(--gold);font-weight:700;z-index:5;}
 
+  /* ---------- 宣傳文彈窗 ---------- */
+  .btn-promo{background:#7b52c4;color:#fff;}
+  .btn-promo:hover{background:#653fae;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(20,20,25,.6);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px;}
+  .modal-overlay.show{display:flex;}
+  .modal-box{background:#fff;border-radius:12px;width:min(94vw,560px);max-height:88vh;display:flex;flex-direction:column;padding:18px 20px;box-shadow:0 12px 40px rgba(0,0,0,.3);}
+  .modal-head{display:flex;justify-content:space-between;align-items:center;font-size:16px;font-weight:800;color:var(--red);margin-bottom:12px;}
+  .modal-x{border:none;background:#f0f0f0;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;}
+  #promoModalText{width:100%;flex:1;min-height:340px;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:14px;line-height:1.8;font-family:inherit;resize:vertical;background:#fafafa;}
+  .modal-actions{display:flex;gap:10px;margin-top:12px;align-items:center;}
+
   /* ---------- progress overlay ---------- */
   #progressOverlay{position:fixed;inset:0;background:rgba(20,20,25,.78);display:none;align-items:center;justify-content:center;z-index:9999;}
   #progressOverlay .pbox{background:#fff;border-radius:12px;padding:26px 34px;width:min(90vw,420px);text-align:center;}
@@ -432,6 +443,7 @@
     <div class="actions">
       <button class="btn btn-primary" id="download">⬇ 下載 EDM (PNG)</button>
       <button class="btn btn-save" id="saveToRoster">💾 儲存到名冊</button>
+      <button class="btn btn-promo" id="openPromoBtn" type="button">✨ 宣傳文</button>
       <button class="btn btn-ghost" id="reset">清空重填</button>
       <span id="saveStatus" style="font-size:12px;color:#2e9e5b;opacity:0;transition:opacity .3s;align-self:center;">✓ 已自動儲存</span>
     </div>
@@ -640,16 +652,32 @@
   </div>
 </div>
 
+<!-- ================= 宣傳文彈出視窗 ================= -->
+<div id="promoModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span>✨ 宣傳文（可直接複製貼到群組）</span>
+      <button id="promoClose" class="modal-x" type="button">✕</button>
+    </div>
+    <textarea id="promoModalText" readonly></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="promoModalCopy" type="button">📋 複製全文</button>
+      <button class="btn btn-ghost" id="promoModalRegen" type="button">🔄 重新生成</button>
+      <span id="promoModalStatus" style="font-size:12px;color:#2e9e5b;align-self:center;"></span>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=7"></script>
-<script src="specialties.js?v=7"></script>
-<script src="members.js?v=7"></script>
-<script src="store.js?v=7"></script>
-<script src="app.js?v=7"></script>
-<script src="roster.js?v=7"></script>
+<script src="firebase-config.js?v=8"></script>
+<script src="specialties.js?v=8"></script>
+<script src="members.js?v=8"></script>
+<script src="store.js?v=8"></script>
+<script src="app.js?v=8"></script>
+<script src="roster.js?v=8"></script>
 </body>
 </html>
