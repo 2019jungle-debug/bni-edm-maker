@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BNI 富鼎分會｜個人 EDM 即時製作工具</title>
+<style>
+  :root{
+    --red:#c0202a;
+    --red-dark:#8f1720;
+    --gold:#b8912f;
+    --gold-light:#c9a856;
+    --ink:#2b2b2b;
+    --grey:#f2f2f2;
+    --line:#e2e2e2;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;
+    background:#ececef;
+    color:var(--ink);
+  }
+  header{
+    background:linear-gradient(90deg,var(--red-dark),var(--red));
+    color:#fff;padding:16px 24px;
+    display:flex;align-items:center;justify-content:space-between;
+    flex-wrap:wrap;gap:8px;
+  }
+  header h1{font-size:19px;margin:0;font-weight:700;letter-spacing:1px;}
+  header .sub{font-size:12px;opacity:.85;}
+  .layout{display:flex;gap:24px;align-items:flex-start;padding:24px;flex-wrap:wrap;}
+  /* ---------- FORM ---------- */
+  .panel{
+    background:#fff;border-radius:12px;padding:22px;
+    box-shadow:0 4px 18px rgba(0,0,0,.08);
+    flex:1 1 380px;max-width:460px;
+  }
+  .panel h2{font-size:15px;margin:0 0 14px;color:var(--red);border-left:4px solid var(--gold);padding-left:8px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:#444;}
+  .field input,.field select,.field textarea{
+    width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:7px;
+    font-size:14px;font-family:inherit;background:#fafafa;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{
+    outline:none;border-color:var(--gold);background:#fff;
+  }
+  .field textarea{resize:vertical;min-height:44px;}
+  .hint{font-size:11px;color:#999;margin-top:3px;}
+  .triple{display:grid;grid-template-columns:1fr;gap:6px;}
+  .group-title{font-size:13px;font-weight:700;color:var(--gold);margin:18px 0 8px;border-bottom:1px dashed var(--line);padding-bottom:4px;}
+  .photo-row{display:flex;align-items:center;gap:12px;}
+  .photo-row .thumb{width:56px;height:56px;border-radius:8px;object-fit:cover;border:1px solid var(--line);background:#f0f0f0;flex:0 0 auto;}
+  .btn{
+    display:inline-block;border:none;border-radius:8px;padding:11px 18px;
+    font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;
+  }
+  .btn-primary{background:var(--red);color:#fff;}
+  .btn-primary:hover{background:var(--red-dark);}
+  .btn-ghost{background:#fff;color:var(--red);border:1px solid var(--red);}
+  .actions{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
+  /* ---------- PREVIEW ---------- */
+  .preview-wrap{flex:1 1 420px;position:sticky;top:24px;}
+  .preview-scale{
+    display:flex;justify-content:center;
+  }
+  /* The actual EDM canvas — fixed A-portrait-ish ratio */
+  #edm{
+    width:600px;height:849px;background:#fff;position:relative;overflow:hidden;
+    box-shadow:0 8px 30px rgba(0,0,0,.18);
+    transform-origin:top center;
+  }
+  /* top red swoosh */
+  .edm-top{
+    position:absolute;top:0;left:0;right:0;height:330px;
+    background:linear-gradient(120deg,var(--red-dark) 0%,var(--red) 55%,#d94651 100%);
+    clip-path:polygon(0 0,100% 0,100% 62%,0 100%);
+  }
+  .edm-brand{position:absolute;top:22px;right:26px;text-align:right;color:#fff;z-index:5;}
+  .edm-brand .fd{font-size:26px;font-weight:800;letter-spacing:3px;line-height:1;}
+  .edm-brand .fd small{display:block;font-size:11px;letter-spacing:5px;opacity:.9;margin-top:3px;}
+  .edm-brand .bni{margin-top:8px;font-size:11px;background:#fff;color:var(--red);display:inline-block;padding:2px 8px;border-radius:3px;font-weight:700;}
+  /* photo */
+  .edm-photo{
+    position:absolute;top:34px;left:34px;width:250px;height:300px;z-index:4;
+    border-radius:6px;overflow:hidden;border:3px solid rgba(255,255,255,.5);
+    background:#ccc;
+  }
+  .edm-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .edm-photo.empty{display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;background:rgba(255,255,255,.15);}
+  /* role + name over swoosh */
+  .edm-role{position:absolute;top:150px;right:30px;z-index:6;text-align:right;color:var(--gold-light);}
+  .edm-role .r{font-size:20px;font-weight:700;color:#f3d689;}
+  .edm-role .n{font-size:40px;font-weight:800;color:#fff;margin-top:6px;text-shadow:0 2px 6px rgba(0,0,0,.25);}
+  /* slogan */
+  .edm-slogan{position:absolute;top:352px;left:34px;right:34px;z-index:6;}
+  .edm-slogan .main{font-size:34px;font-weight:800;color:var(--ink);line-height:1.2;}
+  .edm-slogan .sub{font-size:21px;font-weight:700;color:var(--red);margin-top:8px;line-height:1.3;}
+  .edm-divider{position:absolute;left:34px;right:34px;top:470px;height:1px;background:var(--line);z-index:5;}
+  .edm-divider::before{content:"◆";position:absolute;left:0;top:-9px;color:var(--gold);font-size:12px;}
+  /* body two columns */
+  .edm-body{position:absolute;top:492px;left:34px;right:34px;z-index:6;display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;}
+  .edm-block .bt{font-size:13px;font-weight:800;color:var(--red);border-left:3px solid var(--gold);padding-left:7px;margin-bottom:5px;}
+  .edm-block ul{margin:0;padding-left:16px;}
+  .edm-block li{font-size:12.5px;line-height:1.65;color:#333;}
+  .edm-block.usp{grid-column:1 / -1;}
+  .edm-block.usp .box{background:var(--grey);border-radius:8px;padding:10px 12px;font-size:13px;color:#333;line-height:1.6;}
+  .edm-block.clients .row{font-size:12.5px;color:#333;line-height:1.7;}
+  /* footer */
+  .edm-foot{position:absolute;bottom:0;left:0;right:0;height:30px;background:var(--gold);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:2px;z-index:6;}
+  .zoom-controls{display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:12px;}
+  .zoom-controls button{border:1px solid var(--line);background:#fff;border-radius:6px;width:30px;height:30px;cursor:pointer;font-size:16px;}
+  @media(max-width:1000px){.preview-wrap{position:static;}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>BNI 富鼎分會 · 個人 EDM 即時製作工具</h1>
+    <div class="sub">填寫左側欄位 → 右側即時預覽 → 下載 PNG 圖檔</div>
+  </div>
+  <div class="sub">富鼎富鼎 · 又富又鼎</div>
+</header>
+
+<div class="layout">
+  <!-- ================= FORM ================= -->
+  <div class="panel">
+    <h2>① 基本資料</h2>
+
+    <div class="field">
+      <label>形象照上傳</label>
+      <div class="photo-row">
+        <img id="thumb" class="thumb" alt="">
+        <input type="file" id="photo" accept="image/*">
+      </div>
+      <div class="hint">建議直式、上半身、去背或純色背景效果最佳</div>
+    </div>
+
+    <div class="field">
+      <label>姓名</label>
+      <input id="name" type="text" placeholder="例：歐陽仁傑" value="歐陽仁傑">
+    </div>
+
+    <div class="field">
+      <label>職稱／角色</label>
+      <input id="role" type="text" placeholder="例：職涯顧問" value="職涯顧問">
+    </div>
+
+    <div class="field">
+      <label>專業別（從富鼎分會清單選，或自行輸入）</label>
+      <select id="specialtySelect"></select>
+      <input id="specialty" type="text" placeholder="或自行輸入專業別" style="margin-top:6px;">
+    </div>
+
+    <h2 style="margin-top:24px;">② EDM 標語</h2>
+    <div class="field">
+      <label>主標</label>
+      <input id="sloganMain" type="text" value="職嚮生涯設計" maxlength="12">
+    </div>
+    <div class="field">
+      <label>副標</label>
+      <input id="sloganSub" type="text" value="幫您找到職業生涯的心之所嚮" maxlength="20">
+    </div>
+
+    <h2 style="margin-top:24px;">③ 引薦需求</h2>
+
+    <div class="group-title">合作對象（3 項）</div>
+    <div class="triple" id="partners"></div>
+
+    <div class="group-title">一般引薦（3 項）</div>
+    <div class="triple" id="general"></div>
+
+    <div class="group-title">理想引薦（3 項）</div>
+    <div class="triple" id="ideal"></div>
+
+    <div class="group-title">夢幻引薦（3 項）</div>
+    <div class="triple" id="dream"></div>
+
+    <h2 style="margin-top:24px;">④ 客戶與主張</h2>
+    <div class="group-title">代表性客戶（3 家）</div>
+    <div class="triple" id="clients"></div>
+
+    <div class="field" style="margin-top:14px;">
+      <label>獨特銷售主張 (USP)</label>
+      <textarea id="usp" placeholder="用一兩句話說明您與眾不同之處">結合心理諮商專業與職涯設計，用科學方法幫助每個人找到職業生涯的心之所嚮。</textarea>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="download">⬇ 下載 EDM (PNG)</button>
+      <button class="btn btn-ghost" id="reset">清空重填</button>
+      <span id="saveStatus" style="font-size:12px;color:#2e9e5b;opacity:0;transition:opacity .3s;align-self:center;">✓ 已自動儲存</span>
+    </div>
+    <div class="hint" style="margin-top:6px;">✏️ 您填的內容會自動存在這台裝置的瀏覽器，下次打開自動帶入。</div>
+  </div>
+
+  <!-- ================= PREVIEW ================= -->
+  <div class="preview-wrap">
+    <div class="zoom-controls">
+      <button id="zoomOut">−</button>
+      <span id="zoomLabel" style="font-size:13px;color:#666;">縮放 70%</span>
+      <button id="zoomIn">+</button>
+    </div>
+    <div class="preview-scale">
+      <div id="edm">
+        <div class="edm-top"></div>
+        <div class="edm-brand">
+          <div class="fd">富鼎分會<small>FU DING</small></div>
+          <div class="bni">BNI 鈦金名人堂</div>
+        </div>
+        <div class="edm-photo empty" id="edmPhoto"><span>形象照</span></div>
+        <div class="edm-role">
+          <div class="r" id="pvRole">職涯顧問</div>
+          <div class="n" id="pvName">歐陽仁傑</div>
+        </div>
+        <div class="edm-slogan">
+          <div class="main" id="pvMain">職嚮生涯設計</div>
+          <div class="sub" id="pvSub">幫您找到職業生涯的心之所嚮</div>
+        </div>
+        <div class="edm-divider"></div>
+        <div class="edm-body">
+          <div class="edm-block">
+            <div class="bt">合作對象</div>
+            <ul id="pvPartners"></ul>
+          </div>
+          <div class="edm-block">
+            <div class="bt">一般引薦</div>
+            <ul id="pvGeneral"></ul>
+          </div>
+          <div class="edm-block">
+            <div class="bt">理想引薦</div>
+            <ul id="pvIdeal"></ul>
+          </div>
+          <div class="edm-block">
+            <div class="bt">夢幻引薦</div>
+            <ul id="pvDream"></ul>
+          </div>
+          <div class="edm-block clients">
+            <div class="bt">代表性客戶</div>
+            <div id="pvClients"></div>
+          </div>
+          <div class="edm-block">
+            <div class="bt">專業別</div>
+            <div class="row" id="pvSpecialty" style="font-size:12.5px;line-height:1.7;color:#333;"></div>
+          </div>
+          <div class="edm-block usp">
+            <div class="bt">獨特銷售主張</div>
+            <div class="box" id="pvUsp"></div>
+          </div>
+        </div>
+        <div class="edm-foot">富鼎富鼎 · 又富又鼎 · 團隊上百人 · 引薦破百倍</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="specialties.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
