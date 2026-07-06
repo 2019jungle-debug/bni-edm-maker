@@ -33,9 +33,16 @@ Object.keys(defaults).forEach(id => {
   defaults[id].forEach((v, i) => { if (inputs[i]) inputs[i].value = v; });
 });
 
-// ---- 專業別下拉 ----
-(function fillSpecialties(){
+// ---- 專業別下拉（標註該專業別的會員，或「招募中」） ----
+function memberBySpecialty(spec){
+  return Store.getAllSorted().find(m => (m.specialty || '') === spec) || null;
+}
+
+function buildSpecialtySelect(){
   const sel = document.getElementById('specialtySelect');
+  if (!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = '';
   const blank = document.createElement('option');
   blank.value = ''; blank.textContent = '— 請選擇專業別 —';
   sel.appendChild(blank);
@@ -44,16 +51,32 @@ Object.keys(defaults).forEach(id => {
     og.label = g.group;
     g.items.forEach(it => {
       const o = document.createElement('option');
-      o.value = it; o.textContent = it;
+      o.value = it;
+      const mem = memberBySpecialty(it);
+      o.textContent = it + (mem ? '（' + mem.name + '）' : '（招募中）');
       og.appendChild(o);
     });
     sel.appendChild(og);
   });
-  sel.addEventListener('change', () => {
-    if (sel.value) document.getElementById('specialty').value = sel.value;
+  if (prev) sel.value = prev;
+}
+
+document.getElementById('specialtySelect').addEventListener('change', function(){
+  const spec = this.value;
+  if (!spec){ return; }
+  const mem = memberBySpecialty(spec);
+  if (mem){
+    // 已有會員 → 直接帶出整位會員
+    loadMemberIntoEditor(mem);
+    this.value = spec;   // 保持選取
+  } else {
+    // 招募中：僅填入專業別，脫離目前會員，作為新增會員的起點
+    document.getElementById('specialty').value = spec;
+    currentMember = null;
+    updateEditingBanner();
     render();
-  });
-})();
+  }
+});
 
 // ---- 會員快速選擇（從名冊 Store 帶入並進入編輯） ----
 let currentMember = null;   // 目前正在編輯的名冊會員（null = 尚未對應名冊）
@@ -80,13 +103,21 @@ document.getElementById('memberSelect').addEventListener('change', e => {
   if (m) loadMemberIntoEditor(m);
 });
 
-// 活動資訊預設值（會員未填時沿用）
+// 活動資訊預設值（會員未填時沿用；日期用 ISO yyyy-mm-dd）
 const EV_DEFAULT = {
-  evDate: '06/26', evDay: '週四', evTime: '06:30 – 09:30 AM',
+  evDate: '2026-06-26', evTime: '06:30 – 09:30 AM',
   evNote1: '準備10秒自我介紹 / 入場請著正式服裝',
   evNote2: '入席費 NT.800 元 / 請準備名片50張',
   evPlace: '高雄福華飯店7F金龍廳'
 };
+// 舊資料相容：把 "06/26" 這種舊格式轉成當年度 ISO
+function toISODate(v){
+  if (!v) return EV_DEFAULT.evDate;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+  const m = v.match(/(\d{1,2})\s*[\/\-月]\s*(\d{1,2})/);
+  if (m) return '2026-' + String(m[1]).padStart(2,'0') + '-' + String(m[2]).padStart(2,'0');
+  return EV_DEFAULT.evDate;
+}
 
 // 把一位名冊會員載入左側編輯表單
 function loadMemberIntoEditor(m){
@@ -106,14 +137,13 @@ function loadMemberIntoEditor(m){
   applyTriple('dream',    m.dream);
   applyTriple('clients',  m.clients);
   // 活動資訊（會員自訂，否則用預設）
-  document.getElementById('evDate').value  = m.evDate  != null ? m.evDate  : EV_DEFAULT.evDate;
-  document.getElementById('evDay').value   = m.evDay   != null ? m.evDay   : EV_DEFAULT.evDay;
+  document.getElementById('evDate').value  = toISODate(m.evDate);
   document.getElementById('evTime').value  = m.evTime  != null ? m.evTime  : EV_DEFAULT.evTime;
   document.getElementById('evNote1').value = m.evNote1 != null ? m.evNote1 : EV_DEFAULT.evNote1;
   document.getElementById('evNote2').value = m.evNote2 != null ? m.evNote2 : EV_DEFAULT.evNote2;
   document.getElementById('evPlace').value = m.evPlace != null ? m.evPlace : EV_DEFAULT.evPlace;
-  document.getElementById('showReferrals').checked = m.showReferrals !== false;
-  document.getElementById('showClients').checked = m.showClients !== false;
+  updateDayDisplay();
+  applyShowFlags(m.show);
   photoDataUrl = m.photo || '';
   const thumb = document.getElementById('thumb');
   if (photoDataUrl) thumb.src = photoDataUrl; else thumb.removeAttribute('src');
@@ -139,10 +169,9 @@ function readEditorAsMember(){
     ideal:    readTriple('ideal'),
     dream:    readTriple('dream'),
     clients:  readTriple('clients'),
-    evDate: val('evDate'), evDay: val('evDay'), evTime: val('evTime'),
+    evDate: val('evDate'), evTime: val('evTime'),
     evNote1: val('evNote1'), evNote2: val('evNote2'), evPlace: val('evPlace'),
-    showReferrals: document.getElementById('showReferrals').checked,
-    showClients: document.getElementById('showClients').checked,
+    show: readShowFlags(),
     photo: photoDataUrl
   };
 }
@@ -151,7 +180,7 @@ function blankMember(){
   return Object.assign({ id:null, name:'', role:'', specialty:'', sloganMain:'', sloganSub:'', usp:'',
            partners:['','',''], general:['','',''], ideal:['','',''], dream:['','',''],
            clients:['','',''], photo:'', present:true,
-           showReferrals:true, showClients:true }, EV_DEFAULT);
+           show:{ partners:true, general:true, ideal:true, dream:true, clients:true, usp:true } }, EV_DEFAULT);
 }
 
 async function saveEditorToRoster(){
@@ -195,16 +224,36 @@ function fillList(ulId, values){
 // ---- 主渲染 ----
 let photoDataUrl = '';
 
+// 日期輔助：ISO(yyyy-mm-dd) → MM/DD 與 週X
+function mmdd(iso){
+  if (!iso) return '';
+  const p = iso.split('-');
+  return p.length >= 3 ? (p[1] + '/' + p[2]) : iso;
+}
+function weekdayZh(iso){
+  if (!iso) return '';
+  const d = new Date(iso + 'T00:00:00');
+  if (isNaN(d.getTime())) return '';
+  return '週' + '日一二三四五六'[d.getDay()];
+}
+
+// 讀取各類「顯示」勾選狀態
+function readShowFlags(){
+  const s = {};
+  document.querySelectorAll('.showFlag').forEach(cb => s[cb.dataset.key] = cb.checked);
+  return s;
+}
+
 function currentData(){
+  const iso = val('evDate');
   return {
     name: val('name'), role: val('role'), specialty: val('specialty'),
     main: val('sloganMain'), sub: val('sloganSub'), usp: val('usp'),
-    date: val('evDate'), day: val('evDay'), time: val('evTime'),
+    date: mmdd(iso), day: weekdayZh(iso), time: val('evTime'),
     note1: val('evNote1'), note2: val('evNote2'), place: val('evPlace'),
     partners: readTriple('partners'), general: readTriple('general'),
     ideal: readTriple('ideal'), dream: readTriple('dream'), clients: readTriple('clients'),
-    showReferrals: document.getElementById('showReferrals').checked,
-    showClients: document.getElementById('showClients').checked
+    show: readShowFlags()
   };
 }
 
@@ -217,19 +266,27 @@ function paintTemplate(root, d){
     const arr = (d[el.dataset.inline] || []).filter(Boolean);
     el.textContent = arr.join('、');
   });
-  // 任一引薦/客戶列若值為空 → 整列隱藏（含獨特主張）
+  // 各列：值為空 或 該類未勾選顯示 → 隱藏
   root.querySelectorAll('.ref-row, .ref-item').forEach(row => {
     const v = row.querySelector('.val');
-    if (v) row.classList.toggle('hide', !v.textContent.trim());
+    if (!v) return;
+    const key = v.dataset.inline || v.dataset.f;   // partners/general/ideal/dream/clients/usp
+    const empty = !v.textContent.trim();
+    const shown = d.show[key] !== false;
+    row.classList.toggle('hide', empty || !shown);
+  });
+  // 引薦容器若無任何可見列 → 收起整個容器（避免留白與 ◆ 孤立）
+  ['.tr-refs', '.td-refs', '.tn-refs', '.tg-refs'].forEach(sel => {
+    const c = root.querySelector(sel);
+    if (!c) return;
+    const anyVisible = [...c.querySelectorAll('.ref-row, .ref-item')].some(r => !r.classList.contains('hide'));
+    c.style.display = anyVisible ? '' : 'none';
   });
   // 照片
   root.querySelectorAll('[data-photo]').forEach(p => {
     if (photoDataUrl){ p.classList.remove('empty'); p.innerHTML = '<img src="' + photoDataUrl + '" alt="">'; }
     else { p.classList.add('empty'); p.innerHTML = '<span>' + p.dataset.photo + '</span>'; }
   });
-  // 區塊顯示/隱藏
-  root.querySelectorAll('[data-block=referrals]').forEach(b => b.style.display = d.showReferrals ? '' : 'none');
-  root.querySelectorAll('[data-block=clients]').forEach(b => b.style.display = d.showClients ? '' : 'none');
 }
 
 function render(){
@@ -274,18 +331,27 @@ function setPhoto(id, placeholder){
 
 function val(id){ return document.getElementById(id).value.trim(); }
 
+// 更新「星期（自動）」顯示
+function updateDayDisplay(){
+  const el = document.getElementById('evDayDisplay');
+  if (el) el.value = weekdayZh(val('evDate'));
+}
+
 // bind text inputs
 ['name','role','specialty','sloganMain','sloganSub','usp',
- 'evDate','evTime','evNote1','evNote2','evPlace']
+ 'evTime','evNote1','evNote2','evPlace']
   .forEach(id => document.getElementById(id).addEventListener('input', render));
-['evDay','showReferrals','showClients']
-  .forEach(id => document.getElementById(id).addEventListener('change', () => { render(); scheduleSave(); }));
+// 日期：選日曆 → 自動帶出星期
+document.getElementById('evDate').addEventListener('change', () => { updateDayDisplay(); render(); scheduleSave(); });
+// 各類「顯示」勾選
+document.querySelectorAll('.showFlag').forEach(cb =>
+  cb.addEventListener('change', () => { render(); scheduleSave(); }));
 
 /* ============ 範本自動儲存（存在瀏覽器 localStorage） ============ */
 const STORE_KEY = 'bni_edm_data_v1';
 
 const SINGLE_FIELDS = ['name','role','specialty','sloganMain','sloganSub','usp',
-                       'evDate','evDay','evTime','evNote1','evNote2','evPlace'];
+                       'evDate','evTime','evNote1','evNote2','evPlace'];
 
 function collectData(){
   const single = {};
@@ -297,8 +363,7 @@ function collectData(){
     ideal:    readTriple('ideal'),
     dream:    readTriple('dream'),
     clients:  readTriple('clients'),
-    showReferrals: document.getElementById('showReferrals').checked,
-    showClients:   document.getElementById('showClients').checked,
+    show:     readShowFlags(),
     photo:    photoDataUrl
   };
 }
@@ -330,14 +395,22 @@ function loadData(){
   applyTriple('ideal',    d.ideal);
   applyTriple('dream',    d.dream);
   applyTriple('clients',  d.clients);
-  if (typeof d.showReferrals === 'boolean') document.getElementById('showReferrals').checked = d.showReferrals;
-  if (typeof d.showClients === 'boolean') document.getElementById('showClients').checked = d.showClients;
+  applyShowFlags(d.show);
+  updateDayDisplay();
   if (d.photo){
     photoDataUrl = d.photo;
     const t = document.getElementById('thumb');
     if (t) t.src = d.photo;
   }
   return true;
+}
+
+// 套用各類顯示勾選（未指定則預設顯示）
+function applyShowFlags(show){
+  document.querySelectorAll('.showFlag').forEach(cb => {
+    const v = show && show[cb.dataset.key];
+    cb.checked = (v !== false);   // undefined 或 true → 勾選
+  });
 }
 
 let flashTimer = null;
@@ -499,8 +572,10 @@ if (saveRosterBtn) saveRosterBtn.addEventListener('click', saveEditorToRoster);
 (async function init(){
   await Store.init();
   buildMemberSelect();
+  buildSpecialtySelect();
   Store.onChange(() => {
     buildMemberSelect();
+    buildSpecialtySelect();
     if (currentView === 'roster' && typeof renderRoster === 'function') renderRoster();
     // 若正在編輯的會員被雲端更新，同步 currentMember 參照
     if (currentMember && currentMember.id){
@@ -510,6 +585,7 @@ if (saveRosterBtn) saveRosterBtn.addEventListener('click', saveEditorToRoster);
     updateCloudBadge();
   });
   loadData();            // 還原個人草稿（個人卡片用途）
+  updateDayDisplay();
   render();
   switchFmt('tplRed');
   updateEditingBanner();

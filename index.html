@@ -195,6 +195,9 @@
   /* ---------- 表單小工具 ---------- */
   .show-toggle{font-size:12px;font-weight:600;color:#666;margin-left:10px;}
   .show-toggle input{vertical-align:middle;}
+  .group-title{display:flex;align-items:center;justify-content:space-between;}
+  .gt-toggle{font-size:12px;font-weight:600;color:#888;display:inline-flex;align-items:center;gap:3px;cursor:pointer;}
+  .gt-toggle input{vertical-align:middle;margin:0;}
   .field.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .field.two-col label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:#444;}
 
@@ -360,7 +363,7 @@
     </div>
 
     <div class="field">
-      <label>專業別（從富鼎分會清單選，或自行輸入）</label>
+      <label>專業別（選清單會自動帶出該會員；標「招募中」表示尚無會員）</label>
       <select id="specialtySelect"></select>
       <input id="specialty" type="text" placeholder="或自行輸入專業別" style="margin-top:6px;">
     </div>
@@ -375,43 +378,34 @@
       <input id="sloganSub" type="text" value="幫您找到職業生涯的心之所嚮" maxlength="20">
     </div>
 
-    <h2 style="margin-top:24px;">③ 引薦需求
-      <label class="show-toggle"><input type="checkbox" id="showReferrals" checked> 在 EDM 顯示</label>
-    </h2>
+    <h2 style="margin-top:24px;">③ 引薦需求</h2>
+    <div class="hint" style="margin:-6px 0 8px;">每一類都可獨立勾選是否顯示在 EDM。</div>
 
-    <div class="group-title">合作對象（3 項）</div>
+    <div class="group-title">合作對象<label class="gt-toggle"><input type="checkbox" class="showFlag" data-key="partners" checked>顯示</label></div>
     <div class="triple" id="partners"></div>
 
-    <div class="group-title">一般引薦（3 項）</div>
+    <div class="group-title">一般引薦<label class="gt-toggle"><input type="checkbox" class="showFlag" data-key="general" checked>顯示</label></div>
     <div class="triple" id="general"></div>
 
-    <div class="group-title">理想引薦（3 項）</div>
+    <div class="group-title">理想引薦<label class="gt-toggle"><input type="checkbox" class="showFlag" data-key="ideal" checked>顯示</label></div>
     <div class="triple" id="ideal"></div>
 
-    <div class="group-title">夢幻引薦（3 項）</div>
+    <div class="group-title">夢幻引薦<label class="gt-toggle"><input type="checkbox" class="showFlag" data-key="dream" checked>顯示</label></div>
     <div class="triple" id="dream"></div>
 
-    <h2 style="margin-top:24px;">④ 客戶與主張
-      <label class="show-toggle"><input type="checkbox" id="showClients" checked> 在 EDM 顯示</label>
-    </h2>
-    <div class="group-title">代表性客戶（3 家）</div>
+    <h2 style="margin-top:24px;">④ 客戶與主張</h2>
+    <div class="group-title">代表性客戶<label class="gt-toggle"><input type="checkbox" class="showFlag" data-key="clients" checked>顯示</label></div>
     <div class="triple" id="clients"></div>
 
     <div class="field" style="margin-top:14px;">
-      <label>獨特銷售主張 (USP)</label>
+      <label>獨特銷售主張 (USP)<label class="gt-toggle" style="float:right;"><input type="checkbox" class="showFlag" data-key="usp" checked>顯示</label></label>
       <textarea id="usp" placeholder="用一兩句話說明您與眾不同之處">結合心理諮商專業與職涯設計，用科學方法幫助每個人找到職業生涯的心之所嚮。</textarea>
     </div>
 
     <h2 style="margin-top:24px;">⑤ 活動資訊</h2>
     <div class="field two-col">
-      <div><label>日期</label><input id="evDate" type="text" value="06/26"></div>
-      <div><label>星期</label>
-        <select id="evDay">
-          <option value="">（不顯示）</option>
-          <option>週一</option><option>週二</option><option>週三</option>
-          <option selected>週四</option><option>週五</option><option>週六</option><option>週日</option>
-        </select>
-      </div>
+      <div><label>日期（選日曆）</label><input id="evDate" type="date" value="2026-06-26"></div>
+      <div><label>星期（自動帶出）</label><input id="evDayDisplay" type="text" readonly style="background:#f0f0f0;color:#555;"></div>
     </div>
     <div class="field"><label>時間</label><input id="evTime" type="text" value="06:30 – 09:30 AM"></div>
     <div class="field"><label>備註一</label><input id="evNote1" type="text" value="準備10秒自我介紹 / 入場請著正式服裝"></div>
@@ -624,11 +618,11 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=5"></script>
-<script src="specialties.js?v=5"></script>
-<script src="members.js?v=5"></script>
-<script src="store.js?v=5"></script>
-<script src="app.js?v=5"></script>
-<script src="roster.js?v=5"></script>
+<script src="firebase-config.js?v=6"></script>
+<script src="specialties.js?v=6"></script>
+<script src="members.js?v=6"></script>
+<script src="store.js?v=6"></script>
+<script src="app.js?v=6"></script>
+<script src="roster.js?v=6"></script>
 </body>
 </html>
