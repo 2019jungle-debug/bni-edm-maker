@@ -1,0 +1,11 @@
+// Firestore 安全規則（貼到 Firebase Console → Firestore → 規則）
+// 說明：這版允許任何人讀寫 members 集合（適合內部小型名冊、先求能用）。
+// 之後若要更嚴格，可改為需登入或加分會密碼，屆時再請 Claude 協助。
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /members/{docId} {
+      allow read, write: if true;
+    }
+  }
+}
