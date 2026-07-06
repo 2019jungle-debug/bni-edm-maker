@@ -112,6 +112,48 @@
   /* footer */
   .edm-foot{position:absolute;bottom:0;left:0;right:0;height:30px;background:var(--gold);color:#fff;
     display:flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:2px;z-index:6;}
+  /* ---------- format tabs ---------- */
+  .fmt-tabs{display:flex;gap:6px;justify-content:center;margin-bottom:12px;flex-wrap:wrap;}
+  .fmt-tab{border:1px solid var(--line);background:#fff;color:#555;border-radius:20px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .fmt-tab.active{background:var(--red);color:#fff;border-color:var(--red);}
+
+  /* ---------- HERO 16:9 (960x540) ---------- */
+  #hero{width:960px;height:540px;background:#fff;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18);transform-origin:top center;}
+  .hero-top{position:absolute;top:0;left:0;bottom:0;width:430px;
+    background:linear-gradient(135deg,var(--red-dark) 0%,var(--red) 70%,#d94651 100%);
+    clip-path:polygon(0 0,100% 0,72% 100%,0 100%);}
+  .hero-brand{position:absolute;top:28px;right:36px;text-align:right;z-index:5;}
+  .hero-brand .fd{font-size:30px;font-weight:800;letter-spacing:3px;color:var(--red);line-height:1;}
+  .hero-brand .fd small{display:block;font-size:12px;letter-spacing:5px;opacity:.8;margin-top:4px;}
+  .hero-brand .bni{margin-top:8px;font-size:12px;background:var(--red);color:#fff;display:inline-block;padding:3px 10px;border-radius:3px;font-weight:700;}
+  .hero-photo{position:absolute;top:60px;left:56px;width:300px;height:390px;z-index:4;border-radius:8px;overflow:hidden;border:4px solid rgba(255,255,255,.6);background:#ccc;}
+  .hero-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .hero-photo.empty{display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;background:rgba(255,255,255,.18);}
+  .hero-info{position:absolute;left:470px;right:44px;top:150px;z-index:6;}
+  .hero-info .hRole{font-size:22px;font-weight:700;color:var(--gold);}
+  .hero-info .hName{font-size:64px;font-weight:800;color:var(--ink);line-height:1.05;margin:6px 0;}
+  .hero-info .hSpec{display:inline-block;font-size:18px;font-weight:700;color:#fff;background:var(--red);padding:4px 14px;border-radius:20px;margin-top:4px;}
+  .hero-info .hSlogan{font-size:26px;font-weight:700;color:var(--red-dark);margin-top:22px;line-height:1.35;}
+  .hero-foot{position:absolute;bottom:0;left:0;right:0;height:34px;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;letter-spacing:2px;z-index:6;}
+
+  /* ---------- INTRO 16:9 (960x540) ---------- */
+  #intro{width:960px;height:540px;background:#fff;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18);transform-origin:top center;}
+  .intro-head{position:absolute;top:0;left:0;right:0;height:118px;background:linear-gradient(90deg,var(--red-dark),var(--red));display:flex;align-items:center;padding:0 36px;z-index:5;}
+  .intro-photo{width:82px;height:82px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,.7);background:#ccc;flex:0 0 auto;}
+  .intro-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .intro-photo.empty{display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;background:rgba(255,255,255,.2);}
+  .intro-headtext{margin-left:20px;color:#fff;}
+  .intro-headtext .iName{font-size:40px;font-weight:800;line-height:1;}
+  .intro-headtext .iSpec{font-size:20px;font-weight:700;color:#f3d689;margin-top:6px;}
+  .intro-brand{margin-left:auto;color:rgba(255,255,255,.85);font-size:15px;letter-spacing:2px;font-weight:700;}
+  .intro-body{position:absolute;top:140px;left:36px;right:36px;bottom:44px;display:grid;grid-template-columns:1fr 1fr;gap:14px 34px;z-index:6;}
+  .intro-col{display:flex;flex-direction:column;gap:12px;}
+  .iblk .ibt{font-size:16px;font-weight:800;color:var(--red);border-left:4px solid var(--gold);padding-left:9px;margin-bottom:5px;}
+  .iblk ul{margin:0;padding-left:20px;}
+  .iblk li{font-size:15px;line-height:1.6;color:#333;}
+  .iblk.usp .ibox{background:var(--grey);border-radius:8px;padding:10px 13px;font-size:15px;color:#333;line-height:1.55;}
+  .intro-foot{position:absolute;bottom:0;left:0;right:0;height:30px;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;letter-spacing:2px;z-index:6;}
+
   .zoom-controls{display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:12px;}
   .zoom-controls button{border:1px solid var(--line);background:#fff;border-radius:6px;width:30px;height:30px;cursor:pointer;font-size:16px;}
   @media(max-width:1000px){.preview-wrap{position:static;}}
@@ -206,13 +248,19 @@
 
   <!-- ================= PREVIEW ================= -->
   <div class="preview-wrap">
+    <div class="fmt-tabs">
+      <button class="fmt-tab active" data-fmt="edm">EDM 直式</button>
+      <button class="fmt-tab" data-fmt="hero">形象頁 16:9</button>
+      <button class="fmt-tab" data-fmt="intro">介紹頁 16:9</button>
+    </div>
     <div class="zoom-controls">
       <button id="zoomOut">−</button>
       <span id="zoomLabel" style="font-size:13px;color:#666;">縮放 70%</span>
       <button id="zoomIn">+</button>
     </div>
     <div class="preview-scale">
-      <div id="edm">
+      <!-- ---------- EDM 直式 ---------- -->
+      <div id="edm" class="canvas">
         <div class="edm-top"></div>
         <div class="edm-brand">
           <div class="fd">富鼎分會<small>FU DING</small></div>
@@ -259,6 +307,48 @@
           </div>
         </div>
         <div class="edm-foot">富鼎富鼎 · 又富又鼎 · 團隊上百人 · 引薦破百倍</div>
+      </div>
+
+      <!-- ---------- 形象頁 16:9 ---------- -->
+      <div id="hero" class="canvas" style="display:none;">
+        <div class="hero-top"></div>
+        <div class="hero-brand">
+          <div class="fd">富鼎分會<small>FU DING</small></div>
+          <div class="bni">BNI 鈦金名人堂</div>
+        </div>
+        <div class="hero-photo empty" id="heroPhoto"><span>形象照</span></div>
+        <div class="hero-info">
+          <div class="hRole" id="hRole">職涯顧問</div>
+          <div class="hName" id="hName">歐陽仁傑</div>
+          <div class="hSpec" id="hSpec">職涯顧問</div>
+          <div class="hSlogan" id="hSlogan">幫您找到職業生涯的心之所嚮</div>
+        </div>
+        <div class="hero-foot">富鼎富鼎 · 又富又鼎 · 團隊上百人 · 引薦破百倍</div>
+      </div>
+
+      <!-- ---------- 介紹頁 16:9 ---------- -->
+      <div id="intro" class="canvas" style="display:none;">
+        <div class="intro-head">
+          <div class="intro-photo empty" id="introPhoto"><span>照片</span></div>
+          <div class="intro-headtext">
+            <div class="iName" id="iName">歐陽仁傑</div>
+            <div class="iSpec" id="iSpec">職涯顧問</div>
+          </div>
+          <div class="intro-brand">富鼎分會 · FU DING</div>
+        </div>
+        <div class="intro-body">
+          <div class="intro-col">
+            <div class="iblk"><div class="ibt">合作對象</div><ul id="iPartners"></ul></div>
+            <div class="iblk"><div class="ibt">一般引薦</div><ul id="iGeneral"></ul></div>
+            <div class="iblk"><div class="ibt">理想引薦</div><ul id="iIdeal"></ul></div>
+          </div>
+          <div class="intro-col">
+            <div class="iblk"><div class="ibt">夢幻引薦</div><ul id="iDream"></ul></div>
+            <div class="iblk"><div class="ibt">代表性客戶</div><ul id="iClients"></ul></div>
+            <div class="iblk usp"><div class="ibt">獨特銷售主張</div><div class="ibox" id="iUsp"></div></div>
+          </div>
+        </div>
+        <div class="intro-foot">富鼎富鼎 · 又富又鼎</div>
       </div>
     </div>
   </div>

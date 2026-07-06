@@ -143,14 +143,37 @@ function render(){
     cbox.appendChild(d);
   });
 
-  // photo
-  const ph = document.getElementById('edmPhoto');
+  // photos (三個版面各一張)
+  setPhoto('edmPhoto', '形象照');
+  setPhoto('heroPhoto', '形象照');
+  setPhoto('introPhoto', '照片');
+
+  // ---- 形象頁 16:9 ----
+  document.getElementById('hRole').textContent = val('role') || '職稱';
+  document.getElementById('hName').textContent = val('name') || '姓名';
+  document.getElementById('hSpec').textContent = val('specialty') || '專業別';
+  document.getElementById('hSlogan').textContent = val('sloganSub') || val('sloganMain') || '您的口號標語';
+
+  // ---- 介紹頁 16:9 ----
+  document.getElementById('iName').textContent = val('name') || '姓名';
+  document.getElementById('iSpec').textContent = val('specialty') || '專業別';
+  fillList('iPartners', readTriple('partners'));
+  fillList('iGeneral',  readTriple('general'));
+  fillList('iIdeal',    readTriple('ideal'));
+  fillList('iDream',    readTriple('dream'));
+  fillList('iClients',  readTriple('clients'));
+  document.getElementById('iUsp').textContent = val('usp') || '—';
+}
+
+function setPhoto(id, placeholder){
+  const ph = document.getElementById(id);
+  if (!ph) return;
   if (photoDataUrl){
     ph.classList.remove('empty');
     ph.innerHTML = '<img src="' + photoDataUrl + '" alt="">';
   } else {
     ph.classList.add('empty');
-    ph.innerHTML = '<span>形象照</span>';
+    ph.innerHTML = '<span>' + placeholder + '</span>';
   }
 }
 
@@ -255,36 +278,66 @@ document.getElementById('removePhoto').addEventListener('click', () => {
   saveData();
 });
 
-// ---- 縮放 ----
-let zoom = 0.7;
-const edm = document.getElementById('edm');
+/* ============ 版面切換 / 縮放 / 下載 ============ */
+const FORMATS = {
+  edm:   { w:600, h:849, label:'EDM',  zoom:0.7 },
+  hero:  { w:960, h:540, label:'形象頁', zoom:0.55 },
+  intro: { w:960, h:540, label:'介紹頁', zoom:0.55 }
+};
+let activeFmt = 'edm';
+let zoom = FORMATS.edm.zoom;
+
+function activeEl(){ return document.getElementById(activeFmt); }
+
 function applyZoom(){
-  edm.style.transform = 'scale(' + zoom + ')';
-  // reserve height so page doesn't jump
-  edm.parentElement.style.height = (849 * zoom) + 'px';
+  const el = activeEl();
+  const f = FORMATS[activeFmt];
+  el.style.transform = 'scale(' + zoom + ')';
+  el.parentElement.style.height = (f.h * zoom) + 'px';
   document.getElementById('zoomLabel').textContent = '縮放 ' + Math.round(zoom * 100) + '%';
 }
+
+function switchFmt(fmt){
+  activeFmt = fmt;
+  // 顯示/隱藏三個版面
+  Object.keys(FORMATS).forEach(k => {
+    document.getElementById(k).style.display = (k === fmt) ? '' : 'none';
+  });
+  // 分頁按鈕樣式
+  document.querySelectorAll('.fmt-tab').forEach(b => {
+    b.classList.toggle('active', b.dataset.fmt === fmt);
+  });
+  zoom = FORMATS[fmt].zoom;
+  applyZoom();
+  document.getElementById('download').textContent = '⬇ 下載' + FORMATS[fmt].label + ' (PNG)';
+}
+
+document.querySelectorAll('.fmt-tab').forEach(b => {
+  b.addEventListener('click', () => switchFmt(b.dataset.fmt));
+});
+
 document.getElementById('zoomIn').onclick  = () => { zoom = Math.min(1, zoom + 0.1); applyZoom(); };
 document.getElementById('zoomOut').onclick = () => { zoom = Math.max(0.3, zoom - 0.1); applyZoom(); };
 
-// ---- 下載 PNG ----
+// ---- 下載目前版面 PNG ----
 document.getElementById('download').addEventListener('click', () => {
-  const prev = edm.style.transform;
-  edm.style.transform = 'scale(1)';           // render at full res
-  edm.parentElement.style.height = '849px';
-  html2canvas(edm, { scale: 2, useCORS: true, backgroundColor: '#ffffff' })
+  const el = activeEl();
+  const f = FORMATS[activeFmt];
+  const prev = el.style.transform;
+  el.style.transform = 'scale(1)';           // 用原始解析度輸出
+  el.parentElement.style.height = f.h + 'px';
+  html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff' })
     .then(canvas => {
       const a = document.createElement('a');
-      const name = (val('name') || 'BNI') + '_EDM';
-      a.download = name + '.png';
+      a.download = (val('name') || 'BNI') + '_' + f.label + '.png';
       a.href = canvas.toDataURL('image/png');
       a.click();
-      edm.style.transform = prev;
+      el.style.transform = prev;
       applyZoom();
     })
     .catch(err => {
       alert('下載失敗：' + err.message);
-      edm.style.transform = prev;
+      el.style.transform = prev;
       applyZoom();
     });
 });
@@ -303,5 +356,5 @@ document.getElementById('reset').addEventListener('click', () => {
 // 開啟頁面時，若瀏覽器有存過範本就自動帶入（覆蓋預設值）
 loadData();
 
-applyZoom();
 render();
+switchFmt('edm');
