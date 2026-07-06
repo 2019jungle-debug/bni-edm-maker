@@ -189,6 +189,93 @@
   .roster-row .ract button.del{color:#d9534f;border-color:#eab;}
   .roster-row .ract button.del:hover{background:#d9534f;color:#fff;}
 
+  /* ---------- 表單小工具 ---------- */
+  .show-toggle{font-size:12px;font-weight:600;color:#666;margin-left:10px;}
+  .show-toggle input{vertical-align:middle;}
+  .field.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .field.two-col label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:#444;}
+
+  /* ---------- 模板共用 ---------- */
+  .tpl{width:600px;height:849px;position:relative;overflow:hidden;background:#fff;box-shadow:0 8px 30px rgba(0,0,0,.18);transform-origin:top center;}
+  .tpl .hand{font-family:"DFKai-SB","標楷體","KaiTi","STKaiti",serif;font-weight:700;}
+  .tpl-brand{position:absolute;top:26px;left:34px;z-index:8;}
+  .tpl-brand .fd{font-size:26px;font-weight:800;letter-spacing:3px;line-height:1;color:#1a1a1a;}
+  .tpl-brand .fd small{display:block;font-size:11px;letter-spacing:5px;opacity:.85;margin-top:3px;}
+  .tpl-brand .bni{margin-top:7px;font-size:11px;background:var(--red);color:#fff;display:inline-block;padding:2px 8px;border-radius:3px;font-weight:700;}
+  .tpl-brand.light .fd{color:#fff;}
+  .tpl-brand.green .fd{color:#33472f;}
+  .tpl-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .tpl-photo.empty{display:flex;align-items:center;justify-content:center;font-size:15px;}
+  .ref-row.hide,.ref-item.hide{display:none !important;}
+
+  /* ---------- 模板一：深金聚光 ---------- */
+  .tpl-dark{background:radial-gradient(120% 60% at 50% 0%,#3a2f1c 0%,#1a1509 45%,#0d0b06 100%);color:#f0e6d2;}
+  .td-glow{position:absolute;top:-140px;left:50%;transform:translateX(-50%);width:520px;height:420px;background:radial-gradient(ellipse at center,rgba(255,214,130,.45),transparent 70%);z-index:1;}
+  .td-corner{position:absolute;width:70px;height:70px;z-index:6;}
+  .td-corner.tl{top:16px;left:16px;border-top:2px solid var(--gold);border-left:2px solid var(--gold);}
+  .td-corner.tr{top:16px;right:16px;border-top:2px solid var(--gold);border-right:2px solid var(--gold);}
+  .td-corner.bl{bottom:16px;left:16px;border-bottom:2px solid var(--gold);border-left:2px solid var(--gold);}
+  .td-corner.br{bottom:16px;right:16px;border-bottom:2px solid var(--gold);border-right:2px solid var(--gold);}
+  .td-photo{position:absolute;top:70px;right:34px;width:300px;height:430px;z-index:4;}
+  .td-photo.empty{background:rgba(255,255,255,.08);color:#c9a24b;border:1px solid rgba(201,162,75,.4);border-radius:6px;}
+  .td-role{position:absolute;top:250px;left:40px;z-index:5;font-size:20px;font-weight:700;color:#e6c079;}
+  .td-name{position:absolute;top:280px;left:40px;z-index:5;font-size:52px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.5);}
+  .td-slogan{position:absolute;top:440px;left:40px;right:250px;z-index:5;font-size:30px;font-weight:800;line-height:1.35;color:#fdf6e6;}
+  .td-refs{position:absolute;left:40px;bottom:120px;width:300px;z-index:5;}
+  .td-refs .ref-row{display:flex;align-items:baseline;gap:6px;font-size:15px;line-height:1.9;}
+  .td-refs .lbl{color:#e6c079;font-weight:700;white-space:nowrap;}
+  .td-refs .bar{color:#8a7440;}
+  .td-refs .val{color:#efe6d4;}
+  .td-event{position:absolute;right:34px;bottom:70px;width:230px;z-index:5;text-align:left;}
+  .td-event .date{font-size:56px;font-weight:800;color:#e6c079;line-height:1;}
+  .td-event .date small{font-size:20px;}
+  .td-event .time{font-size:16px;color:#d8c9a8;margin:4px 0 8px;}
+  .td-event ul{margin:0;padding-left:16px;}
+  .td-event li{font-size:12px;line-height:1.6;color:#d8c9a8;}
+
+  /* ---------- 模板二：深藍典雅 ---------- */
+  .tpl-navy{background:#fbfaf7;color:#26314d;}
+  .tn-swoosh{position:absolute;top:0;right:0;width:280px;height:300px;background:linear-gradient(135deg,#1e2a4a 0%,#33436f 100%);clip-path:polygon(40% 0,100% 0,100% 70%);z-index:1;}
+  .tn-photo{position:absolute;top:70px;right:34px;width:290px;height:400px;z-index:4;border-radius:4px;}
+  .tn-photo.empty{background:#eef0f4;color:#8894b0;border:1px solid #d5dbe8;border-radius:6px;}
+  .tn-role{position:absolute;top:190px;left:40px;z-index:5;font-size:20px;font-weight:700;color:var(--gold);}
+  .tn-name{position:absolute;top:218px;left:40px;z-index:5;font-size:50px;color:#1e2a4a;}
+  .tn-slogan{position:absolute;top:320px;left:40px;right:230px;z-index:5;font-size:27px;font-weight:800;line-height:1.35;color:#1e2a4a;}
+  .tn-refs{position:absolute;left:40px;top:470px;width:330px;z-index:5;display:flex;flex-direction:column;gap:9px;}
+  .tn-refs .ref-item{display:flex;align-items:center;gap:10px;}
+  .tn-refs .ico{width:34px;height:34px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;flex:0 0 auto;}
+  .tn-refs .lbl{font-weight:700;color:var(--gold);margin-right:8px;}
+  .tn-refs .val{color:#333;font-size:15px;}
+  .tn-date{position:absolute;left:40px;bottom:150px;z-index:5;font-size:58px;font-weight:800;color:#1e2a4a;line-height:1;}
+  .tn-date small{font-size:22px;}
+  .tn-time{position:absolute;left:42px;bottom:120px;z-index:5;font-size:17px;color:#556;}
+  .tn-footbar{position:absolute;left:0;right:0;bottom:0;height:96px;background:#1e2a4a;color:#fff;display:flex;z-index:6;}
+  .tn-footbar .col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:0 8px;font-size:12.5px;line-height:1.4;border-right:1px solid rgba(255,255,255,.15);}
+  .tn-footbar .col:last-child{border-right:none;}
+  .tn-footbar .ico{font-size:20px;}
+
+  /* ---------- 模板三：綠意自然 (橫式) ---------- */
+  .tpl-green{width:960px;height:640px;background:#f4f1e8;color:#33472f;}
+  .tg-leaf{position:absolute;font-size:150px;opacity:.35;z-index:1;filter:saturate(.7);}
+  .tg-leaf1{top:-20px;right:20px;}
+  .tg-leaf2{bottom:-10px;left:-10px;transform:rotate(30deg);}
+  .tg-role{position:absolute;top:150px;left:56px;z-index:5;font-size:22px;font-weight:700;color:#5a7a4e;}
+  .tg-name{position:absolute;top:182px;left:56px;z-index:5;font-size:54px;color:#33472f;}
+  .tg-slogan{position:absolute;top:270px;left:56px;right:420px;z-index:5;font-size:32px;font-weight:800;line-height:1.35;color:#33472f;}
+  .tg-photo{position:absolute;top:110px;right:70px;width:320px;height:380px;z-index:4;border-radius:10px;border:4px solid var(--gold);}
+  .tg-photo.empty{background:#e6e8d8;color:#7d9070;}
+  .tg-refs{position:absolute;left:56px;bottom:150px;right:420px;z-index:5;display:flex;flex-wrap:wrap;gap:10px 20px;}
+  .tg-refs .ref-item{display:flex;align-items:center;gap:8px;font-size:15px;}
+  .tg-refs .ico{width:30px;height:30px;border-radius:50%;background:#5a7a4e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;flex:0 0 auto;}
+  .tg-refs .lbl{font-weight:700;color:#5a7a4e;}
+  .tg-refs .val{color:#3a3a3a;}
+  .tg-foot{position:absolute;left:0;right:0;bottom:0;height:110px;background:rgba(90,122,78,.12);display:flex;align-items:center;gap:30px;padding:0 56px;z-index:5;}
+  .tg-foot .tg-date{font-size:52px;font-weight:800;color:#5a7a4e;line-height:1;}
+  .tg-foot .tg-date small{font-size:20px;}
+  .tg-foot .tg-date .time{font-size:15px;color:#556;font-weight:600;margin-top:4px;}
+  .tg-foot ul{margin:0;padding-left:18px;}
+  .tg-foot li{font-size:14px;line-height:1.7;color:#3a3a3a;}
+
   /* ---------- progress overlay ---------- */
   #progressOverlay{position:fixed;inset:0;background:rgba(20,20,25,.78);display:none;align-items:center;justify-content:center;z-index:9999;}
   #progressOverlay .pbox{background:#fff;border-radius:12px;padding:26px 34px;width:min(90vw,420px);text-align:center;}
@@ -261,7 +348,9 @@
       <input id="sloganSub" type="text" value="幫您找到職業生涯的心之所嚮" maxlength="20">
     </div>
 
-    <h2 style="margin-top:24px;">③ 引薦需求</h2>
+    <h2 style="margin-top:24px;">③ 引薦需求
+      <label class="show-toggle"><input type="checkbox" id="showReferrals" checked> 在 EDM 顯示</label>
+    </h2>
 
     <div class="group-title">合作對象（3 項）</div>
     <div class="triple" id="partners"></div>
@@ -275,7 +364,9 @@
     <div class="group-title">夢幻引薦（3 項）</div>
     <div class="triple" id="dream"></div>
 
-    <h2 style="margin-top:24px;">④ 客戶與主張</h2>
+    <h2 style="margin-top:24px;">④ 客戶與主張
+      <label class="show-toggle"><input type="checkbox" id="showClients" checked> 在 EDM 顯示</label>
+    </h2>
     <div class="group-title">代表性客戶（3 家）</div>
     <div class="triple" id="clients"></div>
 
@@ -283,6 +374,22 @@
       <label>獨特銷售主張 (USP)</label>
       <textarea id="usp" placeholder="用一兩句話說明您與眾不同之處">結合心理諮商專業與職涯設計，用科學方法幫助每個人找到職業生涯的心之所嚮。</textarea>
     </div>
+
+    <h2 style="margin-top:24px;">⑤ 活動資訊</h2>
+    <div class="field two-col">
+      <div><label>日期</label><input id="evDate" type="text" value="06/26"></div>
+      <div><label>星期</label>
+        <select id="evDay">
+          <option value="">（不顯示）</option>
+          <option>週一</option><option>週二</option><option>週三</option>
+          <option selected>週四</option><option>週五</option><option>週六</option><option>週日</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>時間</label><input id="evTime" type="text" value="06:30 – 09:30 AM"></div>
+    <div class="field"><label>備註一</label><input id="evNote1" type="text" value="準備10秒自我介紹 / 入場請著正式服裝"></div>
+    <div class="field"><label>備註二</label><input id="evNote2" type="text" value="入席費 NT.800 元 / 請準備名片50張"></div>
+    <div class="field"><label>地點</label><input id="evPlace" type="text" value="高雄福華飯店7F金龍廳"></div>
 
     <div id="editingBanner" class="editing-banner"></div>
 
@@ -298,7 +405,9 @@
   <!-- ================= PREVIEW ================= -->
   <div class="preview-wrap">
     <div class="fmt-tabs">
-      <button class="fmt-tab active" data-fmt="edm">EDM 直式</button>
+      <button class="fmt-tab active" data-fmt="tplDark">深金聚光</button>
+      <button class="fmt-tab" data-fmt="tplNavy">深藍典雅</button>
+      <button class="fmt-tab" data-fmt="tplGreen">綠意自然</button>
       <button class="fmt-tab" data-fmt="hero">形象頁 16:9</button>
       <button class="fmt-tab" data-fmt="intro">介紹頁 16:9</button>
     </div>
@@ -308,54 +417,85 @@
       <button id="zoomIn">+</button>
     </div>
     <div class="preview-scale">
-      <!-- ---------- EDM 直式 ---------- -->
-      <div id="edm" class="canvas">
-        <div class="edm-top"></div>
-        <div class="edm-brand">
+      <!-- ========== 模板一：深金聚光 (portrait) ========== -->
+      <div id="tplDark" class="canvas tpl tpl-dark">
+        <div class="td-glow"></div>
+        <div class="td-corner tl"></div><div class="td-corner tr"></div>
+        <div class="td-corner bl"></div><div class="td-corner br"></div>
+        <div class="tpl-brand light">
           <div class="fd">富鼎分會<small>FU DING</small></div>
           <div class="bni">BNI 鈦金名人堂</div>
         </div>
-        <div class="edm-photo empty" id="edmPhoto"><span>形象照</span></div>
-        <div class="edm-role">
-          <div class="r" id="pvRole">職涯顧問</div>
-          <div class="n" id="pvName">歐陽仁傑</div>
+        <div class="td-photo tpl-photo empty" data-photo="形象照"><span>形象照</span></div>
+        <div class="td-role" data-f="role"></div>
+        <div class="td-name hand" data-f="name"></div>
+        <div class="td-slogan"><div data-f="main"></div><div data-f="sub"></div></div>
+        <div class="td-refs" data-block="referrals">
+          <div class="ref-row"><span class="lbl">合作對象</span><span class="bar">｜</span><span class="val" data-inline="partners"></span></div>
+          <div class="ref-row"><span class="lbl">一般引薦</span><span class="bar">｜</span><span class="val" data-inline="general"></span></div>
+          <div class="ref-row"><span class="lbl">理想引薦</span><span class="bar">｜</span><span class="val" data-inline="ideal"></span></div>
+          <div class="ref-row"><span class="lbl">夢幻引薦</span><span class="bar">｜</span><span class="val" data-inline="dream"></span></div>
+          <div class="ref-row cli" data-block="clients"><span class="lbl">代表客戶</span><span class="bar">｜</span><span class="val" data-inline="clients"></span></div>
+          <div class="ref-row usp" data-block="clients"><span class="lbl">獨特主張</span><span class="bar">｜</span><span class="val" data-f="usp"></span></div>
         </div>
-        <div class="edm-slogan">
-          <div class="main" id="pvMain">職嚮生涯設計</div>
-          <div class="sub" id="pvSub">幫您找到職業生涯的心之所嚮</div>
+        <div class="td-event">
+          <div class="date"><span data-f="date"></span> <small data-f="day"></small></div>
+          <div class="time" data-f="time"></div>
+          <ul><li data-f="note1"></li><li data-f="note2"></li><li data-f="place"></li></ul>
         </div>
-        <div class="edm-divider"></div>
-        <div class="edm-body">
-          <div class="edm-block">
-            <div class="bt">合作對象</div>
-            <ul id="pvPartners"></ul>
-          </div>
-          <div class="edm-block">
-            <div class="bt">一般引薦</div>
-            <ul id="pvGeneral"></ul>
-          </div>
-          <div class="edm-block">
-            <div class="bt">理想引薦</div>
-            <ul id="pvIdeal"></ul>
-          </div>
-          <div class="edm-block">
-            <div class="bt">夢幻引薦</div>
-            <ul id="pvDream"></ul>
-          </div>
-          <div class="edm-block clients">
-            <div class="bt">代表性客戶</div>
-            <div id="pvClients"></div>
-          </div>
-          <div class="edm-block">
-            <div class="bt">專業別</div>
-            <div class="row" id="pvSpecialty" style="font-size:12.5px;line-height:1.7;color:#333;"></div>
-          </div>
-          <div class="edm-block usp">
-            <div class="bt">獨特銷售主張</div>
-            <div class="box" id="pvUsp"></div>
-          </div>
+      </div>
+
+      <!-- ========== 模板二：深藍典雅 (portrait) ========== -->
+      <div id="tplNavy" class="canvas tpl tpl-navy" style="display:none;">
+        <div class="tn-swoosh"></div>
+        <div class="tpl-brand">
+          <div class="fd">富鼎分會<small>FU DING</small></div>
+          <div class="bni">BNI 鈦金名人堂</div>
         </div>
-        <div class="edm-foot">富鼎富鼎 · 又富又鼎 · 團隊上百人 · 引薦破百倍</div>
+        <div class="tn-photo tpl-photo empty" data-photo="形象照"><span>形象照</span></div>
+        <div class="tn-role" data-f="role"></div>
+        <div class="tn-name hand" data-f="name"></div>
+        <div class="tn-slogan"><div data-f="main"></div><div data-f="sub"></div></div>
+        <div class="tn-refs" data-block="referrals">
+          <div class="ref-item"><span class="ico">👥</span><div><span class="lbl">合作對象</span><span class="val" data-inline="partners"></span></div></div>
+          <div class="ref-item"><span class="ico">🌱</span><div><span class="lbl">一般引薦</span><span class="val" data-inline="general"></span></div></div>
+          <div class="ref-item"><span class="ico">🏢</span><div><span class="lbl">理想引薦</span><span class="val" data-inline="ideal"></span></div></div>
+          <div class="ref-item"><span class="ico">🏙️</span><div><span class="lbl">夢幻引薦</span><span class="val" data-inline="dream"></span></div></div>
+          <div class="ref-item" data-block="clients"><span class="ico">🤝</span><div><span class="lbl">代表客戶</span><span class="val" data-inline="clients"></span></div></div>
+          <div class="ref-item" data-block="clients"><span class="ico">💎</span><div><span class="lbl">獨特主張</span><span class="val" data-f="usp"></span></div></div>
+        </div>
+        <div class="tn-date"><span data-f="date"></span> <small data-f="day"></small></div>
+        <div class="tn-time" data-f="time"></div>
+        <div class="tn-footbar">
+          <div class="col"><span class="ico">🧑</span><span data-f="note1"></span></div>
+          <div class="col"><span class="ico">💳</span><span data-f="note2"></span></div>
+          <div class="col"><span class="ico">📍</span><span data-f="place"></span></div>
+        </div>
+      </div>
+
+      <!-- ========== 模板三：綠意自然 (landscape) ========== -->
+      <div id="tplGreen" class="canvas tpl tpl-green" style="display:none;">
+        <div class="tg-leaf tg-leaf1">🌿</div><div class="tg-leaf tg-leaf2">🍃</div>
+        <div class="tpl-brand green">
+          <div class="fd">富鼎分會<small>FU DING</small></div>
+          <div class="bni">BNI 鈦金名人堂</div>
+        </div>
+        <div class="tg-role" data-f="role"></div>
+        <div class="tg-name hand" data-f="name"></div>
+        <div class="tg-slogan"><div data-f="main"></div><div data-f="sub"></div></div>
+        <div class="tg-photo tpl-photo empty" data-photo="形象照"><span>形象照</span></div>
+        <div class="tg-refs" data-block="referrals">
+          <div class="ref-item"><span class="ico">👥</span><span class="lbl">合作對象</span><span class="val" data-inline="partners"></span></div>
+          <div class="ref-item"><span class="ico">🌱</span><span class="lbl">一般引薦</span><span class="val" data-inline="general"></span></div>
+          <div class="ref-item"><span class="ico">🏢</span><span class="lbl">理想引薦</span><span class="val" data-inline="ideal"></span></div>
+          <div class="ref-item"><span class="ico">🏙️</span><span class="lbl">夢幻引薦</span><span class="val" data-inline="dream"></span></div>
+          <div class="ref-item" data-block="clients"><span class="ico">🤝</span><span class="lbl">代表客戶</span><span class="val" data-inline="clients"></span></div>
+          <div class="ref-item" data-block="clients"><span class="ico">💎</span><span class="lbl">獨特主張</span><span class="val" data-f="usp"></span></div>
+        </div>
+        <div class="tg-foot">
+          <div class="tg-date"><span data-f="date"></span> <small data-f="day"></small><div class="time" data-f="time"></div></div>
+          <ul><li data-f="note1"></li><li data-f="note2"></li><li data-f="place"></li></ul>
+        </div>
       </div>
 
       <!-- ---------- 形象頁 16:9 ---------- -->

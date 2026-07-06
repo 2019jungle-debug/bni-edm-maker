@@ -80,6 +80,14 @@ document.getElementById('memberSelect').addEventListener('change', e => {
   if (m) loadMemberIntoEditor(m);
 });
 
+// 活動資訊預設值（會員未填時沿用）
+const EV_DEFAULT = {
+  evDate: '06/26', evDay: '週四', evTime: '06:30 – 09:30 AM',
+  evNote1: '準備10秒自我介紹 / 入場請著正式服裝',
+  evNote2: '入席費 NT.800 元 / 請準備名片50張',
+  evPlace: '高雄福華飯店7F金龍廳'
+};
+
 // 把一位名冊會員載入左側編輯表單
 function loadMemberIntoEditor(m){
   currentMember = m;
@@ -97,6 +105,15 @@ function loadMemberIntoEditor(m){
   applyTriple('ideal',    m.ideal);
   applyTriple('dream',    m.dream);
   applyTriple('clients',  m.clients);
+  // 活動資訊（會員自訂，否則用預設）
+  document.getElementById('evDate').value  = m.evDate  != null ? m.evDate  : EV_DEFAULT.evDate;
+  document.getElementById('evDay').value   = m.evDay   != null ? m.evDay   : EV_DEFAULT.evDay;
+  document.getElementById('evTime').value  = m.evTime  != null ? m.evTime  : EV_DEFAULT.evTime;
+  document.getElementById('evNote1').value = m.evNote1 != null ? m.evNote1 : EV_DEFAULT.evNote1;
+  document.getElementById('evNote2').value = m.evNote2 != null ? m.evNote2 : EV_DEFAULT.evNote2;
+  document.getElementById('evPlace').value = m.evPlace != null ? m.evPlace : EV_DEFAULT.evPlace;
+  document.getElementById('showReferrals').checked = m.showReferrals !== false;
+  document.getElementById('showClients').checked = m.showClients !== false;
   photoDataUrl = m.photo || '';
   const thumb = document.getElementById('thumb');
   if (photoDataUrl) thumb.src = photoDataUrl; else thumb.removeAttribute('src');
@@ -122,14 +139,19 @@ function readEditorAsMember(){
     ideal:    readTriple('ideal'),
     dream:    readTriple('dream'),
     clients:  readTriple('clients'),
+    evDate: val('evDate'), evDay: val('evDay'), evTime: val('evTime'),
+    evNote1: val('evNote1'), evNote2: val('evNote2'), evPlace: val('evPlace'),
+    showReferrals: document.getElementById('showReferrals').checked,
+    showClients: document.getElementById('showClients').checked,
     photo: photoDataUrl
   };
 }
 
 function blankMember(){
-  return { id:null, name:'', role:'', specialty:'', sloganMain:'', sloganSub:'', usp:'',
+  return Object.assign({ id:null, name:'', role:'', specialty:'', sloganMain:'', sloganSub:'', usp:'',
            partners:['','',''], general:['','',''], ideal:['','',''], dream:['','',''],
-           clients:['','',''], photo:'', present:true };
+           clients:['','',''], photo:'', present:true,
+           showReferrals:true, showClients:true }, EV_DEFAULT);
 }
 
 async function saveEditorToRoster(){
@@ -173,32 +195,48 @@ function fillList(ulId, values){
 // ---- 主渲染 ----
 let photoDataUrl = '';
 
-function render(){
-  document.getElementById('pvName').textContent = val('name') || '姓名';
-  document.getElementById('pvRole').textContent = val('role') || '職稱';
-  document.getElementById('pvMain').textContent = val('sloganMain') || '主標';
-  document.getElementById('pvSub').textContent  = val('sloganSub') || '副標';
-  document.getElementById('pvSpecialty').textContent = val('specialty') || '—';
-  document.getElementById('pvUsp').textContent = val('usp') || '—';
+function currentData(){
+  return {
+    name: val('name'), role: val('role'), specialty: val('specialty'),
+    main: val('sloganMain'), sub: val('sloganSub'), usp: val('usp'),
+    date: val('evDate'), day: val('evDay'), time: val('evTime'),
+    note1: val('evNote1'), note2: val('evNote2'), place: val('evPlace'),
+    partners: readTriple('partners'), general: readTriple('general'),
+    ideal: readTriple('ideal'), dream: readTriple('dream'), clients: readTriple('clients'),
+    showReferrals: document.getElementById('showReferrals').checked,
+    showClients: document.getElementById('showClients').checked
+  };
+}
 
-  fillList('pvPartners', readTriple('partners'));
-  fillList('pvGeneral',  readTriple('general'));
-  fillList('pvIdeal',    readTriple('ideal'));
-  fillList('pvDream',    readTriple('dream'));
-
-  // clients as rows
-  const cbox = document.getElementById('pvClients');
-  cbox.innerHTML = '';
-  const clients = readTriple('clients').filter(Boolean);
-  (clients.length ? clients : ['—']).forEach(c => {
-    const d = document.createElement('div');
-    d.className = 'row';
-    d.textContent = '· ' + c;
-    cbox.appendChild(d);
+// 用 data-* 屬性通用填入任一模板
+function paintTemplate(root, d){
+  root.querySelectorAll('[data-f]').forEach(el => {
+    el.textContent = d[el.dataset.f] || '';
   });
+  root.querySelectorAll('[data-inline]').forEach(el => {
+    const arr = (d[el.dataset.inline] || []).filter(Boolean);
+    el.textContent = arr.join('、');
+    // 若該引薦列沒有內容則整列隱藏
+    const row = el.closest('.ref-row, .ref-item');
+    if (row && !el.hasAttribute('data-f')) row.classList.toggle('hide', arr.length === 0);
+  });
+  // 照片
+  root.querySelectorAll('[data-photo]').forEach(p => {
+    if (photoDataUrl){ p.classList.remove('empty'); p.innerHTML = '<img src="' + photoDataUrl + '" alt="">'; }
+    else { p.classList.add('empty'); p.innerHTML = '<span>' + p.dataset.photo + '</span>'; }
+  });
+  // 區塊顯示/隱藏
+  root.querySelectorAll('[data-block=referrals]').forEach(b => b.style.display = d.showReferrals ? '' : 'none');
+  root.querySelectorAll('[data-block=clients]').forEach(b => b.style.display = d.showClients ? '' : 'none');
+}
 
-  // photos (三個版面各一張)
-  setPhoto('edmPhoto', '形象照');
+function render(){
+  const d = currentData();
+  paintTemplate(document.getElementById('tplDark'), d);
+  paintTemplate(document.getElementById('tplNavy'), d);
+  paintTemplate(document.getElementById('tplGreen'), d);
+
+  // 16:9 版面照片
   setPhoto('heroPhoto', '形象照');
   setPhoto('introPhoto', '照片');
 
@@ -234,16 +272,21 @@ function setPhoto(id, placeholder){
 function val(id){ return document.getElementById(id).value.trim(); }
 
 // bind text inputs
-['name','role','specialty','sloganMain','sloganSub','usp']
+['name','role','specialty','sloganMain','sloganSub','usp',
+ 'evDate','evTime','evNote1','evNote2','evPlace']
   .forEach(id => document.getElementById(id).addEventListener('input', render));
+['evDay','showReferrals','showClients']
+  .forEach(id => document.getElementById(id).addEventListener('change', () => { render(); scheduleSave(); }));
 
 /* ============ 範本自動儲存（存在瀏覽器 localStorage） ============ */
 const STORE_KEY = 'bni_edm_data_v1';
 
+const SINGLE_FIELDS = ['name','role','specialty','sloganMain','sloganSub','usp',
+                       'evDate','evDay','evTime','evNote1','evNote2','evPlace'];
+
 function collectData(){
   const single = {};
-  ['name','role','specialty','sloganMain','sloganSub','usp']
-    .forEach(id => single[id] = document.getElementById(id).value);
+  SINGLE_FIELDS.forEach(id => single[id] = document.getElementById(id).value);
   return {
     single,
     partners: readTriple('partners'),
@@ -251,6 +294,8 @@ function collectData(){
     ideal:    readTriple('ideal'),
     dream:    readTriple('dream'),
     clients:  readTriple('clients'),
+    showReferrals: document.getElementById('showReferrals').checked,
+    showClients:   document.getElementById('showClients').checked,
     photo:    photoDataUrl
   };
 }
@@ -282,6 +327,8 @@ function loadData(){
   applyTriple('ideal',    d.ideal);
   applyTriple('dream',    d.dream);
   applyTriple('clients',  d.clients);
+  if (typeof d.showReferrals === 'boolean') document.getElementById('showReferrals').checked = d.showReferrals;
+  if (typeof d.showClients === 'boolean') document.getElementById('showClients').checked = d.showClients;
   if (d.photo){
     photoDataUrl = d.photo;
     const t = document.getElementById('thumb');
@@ -352,12 +399,14 @@ document.getElementById('removePhoto').addEventListener('click', () => {
 
 /* ============ 版面切換 / 縮放 / 下載 ============ */
 const FORMATS = {
-  edm:   { w:600, h:849, label:'EDM',  zoom:1 },
-  hero:  { w:960, h:540, label:'形象頁', zoom:1 },
-  intro: { w:960, h:540, label:'介紹頁', zoom:1 }
+  tplDark:  { w:600, h:849, label:'深金聚光', zoom:1 },
+  tplNavy:  { w:600, h:849, label:'深藍典雅', zoom:1 },
+  tplGreen: { w:960, h:640, label:'綠意自然', zoom:1 },
+  hero:     { w:960, h:540, label:'形象頁',  zoom:1 },
+  intro:    { w:960, h:540, label:'介紹頁',  zoom:1 }
 };
-let activeFmt = 'edm';
-let zoom = FORMATS.edm.zoom;
+let activeFmt = 'tplDark';
+let zoom = FORMATS.tplDark.zoom;
 
 function activeEl(){ return document.getElementById(activeFmt); }
 
@@ -458,7 +507,7 @@ if (saveRosterBtn) saveRosterBtn.addEventListener('click', saveEditorToRoster);
   });
   loadData();            // 還原個人草稿（個人卡片用途）
   render();
-  switchFmt('edm');
+  switchFmt('tplDark');
   updateEditingBanner();
   updateCloudBadge();
 })();
