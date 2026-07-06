@@ -254,27 +254,27 @@
   .tn-footbar .col:last-child{border-right:none;}
   .tn-footbar .ico{font-size:20px;}
 
-  /* ---------- 模板三：綠意自然 (橫式) ---------- */
-  .tpl-green{width:960px;height:640px;background:#f4f1e8;color:#33472f;}
-  .tg-leaf{position:absolute;font-size:150px;opacity:.35;z-index:1;filter:saturate(.7);}
-  .tg-leaf1{top:-20px;right:20px;}
-  .tg-leaf2{bottom:-10px;left:-10px;transform:rotate(30deg);}
-  .tg-role{position:absolute;top:150px;left:56px;z-index:5;font-size:22px;font-weight:700;color:#5a7a4e;}
-  .tg-name{position:absolute;top:182px;left:56px;z-index:5;font-size:54px;color:#33472f;}
-  .tg-slogan{position:absolute;top:270px;left:56px;right:420px;z-index:5;font-size:32px;font-weight:800;line-height:1.35;color:#33472f;}
-  .tg-photo{position:absolute;top:110px;right:70px;width:320px;height:380px;z-index:4;border-radius:10px;border:4px solid var(--gold);}
-  .tg-photo.empty{background:#e6e8d8;color:#7d9070;}
-  .tg-refs{position:absolute;left:56px;bottom:150px;right:420px;z-index:5;display:flex;flex-wrap:wrap;gap:10px 20px;}
-  .tg-refs .ref-item{display:flex;align-items:center;gap:8px;font-size:15px;}
-  .tg-refs .ico{width:30px;height:30px;border-radius:50%;background:#5a7a4e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;flex:0 0 auto;}
-  .tg-refs .lbl{font-weight:700;color:#5a7a4e;}
+  /* ---------- 模板三：綠意自然 (A4 直式) ---------- */
+  .tpl-green{width:600px;height:849px;background:#f4f1e8;color:#33472f;}
+  .tg-leaf{position:absolute;opacity:.32;z-index:1;filter:saturate(.7);}
+  .tg-leaf1{top:-24px;right:6px;font-size:150px;}
+  .tg-leaf2{bottom:120px;left:-24px;font-size:130px;transform:rotate(30deg);}
+  .tg-role{position:absolute;top:216px;left:40px;z-index:5;font-size:21px;font-weight:700;color:#5a7a4e;}
+  .tg-name{position:absolute;top:246px;left:40px;z-index:5;font-size:52px;color:#33472f;}
+  .tg-slogan{position:absolute;top:356px;left:40px;right:250px;z-index:5;font-size:29px;font-weight:800;line-height:1.35;color:#33472f;}
+  .tg-photo{position:absolute;top:84px;right:34px;width:250px;height:334px;z-index:4;border-radius:10px;border:4px solid var(--gold);}
+  .tg-photo.empty{display:flex;align-items:center;justify-content:center;background:#e6e8d8;color:#7d9070;}
+  .tg-refs{position:absolute;left:40px;right:40px;top:496px;z-index:5;display:flex;flex-direction:column;gap:11px;}
+  .tg-refs .ref-item{display:flex;align-items:center;gap:10px;font-size:16px;}
+  .tg-refs .ico{width:32px;height:32px;border-radius:50%;background:#5a7a4e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 auto;}
+  .tg-refs .lbl{font-weight:700;color:#5a7a4e;white-space:nowrap;}
   .tg-refs .val{color:#3a3a3a;}
-  .tg-foot{position:absolute;left:0;right:0;bottom:0;height:110px;background:rgba(90,122,78,.12);display:flex;align-items:center;gap:30px;padding:0 56px;z-index:5;}
-  .tg-foot .tg-date{font-size:52px;font-weight:800;color:#5a7a4e;line-height:1;}
+  .tg-foot{position:absolute;left:0;right:0;bottom:0;height:132px;background:rgba(90,122,78,.14);display:flex;align-items:center;gap:26px;padding:0 40px;z-index:5;}
+  .tg-foot .tg-date{font-size:54px;font-weight:800;color:#5a7a4e;line-height:1;flex:0 0 auto;}
   .tg-foot .tg-date small{font-size:20px;}
   .tg-foot .tg-date .time{font-size:15px;color:#556;font-weight:600;margin-top:4px;}
   .tg-foot ul{margin:0;padding-left:18px;}
-  .tg-foot li{font-size:14px;line-height:1.7;color:#3a3a3a;}
+  .tg-foot li{font-size:14px;line-height:1.75;color:#3a3a3a;}
 
   /* ---------- progress overlay ---------- */
   #progressOverlay{position:fixed;inset:0;background:rgba(20,20,25,.78);display:none;align-items:center;justify-content:center;z-index:9999;}
@@ -568,11 +568,11 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=2"></script>
-<script src="specialties.js?v=2"></script>
-<script src="members.js?v=2"></script>
-<script src="store.js?v=2"></script>
-<script src="app.js?v=2"></script>
-<script src="roster.js?v=2"></script>
+<script src="firebase-config.js?v=4"></script>
+<script src="specialties.js?v=4"></script>
+<script src="members.js?v=4"></script>
+<script src="store.js?v=4"></script>
+<script src="app.js?v=4"></script>
+<script src="roster.js?v=4"></script>
 </body>
 </html>

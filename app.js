@@ -216,9 +216,11 @@ function paintTemplate(root, d){
   root.querySelectorAll('[data-inline]').forEach(el => {
     const arr = (d[el.dataset.inline] || []).filter(Boolean);
     el.textContent = arr.join('、');
-    // 若該引薦列沒有內容則整列隱藏
-    const row = el.closest('.ref-row, .ref-item');
-    if (row && !el.hasAttribute('data-f')) row.classList.toggle('hide', arr.length === 0);
+  });
+  // 任一引薦/客戶列若值為空 → 整列隱藏（含獨特主張）
+  root.querySelectorAll('.ref-row, .ref-item').forEach(row => {
+    const v = row.querySelector('.val');
+    if (v) row.classList.toggle('hide', !v.textContent.trim());
   });
   // 照片
   root.querySelectorAll('[data-photo]').forEach(p => {
@@ -401,7 +403,7 @@ document.getElementById('removePhoto').addEventListener('click', () => {
 const FORMATS = {
   tplDark:  { w:600, h:849, label:'深金聚光', zoom:1 },
   tplNavy:  { w:600, h:849, label:'深藍典雅', zoom:1 },
-  tplGreen: { w:960, h:640, label:'綠意自然', zoom:1 },
+  tplGreen: { w:600, h:849, label:'綠意自然', zoom:1 },
   hero:     { w:960, h:540, label:'形象頁',  zoom:1 },
   intro:    { w:960, h:540, label:'介紹頁',  zoom:1 }
 };
