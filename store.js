@@ -65,7 +65,8 @@ const Store = {
 
   // ---------- 讀取 ----------
   getAllSorted(){
-    return this._members.slice().sort((a,b) => (a.order ?? 9999) - (b.order ?? 9999));
+    return this._members.filter(m => m.type !== 'config')
+      .slice().sort((a,b) => (a.order ?? 9999) - (b.order ?? 9999));
   },
   getById(id){ return this._members.find(m => m.id === id) || null; },
 

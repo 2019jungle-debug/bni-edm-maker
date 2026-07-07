@@ -162,6 +162,7 @@ function readEditorAsMember(){
     id: base.id || null,
     order: base.order,
     present: base.present !== false,
+    pw: base.pw,
     name: val('name'),
     role: val('role'),
     specialty: val('specialty'),
@@ -198,11 +199,76 @@ function blankDivider(){
 async function saveEditorToRoster(){
   const m = readEditorAsMember();
   if (!m.name.trim()){ alert('請先填寫姓名，才能儲存到名冊'); return; }
+  // 權限：管理者可存任何人；會員只能存自己
+  if (m.id && !isAdmin && ownerMemberId !== m.id){
+    alert('您沒有此會員的編輯權限。請用「🔑 登入」以您的會員密碼登入，才能儲存自己的頁面。');
+    return;
+  }
   const id = await Store.upsert(m);
   currentMember = Store.getById(id) || m;
+  if (!ownerMemberId && !isAdmin) ownerMemberId = id;   // 新建者視為擁有者
   updateEditingBanner();
   flashSaved('✓ 已儲存到名冊');
 }
+
+/* ============ 權限：管理者 / 會員登入 ============ */
+let isAdmin = false;
+let ownerMemberId = null;
+function genPw(){ const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s=''; for (let i=0;i<6;i++) s+=c[Math.floor(Math.random()*c.length)]; return s; }
+function getConfigDoc(){ return Store.getById('_config') || {}; }
+function canSaveMember(){ return isAdmin || (currentMember && currentMember.id && ownerMemberId === currentMember.id); }
+
+async function unlockAdmin(){
+  const cfg = getConfigDoc();
+  if (!cfg.adminPw){
+    const np = prompt('尚未設定管理者密碼，請設定一組（供調整排序 / 查看會員密碼用）：');
+    if (!np || !np.trim()) return;
+    await Store.upsert({ id:'_config', type:'config', adminPw: np.trim(), order:99999 });
+    isAdmin = true;
+    alert('✓ 管理者密碼已設定為：' + np.trim() + '\n請記好，之後管理者登入用。');
+  } else {
+    const p = prompt('請輸入管理者密碼：');
+    if (p == null) return;
+    if (p.trim() === cfg.adminPw){ isAdmin = true; alert('✓ 已進入管理者模式'); }
+    else { alert('密碼錯誤'); return; }
+  }
+  ownerMemberId = null;
+  updateAuthUI(); if (typeof renderRoster === 'function') renderRoster();
+}
+
+function loginMemberByPw(){
+  const p = prompt('請輸入您的會員密碼（向管理者索取）：');
+  if (p == null) return;
+  const code = p.trim().toUpperCase();
+  const m = Store.getAllSorted().find(x => x.type !== 'divider' && x.pw && String(x.pw).toUpperCase() === code);
+  if (!m){ alert('查無此密碼，請確認或向管理者索取。'); return; }
+  ownerMemberId = m.id; isAdmin = false;
+  loadMemberIntoEditor(m); showView('editor');
+  updateAuthUI();
+  alert('✓ 已登入：' + m.name + '\n您現在可以編輯並儲存自己的頁面（會自動存回雲端）。');
+}
+
+function logoutAuth(){ isAdmin = false; ownerMemberId = null; updateAuthUI(); if (typeof renderRoster === 'function') renderRoster(); }
+
+function updateAuthUI(){
+  const badge = document.getElementById('authBadge');
+  const btn = document.getElementById('authBtn');
+  if (isAdmin){ if (badge){ badge.textContent = '🛠 管理者'; badge.style.color = '#c0202a'; } if (btn) btn.textContent = '登出'; }
+  else if (ownerMemberId){ const m = Store.getById(ownerMemberId); if (badge){ badge.textContent = '👤 ' + (m ? m.name : '會員'); badge.style.color = '#2e9e5b'; } if (btn) btn.textContent = '登出'; }
+  else { if (badge){ badge.textContent = '👤 訪客'; badge.style.color = '#555'; } if (btn) btn.textContent = '🔑 登入'; }
+  const note = document.getElementById('rosterViewNote'); if (note) note.style.display = isAdmin ? 'none' : '';
+  const tools = document.getElementById('rosterTools'); if (tools) tools.style.display = isAdmin ? '' : 'none';
+}
+
+function openAuthMenu(){
+  if (isAdmin || ownerMemberId){ if (confirm('要登出目前身分嗎？')) logoutAuth(); return; }
+  const c = prompt('登入身分：\n輸入「A」→ 管理者登入\n或直接輸入您的「會員密碼」→ 會員登入');
+  if (c == null) return;
+  if (c.trim().toUpperCase() === 'A'){ unlockAdmin(); }
+  else if (c.trim()){ const code=c.trim().toUpperCase(); const m=Store.getAllSorted().find(x=>x.type!=='divider'&&x.pw&&String(x.pw).toUpperCase()===code); if(m){ ownerMemberId=m.id; isAdmin=false; loadMemberIntoEditor(m); showView('editor'); updateAuthUI(); alert('✓ 已登入：'+m.name); } else alert('查無此密碼（管理者請輸入 A）'); }
+}
+const authBtnEl = document.getElementById('authBtn');
+if (authBtnEl) authBtnEl.addEventListener('click', openAuthMenu);
 
 function updateEditingBanner(){
   const el = document.getElementById('editingBanner');
@@ -603,6 +669,7 @@ const EXTRA_IMGS = [
 // 編輯名冊會員時，自動把目前內容存回雲端（避免圖片沒存就不見）
 async function autoSaveMember(){
   if (!currentMember || !currentMember.id) return false;
+  if (!canSaveMember()) return false;   // 沒權限就不自動存雲端
   const m = readEditorAsMember();
   if (!m.name.trim()) return false;
   try { await Store.upsert(m); currentMember = Store.getById(m.id) || m; flashSaved('☁ 已存回雲端'); return true; }
@@ -780,6 +847,7 @@ if (saveTopBtn) saveTopBtn.addEventListener('click', saveEditorToRoster);
   switchFmt('themeBlack');
   updateEditingBanner();
   updateCloudBadge();
+  updateAuthUI();
 })();
 
 function updateCloudBadge(){

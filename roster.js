@@ -34,58 +34,71 @@ function renderRoster(){
   document.getElementById('rosterCount').textContent = list.filter(m => m.type !== 'divider').length;
   document.getElementById('presentCount').textContent = list.filter(m => m.type !== 'divider' && m.present !== false).length;
 
+  const admin = (typeof isAdmin !== 'undefined') && isAdmin;   // 僅管理者可編輯
+
   wrap.innerHTML = '';
   list.forEach((m, idx) => {
     const row = document.createElement('div');
-    row.draggable = true;
+    row.draggable = admin;
     row.dataset.id = m.id;
+    const adminActs = admin ? (
+        '<button data-act="up" title="上移">↑</button>' +
+        '<button data-act="down" title="下移">↓</button>' +
+        (m.type === 'divider' ? '' : '<button data-act="edit">編輯</button>') +
+        (m.type === 'divider' ? '' : '<button data-act="pw" title="會員密碼">🔑</button>') +
+        '<button data-act="del" class="del">刪除</button>') : '';
 
     if (m.type === 'divider'){
       row.className = 'roster-row divider-row';
       row.innerHTML =
         '<span class="drag" title="拖曳調整順序">⠿</span>' +
         '<span class="ord">' + (idx+1) + '</span>' +
-        '<label class="present"><input type="checkbox" ' + (m.present !== false ? 'checked' : '') + '><span>放入</span></label>' +
+        '<label class="present"><input type="checkbox" ' + (m.present !== false ? 'checked' : '') + (admin?'':' disabled') + '><span>放入</span></label>' +
         '<span class="dv-tag">產業鏈分隔頁</span>' +
-        '<input class="dv-title-input" list="chainDatalist" placeholder="選擇或輸入產業鏈名稱，例：品牌造夢者產業鏈" value="' + escapeHtml(m.title || '') + '">' +
-        '<span class="ract">' +
-          '<button data-act="up" title="上移">↑</button>' +
-          '<button data-act="down" title="下移">↓</button>' +
-          '<button data-act="del" class="del">刪除</button>' +
-        '</span>';
-      row.querySelector('.dv-title-input').addEventListener('change', e => {
-        const item = Store.getById(m.id); if (item){ item.title = e.target.value; Store.upsert(item); }
-      });
+        (admin ? '<input class="dv-title-input" list="chainDatalist" placeholder="選擇或輸入產業鏈名稱" value="' + escapeHtml(m.title || '') + '">'
+               : '<span class="rspec" style="flex:1;font-weight:700;color:var(--red-dark);">' + escapeHtml(m.title || '(未命名產業鏈)') + '</span>') +
+        '<span class="ract">' + adminActs + '</span>';
+      const ti = row.querySelector('.dv-title-input');
+      if (ti) ti.addEventListener('change', e => { const item = Store.getById(m.id); if (item){ item.title = e.target.value; Store.upsert(item); } });
     } else {
       row.className = 'roster-row';
       row.innerHTML =
         '<span class="drag" title="拖曳調整順序">⠿</span>' +
         '<span class="ord">' + (idx+1) + '</span>' +
-        '<label class="present"><input type="checkbox" ' + (m.present !== false ? 'checked' : '') + '><span>出場</span></label>' +
+        '<label class="present"><input type="checkbox" ' + (m.present !== false ? 'checked' : '') + (admin?'':' disabled') + '><span>出場</span></label>' +
         '<span class="rname">' + escapeHtml(m.name || '(未命名)') + '</span>' +
         '<span class="rspec">' + escapeHtml(m.specialty || '') + '</span>' +
-        '<span class="ract">' +
-          '<button data-act="up" title="上移">↑</button>' +
-          '<button data-act="down" title="下移">↓</button>' +
-          '<button data-act="edit">編輯</button>' +
-          '<button data-act="del" class="del">刪除</button>' +
-        '</span>';
-      row.querySelector('[data-act=edit]').addEventListener('click', () => { loadMemberIntoEditor(Store.getById(m.id)); showView('editor'); });
+        (admin ? '<span class="rspec pwcell" style="flex:0 0 auto;font-family:monospace;color:#7b52c4;">' + (m.pw ? escapeHtml(m.pw) : '—') + '</span>' : '') +
+        '<span class="ract">' + adminActs + '</span>';
+      const eb = row.querySelector('[data-act=edit]');
+      if (eb) eb.addEventListener('click', () => { loadMemberIntoEditor(Store.getById(m.id)); showView('editor'); });
+      const pb = row.querySelector('[data-act=pw]');
+      if (pb) pb.addEventListener('click', async () => {
+        const item = Store.getById(m.id); if (!item) return;
+        if (!item.pw || confirm('「' + item.name + '」目前密碼：' + item.pw + '\n要重新產生一組新密碼嗎？')){
+          item.pw = genPw(); await Store.upsert(item);
+          alert('「' + item.name + '」的會員密碼：' + item.pw + '\n請把這組密碼給該會員，他登入後只能編輯自己的頁面。');
+        }
+      });
     }
 
-    row.querySelector('.present input').addEventListener('change', e => Store.setPresent(m.id, e.target.checked));
-    row.querySelector('[data-act=up]').addEventListener('click', () => moveMember(m.id, -1));
-    row.querySelector('[data-act=down]').addEventListener('click', () => moveMember(m.id, +1));
-    row.querySelector('[data-act=del]').addEventListener('click', () => {
+    const pc = row.querySelector('.present input');
+    if (pc && admin) pc.addEventListener('change', e => Store.setPresent(m.id, e.target.checked));
+    const ub = row.querySelector('[data-act=up]');   if (ub) ub.addEventListener('click', () => moveMember(m.id, -1));
+    const db = row.querySelector('[data-act=down]'); if (db) db.addEventListener('click', () => moveMember(m.id, +1));
+    const xb = row.querySelector('[data-act=del]');
+    if (xb) xb.addEventListener('click', () => {
       const label = m.type === 'divider' ? ('分隔頁「' + (m.title || '') + '」') : ('「' + (m.name || '此會員') + '」');
       if (confirm('確定刪除' + label + '？')) Store.remove(m.id);
     });
 
-    row.addEventListener('dragstart', () => { dragId = m.id; row.classList.add('dragging'); });
-    row.addEventListener('dragend',   () => row.classList.remove('dragging'));
-    row.addEventListener('dragover',  e => { e.preventDefault(); row.classList.add('drop-hint'); });
-    row.addEventListener('dragleave', () => row.classList.remove('drop-hint'));
-    row.addEventListener('drop', e => { e.preventDefault(); row.classList.remove('drop-hint'); onDrop(m.id); });
+    if (admin){
+      row.addEventListener('dragstart', () => { dragId = m.id; row.classList.add('dragging'); });
+      row.addEventListener('dragend',   () => row.classList.remove('dragging'));
+      row.addEventListener('dragover',  e => { e.preventDefault(); row.classList.add('drop-hint'); });
+      row.addEventListener('dragleave', () => row.classList.remove('drop-hint'));
+      row.addEventListener('drop', e => { e.preventDefault(); row.classList.remove('drop-hint'); onDrop(m.id); });
+    }
 
     wrap.appendChild(row);
   });

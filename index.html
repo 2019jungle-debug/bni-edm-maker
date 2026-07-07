@@ -378,8 +378,12 @@
     <nav class="topnav">
       <button class="nav-btn active" data-view="editor">個人編輯</button>
       <button class="nav-btn" data-view="roster">本週例會簡報</button>
+      <button class="nav-btn" id="authBtn" type="button">🔑 登入</button>
     </nav>
-    <div id="cloudBadge" class="cloud-badge">💾 本機儲存</div>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <div id="authBadge" class="cloud-badge" style="background:#fff;color:#555;">👤 訪客</div>
+      <div id="cloudBadge" class="cloud-badge">💾 本機儲存</div>
+    </div>
   </div>
 </header>
 
@@ -683,7 +687,7 @@
         <h2 style="margin:0;">本週例會簡報名冊</h2>
         <div class="hint">拖曳 ⠿ 或用 ↑↓ 調整<b>出場順序</b>；勾選「出場」決定本週要不要上台。共 <b id="rosterCount">0</b> 位，本週出場 <b id="presentCount">0</b> 位。</div>
       </div>
-      <div class="roster-tools">
+      <div class="roster-tools" id="rosterTools">
         <button class="btn btn-ghost" id="newMemberBtn">＋ 新增會員</button>
         <button class="btn btn-ghost" id="newDividerBtn">＋ 產業鏈分隔頁</button>
         <button class="btn btn-ghost" id="exportBtn">匯出 JSON</button>
@@ -691,6 +695,9 @@
         <input type="file" id="importFile" accept="application/json" style="display:none;">
         <button class="btn btn-primary" id="downloadPPTBtn">⬇ 下載本週 PPT（每人形象頁＋介紹頁）</button>
       </div>
+    </div>
+    <div id="rosterViewNote" class="hint" style="display:none;background:#fff8ec;border:1px solid #e9d9b0;border-radius:8px;padding:8px 12px;margin-bottom:12px;">
+      🔒 檢視模式：僅管理者可調整出場順序、新增/刪除會員、查看密碼。請點右上「🔑 登入 → 管理者」。
     </div>
     <div id="rosterList" class="roster-list"></div>
     <datalist id="chainDatalist"></datalist>
@@ -740,11 +747,11 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=20"></script>
-<script src="specialties.js?v=20"></script>
-<script src="members.js?v=20"></script>
-<script src="store.js?v=20"></script>
-<script src="app.js?v=20"></script>
-<script src="roster.js?v=20"></script>
+<script src="firebase-config.js?v=21"></script>
+<script src="specialties.js?v=21"></script>
+<script src="members.js?v=21"></script>
+<script src="store.js?v=21"></script>
+<script src="app.js?v=21"></script>
+<script src="roster.js?v=21"></script>
 </body>
 </html>
