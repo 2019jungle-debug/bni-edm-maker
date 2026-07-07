@@ -557,15 +557,17 @@ document.getElementById('removePhoto').addEventListener('click', () => {
 
 /* ============ 版面切換 / 縮放 / 下載 ============ */
 // 6 個主題都用同一個 #edm 元素，切換 theme class；hero/intro 為獨立 16:9 元素
+// A4 主題 exportScale 4.13 → 600×849 輸出 ≈ 2480×3508（A4 300dpi）
+const A4X = 4.13;
 const FORMATS = {
-  themeBlack:   { el:'edm', theme:'theme-black',   w:600, h:849, label:'尊爵黑金', zoom:1 },
-  themeBlue:    { el:'edm', theme:'theme-blue',    w:600, h:849, label:'深藍專業', zoom:1 },
-  themeGreen:   { el:'edm', theme:'theme-green',   w:600, h:849, label:'自然清新', zoom:1 },
-  themeRed:     { el:'edm', theme:'theme-red',     w:600, h:849, label:'活力紅動', zoom:1 },
-  themeAi:      { el:'edm', theme:'theme-ai',      w:600, h:849, label:'科技未來', zoom:1 },
-  themeMinimal: { el:'edm', theme:'theme-minimal', w:600, h:849, label:'優雅極簡', zoom:1 },
-  hero:  { el:'hero',  w:960, h:540, label:'形象頁', zoom:1 },
-  intro: { el:'intro', w:960, h:540, label:'介紹頁', zoom:1 }
+  themeBlack:   { el:'edm', theme:'theme-black',   w:600, h:849, label:'尊爵黑金', zoom:1, exportScale:A4X },
+  themeBlue:    { el:'edm', theme:'theme-blue',    w:600, h:849, label:'深藍專業', zoom:1, exportScale:A4X },
+  themeGreen:   { el:'edm', theme:'theme-green',   w:600, h:849, label:'自然清新', zoom:1, exportScale:A4X },
+  themeRed:     { el:'edm', theme:'theme-red',     w:600, h:849, label:'活力紅動', zoom:1, exportScale:A4X },
+  themeAi:      { el:'edm', theme:'theme-ai',      w:600, h:849, label:'科技未來', zoom:1, exportScale:A4X },
+  themeMinimal: { el:'edm', theme:'theme-minimal', w:600, h:849, label:'優雅極簡', zoom:1, exportScale:A4X },
+  hero:  { el:'hero',  w:960, h:540, label:'形象頁', zoom:1, exportScale:2 },
+  intro: { el:'intro', w:960, h:540, label:'介紹頁', zoom:1, exportScale:2 }
 };
 const CANVAS_ELS = ['edm', 'hero', 'intro'];
 let activeFmt = 'themeBlack';
@@ -614,7 +616,7 @@ document.getElementById('download').addEventListener('click', async () => {
   const prev = el.style.zoom;
   el.style.zoom = 1;                          // 用原始解析度輸出
   try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch(e){}
-  html2canvas(el, { scale: 2, useCORS: true, backgroundColor: null })
+  html2canvas(el, { scale: f.exportScale || 2, useCORS: true, backgroundColor: null })
     .then(canvas => {
       const a = document.createElement('a');
       a.download = (val('name') || 'BNI') + '_' + f.label + '.png';
