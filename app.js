@@ -524,12 +524,17 @@ function applyShowFlags(show){
 
 let flashTimer = null;
 function flashSaved(msg){
-  const el = document.getElementById('saveStatus');
-  if (!el) return;
-  el.textContent = msg || '✓ 已自動儲存';
-  el.style.opacity = '1';
+  const text = msg || '✓ 已自動儲存';
+  ['saveStatus','saveStatusTop'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = text;
+    el.style.opacity = '1';
+  });
   clearTimeout(flashTimer);
-  flashTimer = setTimeout(() => { el.style.opacity = '0'; }, 1800);
+  flashTimer = setTimeout(() => {
+    ['saveStatus','saveStatusTop'].forEach(id => { const el = document.getElementById(id); if (el) el.style.opacity = '0'; });
+  }, 1800);
 }
 
 // 壓縮上傳照片，避免存進雲端/瀏覽器時過大
@@ -736,6 +741,8 @@ document.querySelectorAll('.nav-btn').forEach(b => {
 // 編輯區「儲存到名冊」按鈕
 const saveRosterBtn = document.getElementById('saveToRoster');
 if (saveRosterBtn) saveRosterBtn.addEventListener('click', saveEditorToRoster);
+const saveTopBtn = document.getElementById('saveTop');
+if (saveTopBtn) saveTopBtn.addEventListener('click', saveEditorToRoster);
 
 /* ============ 啟動 ============ */
 (async function init(){
