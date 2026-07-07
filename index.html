@@ -90,7 +90,7 @@
   .hero-brand .fd small{display:block;font-size:12px;letter-spacing:5px;opacity:.8;margin-top:4px;}
   .hero-brand .bni{margin-top:8px;font-size:12px;background:var(--red);color:#fff;display:inline-block;padding:3px 10px;border-radius:3px;font-weight:700;}
   .hero-photo{position:absolute;top:60px;left:56px;width:300px;height:390px;z-index:4;border-radius:8px;overflow:hidden;border:4px solid rgba(255,255,255,.6);background:#ccc;}
-  .hero-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .hero-photo img{width:100%;height:100%;object-fit:cover;object-position:center var(--pp,18%);display:block;}
   .hero-photo.empty{display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;background:rgba(255,255,255,.18);}
   .hero-info{position:absolute;left:470px;right:44px;top:150px;z-index:6;}
   .hero-info .hRole{font-size:22px;font-weight:700;color:var(--gold);}
@@ -116,7 +116,7 @@
   #intro{width:960px;height:540px;background:#fff;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18);transform-origin:top center;}
   .intro-head{position:absolute;top:0;left:0;right:0;height:118px;background:linear-gradient(90deg,var(--red-dark),var(--red));display:flex;align-items:center;padding:0 36px;z-index:5;}
   .intro-photo{width:82px;height:82px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,.7);background:#ccc;flex:0 0 auto;}
-  .intro-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .intro-photo img{width:100%;height:100%;object-fit:cover;object-position:center var(--pp,18%);display:block;}
   .intro-photo.empty{display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;background:rgba(255,255,255,.2);}
   .intro-headtext{margin-left:20px;color:#fff;}
   .intro-headtext .iName{font-size:40px;font-weight:800;line-height:1;}
@@ -186,7 +186,7 @@
   .edm-brand .fd small{display:block;font-family:"Montserrat",sans-serif;font-size:10px;letter-spacing:6px;opacity:.85;margin-top:4px;font-weight:600;}
   .edm-brand .bni{margin-top:8px;font-size:10.5px;background:var(--bni-bg,#c60c30);color:#fff;display:inline-block;padding:2px 8px;border-radius:3px;font-weight:700;letter-spacing:1px;}
   .edm-photo{position:absolute;top:34px;right:16px;width:266px;height:566px;z-index:2;overflow:hidden;border-radius:var(--photo-radius,4px);}
-  .edm-photo img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;}
+  .edm-photo img{width:100%;height:100%;object-fit:cover;object-position:center var(--pp,18%);display:block;}
   .edm-photo.empty{display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--muted);background:var(--photo-empty,rgba(0,0,0,.05));border:1px dashed var(--line,#ccc);}
   .edm-role{position:absolute;top:196px;left:40px;z-index:6;font-size:19px;font-weight:700;letter-spacing:3px;color:var(--accent);}
   .edm-name{position:absolute;top:224px;left:40px;z-index:6;font-family:"Noto Serif TC",serif;font-weight:900;font-size:48px;line-height:1;color:var(--name);letter-spacing:4px;}
@@ -402,6 +402,9 @@
         <button type="button" id="removePhoto" class="btn-remove">移除</button>
       </div>
       <div class="hint">建議直式、上半身、去背或純色背景效果最佳</div>
+      <label style="margin-top:8px;">照片焦點（上下）：<span id="photoPosVal">18%</span></label>
+      <input type="range" id="photoPos" min="0" max="100" value="18" style="width:100%;">
+      <div class="hint">若圓形／裁切照沒對到臉，左右拖曳調整露出位置（0＝頂端、100＝底部）。</div>
     </div>
 
     <div class="field">
@@ -727,11 +730,11 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=17"></script>
-<script src="specialties.js?v=17"></script>
-<script src="members.js?v=17"></script>
-<script src="store.js?v=17"></script>
-<script src="app.js?v=17"></script>
-<script src="roster.js?v=17"></script>
+<script src="firebase-config.js?v=18"></script>
+<script src="specialties.js?v=18"></script>
+<script src="members.js?v=18"></script>
+<script src="store.js?v=18"></script>
+<script src="app.js?v=18"></script>
+<script src="roster.js?v=18"></script>
 </body>
 </html>

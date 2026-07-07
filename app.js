@@ -143,6 +143,7 @@ function loadMemberIntoEditor(m){
   document.getElementById('evNote1').value = m.evNote1 != null ? m.evNote1 : EV_DEFAULT.evNote1;
   document.getElementById('evNote2').value = m.evNote2 != null ? m.evNote2 : EV_DEFAULT.evNote2;
   document.getElementById('evPlace').value = m.evPlace != null ? m.evPlace : EV_DEFAULT.evPlace;
+  document.getElementById('photoPos').value = (m.photoPos != null ? m.photoPos : 18);
   updateDayDisplay();
   applyShowFlags(m.show);
   photoDataUrl = m.photo || '';
@@ -174,6 +175,7 @@ function readEditorAsMember(){
     evDate: val('evDate'), evTime: val('evTime'),
     evNote1: val('evNote1'), evNote2: val('evNote2'), evPlace: val('evPlace'),
     show: readShowFlags(),
+    photoPos: document.getElementById('photoPos').value,
     photo: photoDataUrl,
     logo: logoDataUrl, product: productDataUrl, introImg: introImgDataUrl
   };
@@ -182,7 +184,7 @@ function readEditorAsMember(){
 function blankMember(){
   return Object.assign({ id:null, name:'', role:'', specialty:'', sloganMain:'', sloganSub:'', usp:'',
            partners:['','',''], general:['','',''], ideal:['','',''], dream:['','',''],
-           clients:['','',''], photo:'', logo:'', product:'', introImg:'', present:true,
+           clients:['','',''], photo:'', logo:'', product:'', introImg:'', photoPos:18, present:true,
            show:{ partners:true, general:true, ideal:true, dream:true, clients:true, usp:true } }, EV_DEFAULT);
 }
 
@@ -300,6 +302,11 @@ function paintTemplate(root, d){
 function render(){
   const d = currentData();
   paintTemplate(document.getElementById('edm'), d);
+
+  // 照片焦點（上下）套用到各版面
+  const pp = (document.getElementById('photoPos') || {}).value || '18';
+  ['edm','hero','intro'].forEach(id => { const e = document.getElementById(id); if (e) e.style.setProperty('--pp', pp + '%'); });
+  const ppv = document.getElementById('photoPosVal'); if (ppv) ppv.textContent = pp + '%';
 
   // 16:9 版面照片
   setPhoto('heroPhoto', '形象照');
@@ -431,6 +438,8 @@ function updateDayDisplay(){
   .forEach(id => document.getElementById(id).addEventListener('input', render));
 // 日期：選日曆 → 自動帶出星期
 document.getElementById('evDate').addEventListener('change', () => { updateDayDisplay(); render(); scheduleSave(); });
+// 照片焦點滑桿
+document.getElementById('photoPos').addEventListener('input', () => { render(); scheduleSave(); });
 // 各類「顯示」勾選
 document.querySelectorAll('.showFlag').forEach(cb =>
   cb.addEventListener('change', () => { render(); scheduleSave(); }));
@@ -439,7 +448,7 @@ document.querySelectorAll('.showFlag').forEach(cb =>
 const STORE_KEY = 'bni_edm_data_v1';
 
 const SINGLE_FIELDS = ['name','role','specialty','sloganMain','sloganSub','usp',
-                       'evDate','evTime','evNote1','evNote2','evPlace'];
+                       'evDate','evTime','evNote1','evNote2','evPlace','photoPos'];
 
 function collectData(){
   const single = {};
