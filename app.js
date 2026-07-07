@@ -35,7 +35,7 @@ Object.keys(defaults).forEach(id => {
 
 // ---- 專業別下拉（標註該專業別的會員，或「招募中」） ----
 function memberBySpecialty(spec){
-  return Store.getAllSorted().find(m => (m.specialty || '') === spec) || null;
+  return Store.getAllSorted().find(m => m.type !== 'divider' && (m.specialty || '') === spec) || null;
 }
 
 function buildSpecialtySelect(){
@@ -90,6 +90,7 @@ function buildMemberSelect(){
   blank.value = ''; blank.textContent = '— 選擇會員自動帶入 —';
   sel.appendChild(blank);
   Store.getAllSorted().forEach(m => {
+    if (m.type === 'divider') return;
     const o = document.createElement('option');
     o.value = m.id;
     o.textContent = m.name + '（' + (m.specialty || '') + '）';
@@ -181,6 +182,11 @@ function blankMember(){
            partners:['','',''], general:['','',''], ideal:['','',''], dream:['','',''],
            clients:['','',''], photo:'', present:true,
            show:{ partners:true, general:true, ideal:true, dream:true, clients:true, usp:true } }, EV_DEFAULT);
+}
+
+// 產業鏈分隔頁項目（放在名冊中，PPT 產生時變成一張分隔投影片）
+function blankDivider(){
+  return { id:null, type:'divider', title:'', present:true, order:null };
 }
 
 async function saveEditorToRoster(){

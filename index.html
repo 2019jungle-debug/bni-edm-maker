@@ -191,6 +191,9 @@
   .roster-row .ract button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:4px 9px;font-size:12px;cursor:pointer;font-family:inherit;}
   .roster-row .ract button.del{color:#d9534f;border-color:#eab;}
   .roster-row .ract button.del:hover{background:#d9534f;color:#fff;}
+  .roster-row.divider-row{background:linear-gradient(90deg,#fdeef0,#fff8ec);border-color:#e9c9cf;}
+  .roster-row .dv-tag{font-size:11px;font-weight:700;color:#fff;background:var(--red);padding:3px 8px;border-radius:10px;white-space:nowrap;}
+  .roster-row .dv-title-input{flex:1;padding:6px 9px;border:1px solid var(--line);border-radius:6px;font-size:14px;font-family:inherit;font-weight:700;color:var(--red-dark);}
 
   /* ---------- 表單小工具 ---------- */
   .show-toggle{font-size:12px;font-weight:600;color:#666;margin-left:10px;}
@@ -642,6 +645,7 @@
       </div>
       <div class="roster-tools">
         <button class="btn btn-ghost" id="newMemberBtn">＋ 新增會員</button>
+        <button class="btn btn-ghost" id="newDividerBtn">＋ 產業鏈分隔頁</button>
         <button class="btn btn-ghost" id="exportBtn">匯出 JSON</button>
         <button class="btn btn-ghost" id="importBtn">匯入 JSON</button>
         <input type="file" id="importFile" accept="application/json" style="display:none;">
@@ -653,7 +657,7 @@
 </div>
 
 <!-- ================= 新增會員彈出視窗 ================= -->
-<div id="addMemberModal" class="modal-overlay" style="display:none;">
+<div id="addMemberModal" class="modal-overlay">
   <div class="modal-box" style="width:min(94vw,420px);">
     <div class="modal-head">
       <span>＋ 新增會員</span>
@@ -675,7 +679,7 @@
 </div>
 
 <!-- ================= 宣傳文彈出視窗 ================= -->
-<div id="promoModal" class="modal-overlay" style="display:none;">
+<div id="promoModal" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-head">
       <span>✨ 宣傳文（可直接複製貼到群組）</span>
@@ -695,11 +699,11 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=9"></script>
-<script src="specialties.js?v=9"></script>
-<script src="members.js?v=9"></script>
-<script src="store.js?v=9"></script>
-<script src="app.js?v=9"></script>
-<script src="roster.js?v=9"></script>
+<script src="firebase-config.js?v=10"></script>
+<script src="specialties.js?v=10"></script>
+<script src="members.js?v=10"></script>
+<script src="store.js?v=10"></script>
+<script src="app.js?v=10"></script>
+<script src="roster.js?v=10"></script>
 </body>
 </html>

@@ -17,34 +17,54 @@ function renderRoster(){
   const wrap = document.getElementById('rosterList');
   if (!wrap) return;
   const list = Store.getAllSorted();
-  document.getElementById('rosterCount').textContent = list.length;
-  document.getElementById('presentCount').textContent = list.filter(m => m.present !== false).length;
+  document.getElementById('rosterCount').textContent = list.filter(m => m.type !== 'divider').length;
+  document.getElementById('presentCount').textContent = list.filter(m => m.type !== 'divider' && m.present !== false).length;
 
   wrap.innerHTML = '';
   list.forEach((m, idx) => {
     const row = document.createElement('div');
-    row.className = 'roster-row';
     row.draggable = true;
     row.dataset.id = m.id;
-    row.innerHTML =
-      '<span class="drag" title="拖曳調整順序">⠿</span>' +
-      '<span class="ord">' + (idx+1) + '</span>' +
-      '<label class="present"><input type="checkbox" ' + (m.present !== false ? 'checked' : '') + '><span>出場</span></label>' +
-      '<span class="rname">' + escapeHtml(m.name || '(未命名)') + '</span>' +
-      '<span class="rspec">' + escapeHtml(m.specialty || '') + '</span>' +
-      '<span class="ract">' +
-        '<button data-act="up" title="上移">↑</button>' +
-        '<button data-act="down" title="下移">↓</button>' +
-        '<button data-act="edit">編輯</button>' +
-        '<button data-act="del" class="del">刪除</button>' +
-      '</span>';
+
+    if (m.type === 'divider'){
+      row.className = 'roster-row divider-row';
+      row.innerHTML =
+        '<span class="drag" title="拖曳調整順序">⠿</span>' +
+        '<span class="ord">' + (idx+1) + '</span>' +
+        '<label class="present"><input type="checkbox" ' + (m.present !== false ? 'checked' : '') + '><span>放入</span></label>' +
+        '<span class="dv-tag">產業鏈分隔頁</span>' +
+        '<input class="dv-title-input" placeholder="輸入產業鏈名稱，例：品牌造夢者產業鏈" value="' + escapeHtml(m.title || '') + '">' +
+        '<span class="ract">' +
+          '<button data-act="up" title="上移">↑</button>' +
+          '<button data-act="down" title="下移">↓</button>' +
+          '<button data-act="del" class="del">刪除</button>' +
+        '</span>';
+      row.querySelector('.dv-title-input').addEventListener('change', e => {
+        const item = Store.getById(m.id); if (item){ item.title = e.target.value; Store.upsert(item); }
+      });
+    } else {
+      row.className = 'roster-row';
+      row.innerHTML =
+        '<span class="drag" title="拖曳調整順序">⠿</span>' +
+        '<span class="ord">' + (idx+1) + '</span>' +
+        '<label class="present"><input type="checkbox" ' + (m.present !== false ? 'checked' : '') + '><span>出場</span></label>' +
+        '<span class="rname">' + escapeHtml(m.name || '(未命名)') + '</span>' +
+        '<span class="rspec">' + escapeHtml(m.specialty || '') + '</span>' +
+        '<span class="ract">' +
+          '<button data-act="up" title="上移">↑</button>' +
+          '<button data-act="down" title="下移">↓</button>' +
+          '<button data-act="edit">編輯</button>' +
+          '<button data-act="del" class="del">刪除</button>' +
+        '</span>';
+      row.querySelector('[data-act=edit]').addEventListener('click', () => { loadMemberIntoEditor(Store.getById(m.id)); showView('editor'); });
+    }
 
     row.querySelector('.present input').addEventListener('change', e => Store.setPresent(m.id, e.target.checked));
     row.querySelector('[data-act=up]').addEventListener('click', () => moveMember(m.id, -1));
     row.querySelector('[data-act=down]').addEventListener('click', () => moveMember(m.id, +1));
-    row.querySelector('[data-act=edit]').addEventListener('click', () => { loadMemberIntoEditor(Store.getById(m.id)); showView('editor'); });
     row.querySelector('[data-act=del]').addEventListener('click', () => {
-      if (confirm('確定刪除「' + (m.name || '此會員') + '」？')) Store.remove(m.id);
+      const label = m.type === 'divider' ? ('分隔頁「' + (m.title || '') + '」') : ('「' + (m.name || '此會員') + '」');
+      if (confirm('確定刪除' + label + '？')) Store.remove(m.id);
     });
 
     row.addEventListener('dragstart', () => { dragId = m.id; row.classList.add('dragging'); });
@@ -125,27 +145,27 @@ async function generatePPT(){
   pptx.defineLayout({ name:'W16x9', width:13.333, height:7.5 });
   pptx.layout = 'W16x9';
 
-  let prevTeam = null;
-
   try {
     for (let i = 0; i < list.length; i++){
-      // 產業鏈分隔頁：當團隊改變時插入一頁
-      const team = (typeof teamOf === 'function') ? teamOf(list[i].specialty) : '';
-      if (team && team !== prevTeam){
-        document.getElementById('dvTeam').textContent = team;
-        document.getElementById('dvSub').textContent = '產業服務鏈';
+      const item = list[i];
+
+      if (item.type === 'divider'){
+        // 產業鏈分隔頁（使用名冊中自填的名稱）
+        document.getElementById('dvTeam').textContent = item.title || '產業鏈';
+        document.getElementById('dvSub').textContent = item.title ? '' : '產業服務鏈';
         hero.style.display = 'none'; intro.style.display = 'none'; divider.style.display = ''; divider.style.zoom = 1;
         await nextFrame();
         const dc = await html2canvas(divider, { scale:2, useCORS:true, backgroundColor:'#ffffff' });
         pptx.addSlide().addImage({ data: dc.toDataURL('image/png'), x:0, y:0, w:13.333, h:7.5 });
         divider.style.display = 'none';
-        prevTeam = team;
+        setProgress(overlay, i+1, list.length);
+        continue;
       }
 
-      loadMemberIntoEditor(list[i]);
+      loadMemberIntoEditor(item);
       await nextFrame();
 
-      hero.style.display = ''; intro.style.display = 'none'; hero.style.zoom = 1;
+      hero.style.display = ''; intro.style.display = 'none'; divider.style.display = 'none'; hero.style.zoom = 1;
       let c = await html2canvas(hero, { scale:2, useCORS:true, backgroundColor:'#ffffff' });
       pptx.addSlide().addImage({ data: c.toDataURL('image/png'), x:0, y:0, w:13.333, h:7.5 });
 
@@ -219,6 +239,12 @@ function buildNewMember(){
 (function wireRoster(){
   const nb = document.getElementById('newMemberBtn');
   if (nb) nb.addEventListener('click', openAddMember);
+
+  const nd = document.getElementById('newDividerBtn');
+  if (nd) nd.addEventListener('click', async () => {
+    await Store.upsert(blankDivider());
+    if (typeof renderRoster === 'function') renderRoster();
+  });
 
   document.getElementById('addClose').addEventListener('click', closeAddMember);
   document.getElementById('addCancel').addEventListener('click', closeAddMember);
