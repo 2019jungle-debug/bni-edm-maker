@@ -98,6 +98,19 @@
   .hero-info .hSpec{display:inline-block;font-size:18px;font-weight:700;color:#fff;background:var(--red);padding:4px 14px;border-radius:20px;margin-top:4px;}
   .hero-info .hSlogan{font-size:26px;font-weight:700;color:var(--red-dark);margin-top:22px;line-height:1.35;}
   .hero-foot{position:absolute;bottom:0;left:0;right:0;height:34px;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;letter-spacing:2px;z-index:6;}
+  .hero-logo{position:absolute;top:150px;left:56px;width:150px;height:70px;z-index:6;}
+  .hero-logo img{width:100%;height:100%;object-fit:contain;display:block;}
+  .hero-logo.empty{display:none;}
+  .hero-info .hero-partners{font-size:16px;color:#444;margin-top:16px;font-weight:600;}
+  .hero-info .hero-partners:empty{display:none;}
+  .hero-info .hero-partners::before{content:"合作對象｜";color:var(--gold);font-weight:800;}
+  .hero-product{position:absolute;right:44px;bottom:52px;width:150px;height:150px;z-index:6;border-radius:10px;overflow:hidden;border:3px solid var(--gold);box-shadow:0 6px 18px rgba(0,0,0,.2);}
+  .hero-product img{width:100%;height:100%;object-fit:cover;display:block;}
+  .hero-product.empty{display:none;}
+  /* 介紹頁：25秒輔助圖鋪滿 */
+  .intro-img{position:absolute;inset:0;z-index:10;}
+  .intro-img img{width:100%;height:100%;object-fit:contain;background:#111;display:block;}
+  .intro-img.empty{display:none;}
 
   /* ---------- INTRO 16:9 (960x540) ---------- */
   #intro{width:960px;height:540px;background:#fff;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18);transform-origin:top center;}
@@ -451,7 +464,22 @@
     <div class="field"><label>備註二</label><input id="evNote2" type="text" value="入席費 NT.800 元 / 請準備名片50張"></div>
     <div class="field"><label>地點</label><input id="evPlace" type="text" value="高雄福華飯店7F金龍廳"></div>
 
-    <h2 style="margin-top:24px;">⑥ 宣傳文（依上方資料自動生成）</h2>
+    <h2 style="margin-top:24px;">⑥ 形象頁／介紹頁素材</h2>
+    <div class="field">
+      <label>公司 Logo（形象頁用，建議去背 PNG）</label>
+      <div class="photo-row"><img id="logoThumb" class="thumb" alt=""><input type="file" id="logoUpload" accept="image/*"><button type="button" id="logoRemove" class="btn-remove">移除</button></div>
+    </div>
+    <div class="field">
+      <label>產品／服務形象照（形象頁用，方形最佳）</label>
+      <div class="photo-row"><img id="productThumb" class="thumb" alt=""><input type="file" id="productUpload" accept="image/*"><button type="button" id="productRemove" class="btn-remove">移除</button></div>
+    </div>
+    <div class="field">
+      <label>介紹頁圖片（25 秒輔助用）</label>
+      <div class="photo-row"><img id="introThumb" class="thumb" alt=""><input type="file" id="introUpload" accept="image/*"><button type="button" id="introRemove" class="btn-remove">移除</button></div>
+      <div class="hint">請自行設計已合併好的圖片後上傳；若有影片要播放，請另外傳到雲端，影片檔請勿超過 25 秒。</div>
+    </div>
+
+    <h2 style="margin-top:24px;">⑦ 宣傳文（依上方資料自動生成）</h2>
     <div class="actions" style="margin-bottom:8px;">
       <button class="btn btn-primary" id="genPromoBtn" type="button">✨ 生成宣傳文</button>
       <button class="btn btn-ghost" id="copyPromoBtn" type="button">📋 複製</button>
@@ -584,18 +612,22 @@
           <div class="fd">富鼎分會<small>FU DING</small></div>
           <div class="bni">BNI 鈦金名人堂</div>
         </div>
+        <div class="hero-logo empty" id="heroLogo"></div>
         <div class="hero-photo empty" id="heroPhoto"><span>形象照</span></div>
         <div class="hero-info">
           <div class="hRole" id="hRole">職涯顧問</div>
           <div class="hName" id="hName">歐陽仁傑</div>
           <div class="hSpec" id="hSpec">職涯顧問</div>
           <div class="hSlogan" id="hSlogan">幫您找到職業生涯的心之所嚮</div>
+          <div class="hero-partners" id="hPartners"></div>
         </div>
+        <div class="hero-product empty" id="heroProduct"><span>產品照</span></div>
         <div class="hero-foot">富鼎富鼎 · 又富又鼎 · 團隊上百人 · 引薦破百倍</div>
       </div>
 
       <!-- ---------- 介紹頁 16:9 ---------- -->
       <div id="intro" class="canvas" style="display:none;">
+        <div class="intro-img empty" id="introImgLayer"><span>上傳 25 秒輔助圖片（將鋪滿整頁）</span></div>
         <div class="intro-head">
           <div class="intro-photo empty" id="introPhoto"><span>照片</span></div>
           <div class="intro-headtext">
@@ -695,11 +727,11 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=16"></script>
-<script src="specialties.js?v=16"></script>
-<script src="members.js?v=16"></script>
-<script src="store.js?v=16"></script>
-<script src="app.js?v=16"></script>
-<script src="roster.js?v=16"></script>
+<script src="firebase-config.js?v=17"></script>
+<script src="specialties.js?v=17"></script>
+<script src="members.js?v=17"></script>
+<script src="store.js?v=17"></script>
+<script src="app.js?v=17"></script>
+<script src="roster.js?v=17"></script>
 </body>
 </html>

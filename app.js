@@ -148,6 +148,7 @@ function loadMemberIntoEditor(m){
   photoDataUrl = m.photo || '';
   const thumb = document.getElementById('thumb');
   if (photoDataUrl) thumb.src = photoDataUrl; else thumb.removeAttribute('src');
+  setExtraImg('logo', m.logo); setExtraImg('product', m.product); setExtraImg('introImg', m.introImg);
   updateEditingBanner();
   render();
 }
@@ -173,14 +174,15 @@ function readEditorAsMember(){
     evDate: val('evDate'), evTime: val('evTime'),
     evNote1: val('evNote1'), evNote2: val('evNote2'), evPlace: val('evPlace'),
     show: readShowFlags(),
-    photo: photoDataUrl
+    photo: photoDataUrl,
+    logo: logoDataUrl, product: productDataUrl, introImg: introImgDataUrl
   };
 }
 
 function blankMember(){
   return Object.assign({ id:null, name:'', role:'', specialty:'', sloganMain:'', sloganSub:'', usp:'',
            partners:['','',''], general:['','',''], ideal:['','',''], dream:['','',''],
-           clients:['','',''], photo:'', present:true,
+           clients:['','',''], photo:'', logo:'', product:'', introImg:'', present:true,
            show:{ partners:true, general:true, ideal:true, dream:true, clients:true, usp:true } }, EV_DEFAULT);
 }
 
@@ -307,9 +309,13 @@ function render(){
   document.getElementById('hRole').textContent = val('role') || '職稱';
   document.getElementById('hName').textContent = val('name') || '姓名';
   document.getElementById('hSpec').textContent = val('specialty') || '專業別';
-  document.getElementById('hSlogan').textContent = val('sloganSub') || val('sloganMain') || '您的口號標語';
+  document.getElementById('hSlogan').textContent = val('usp') || val('sloganSub') || val('sloganMain') || '您的獨特銷售主張';
+  document.getElementById('hPartners').textContent = readTriple('partners').filter(Boolean).join('、');
+  paintImg('heroLogo', logoDataUrl);
+  paintImg('heroProduct', productDataUrl);
 
   // ---- 介紹頁 16:9 ----
+  paintImg('introImgLayer', introImgDataUrl);
   document.getElementById('iName').textContent = val('name') || '姓名';
   document.getElementById('iSpec').textContent = val('specialty') || '專業別';
   fillList('iPartners', readTriple('partners'));
@@ -446,7 +452,10 @@ function collectData(){
     dream:    readTriple('dream'),
     clients:  readTriple('clients'),
     show:     readShowFlags(),
-    photo:    photoDataUrl
+    photo:    photoDataUrl,
+    logo:     logoDataUrl,
+    product:  productDataUrl,
+    introImg: introImgDataUrl
   };
 }
 
@@ -484,7 +493,16 @@ function loadData(){
     const t = document.getElementById('thumb');
     if (t) t.src = d.photo;
   }
+  setExtraImg('logo', d.logo); setExtraImg('product', d.product); setExtraImg('introImg', d.introImg);
   return true;
+}
+
+// 還原額外素材圖到變數與縮圖
+function setExtraImg(key, url){
+  const cfg = EXTRA_IMGS.find(c => c.key === key); if (!cfg) return;
+  cfg.set(url || '');
+  const th = document.getElementById(cfg.thumb);
+  if (th){ if (url) th.src = url; else th.removeAttribute('src'); }
 }
 
 // 套用各類顯示勾選（未指定則預設顯示）
@@ -554,6 +572,53 @@ document.getElementById('removePhoto').addEventListener('click', () => {
   render();
   saveData();
 });
+
+/* ---- 額外素材圖：公司 Logo / 產品方形照 / 介紹頁圖 ---- */
+let logoDataUrl = '', productDataUrl = '', introImgDataUrl = '';
+const EXTRA_IMGS = [
+  { key:'logo',     get:()=>logoDataUrl,     set:v=>logoDataUrl=v,     input:'logoUpload',    thumb:'logoThumb',    remove:'logoRemove',    maxW:400,  fmt:'image/png'  },
+  { key:'product',  get:()=>productDataUrl,  set:v=>productDataUrl=v,  input:'productUpload', thumb:'productThumb', remove:'productRemove', maxW:600,  fmt:'image/jpeg' },
+  { key:'introImg', get:()=>introImgDataUrl, set:v=>introImgDataUrl=v, input:'introUpload',   thumb:'introThumb',   remove:'introRemove',   maxW:1280, fmt:'image/jpeg' }
+];
+function compressImageAs(dataUrl, maxW, fmt, quality){
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      if (w > maxW){ h = Math.round(h * maxW / w); w = maxW; }
+      const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+      cv.getContext('2d').drawImage(img, 0, 0, w, h);
+      try { resolve(cv.toDataURL(fmt, quality)); } catch(e){ resolve(dataUrl); }
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+}
+EXTRA_IMGS.forEach(cfg => {
+  const inp = document.getElementById(cfg.input);
+  const th = document.getElementById(cfg.thumb);
+  const rm = document.getElementById(cfg.remove);
+  if (inp) inp.addEventListener('change', e => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = async ev => {
+      cfg.set(await compressImageAs(ev.target.result, cfg.maxW, cfg.fmt, 0.85));
+      if (th) th.src = cfg.get();
+      render(); saveData();
+    };
+    r.readAsDataURL(f);
+  });
+  if (rm) rm.addEventListener('click', () => {
+    cfg.set(''); if (inp) inp.value=''; if (th) th.removeAttribute('src');
+    render(); saveData();
+  });
+});
+// 把某 dataUrl 套進畫布元素（有圖顯示 img，無圖 empty）
+function paintImg(id, url){
+  const el = document.getElementById(id); if (!el) return;
+  if (url){ el.classList.remove('empty'); el.innerHTML = '<img src="' + url + '" alt="">'; }
+  else { el.classList.add('empty'); if (id==='introImgLayer') el.innerHTML='<span>上傳 25 秒輔助圖片（將鋪滿整頁）</span>'; else el.innerHTML=''; }
+}
 
 /* ============ 版面切換 / 縮放 / 下載 ============ */
 // 6 個主題都用同一個 #edm 元素，切換 theme class；hero/intro 為獨立 16:9 元素
@@ -639,6 +704,7 @@ document.getElementById('reset').addEventListener('click', () => {
   document.getElementById('specialtySelect').value = '';
   photoDataUrl = '';
   document.getElementById('thumb').removeAttribute('src');
+  setExtraImg('logo',''); setExtraImg('product',''); setExtraImg('introImg','');
   try { localStorage.removeItem(STORE_KEY); } catch(e){}
   render();
 });
