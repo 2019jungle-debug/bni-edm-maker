@@ -194,19 +194,21 @@
   .edm-notes .note{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);}
   .edm-notes .ni svg{width:15px;height:15px;fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round;flex:0 0 auto;}
   .ref-row.hide,.ref-item.hide{display:none !important;}
+  /* 各主題素材 SVG：依主題顯示 */
+  .edm-deco .deco{position:absolute;inset:0;width:100%;height:100%;display:none;z-index:0;}
+  .theme-black .deco-black,.theme-blue .deco-blue,.theme-green .deco-green,
+  .theme-red .deco-red,.theme-ai .deco-ai,.theme-minimal .deco-minimal{display:block;}
 
   /* Theme 01 尊爵黑金 */
   .theme-black{--bg:#0f0f10;--text:#e6dabf;--muted:#c6b489;--brand:#e8d4a2;--accent:#d9b56d;--name:#ffffff;--slogan:#f3e9cf;--date:#d9b56d;--icon-bg:rgba(217,181,109,.16);--icon-fg:#d9b56d;--line:rgba(217,181,109,.4);--photo-empty:rgba(255,255,255,.06);--photo-radius:6px;
     background:radial-gradient(120% 55% at 52% -5%,#3a2f1c 0%,#171208 45%,#0c0a06 100%);}
-  .theme-black .edm-deco{background:radial-gradient(ellipse 55% 38% at 55% 6%,rgba(255,214,130,.26),transparent 60%);}
-  .theme-black .edm-deco::after{content:"";position:absolute;inset:14px;border:1px solid rgba(217,181,109,.35);border-radius:6px;}
+  .theme-black .edm-deco::after{content:"";position:absolute;inset:14px;border:1px solid rgba(217,181,109,.35);border-radius:6px;z-index:1;}
   .theme-black .edm-name{text-shadow:0 2px 16px rgba(0,0,0,.6);}
   .theme-black .edm-photo{box-shadow:-24px 0 50px rgba(0,0,0,.5);}
 
   /* Theme 02 深藍專業 */
   .theme-blue{--bg:#f5f7fb;--text:#2a3a5a;--muted:#5a6a8a;--brand:#173b72;--accent:#c19b53;--name:#173b72;--slogan:#173b72;--date:#173b72;--icon-bg:#173b72;--icon-fg:#fff;--line:#cdd6e6;--photo-empty:#e7ecf5;}
-  .theme-blue .edm-deco::before{content:"";position:absolute;top:0;right:0;width:300px;height:330px;background:linear-gradient(135deg,#173b72,#112a52);clip-path:polygon(35% 0,100% 0,100% 72%);}
-  .theme-blue .edm-deco::after{content:"";position:absolute;left:0;right:0;bottom:0;height:96px;background:#112a52;}
+  .theme-blue .edm-deco::after{content:"";position:absolute;left:0;right:0;bottom:0;height:96px;background:#112a52;z-index:1;}
   .theme-blue .edm-notes{bottom:22px;left:34px;right:34px;flex-direction:row;justify-content:space-between;gap:10px;}
   .theme-blue .edm-notes .note{color:#dbe4f5;flex:1;font-size:11px;}
   .theme-blue .edm-notes .ni svg{stroke:#c19b53;}
@@ -215,14 +217,10 @@
   /* Theme 03 自然清新 */
   .theme-green{--bg:#f7f5ee;--text:#3a4a3a;--muted:#6a7a62;--brand:#33472f;--accent:#5a7a4e;--name:#33472f;--slogan:#33472f;--date:#5a7a4e;--icon-bg:#5a7a4e;--icon-fg:#fff;--line:#cdd6c0;--photo-empty:#e6e8d8;--photo-radius:12px;
     background:linear-gradient(160deg,#f7f5ee,#eef0e4);}
-  .theme-green .edm-deco::before{content:"🌿";position:absolute;top:-34px;right:2px;font-size:168px;opacity:.26;filter:saturate(.7);}
-  .theme-green .edm-deco::after{content:"🍃";position:absolute;bottom:36px;left:-22px;font-size:128px;opacity:.2;transform:rotate(24deg);}
 
   /* Theme 04 活力紅動 */
   .theme-red{--bg:#ffffff;--text:#2b2b2b;--muted:#555;--brand:#111;--accent:#c60c30;--name:#1a1a1a;--slogan:#1a1a1a;--date:#c60c30;--icon-bg:#c60c30;--icon-fg:#fff;--line:#e5c9cf;--photo-empty:rgba(0,0,0,.05);--bni-bg:#c60c30;
     background:linear-gradient(160deg,#ffffff,#f3f4f6);}
-  .theme-red .edm-deco::before{content:"";position:absolute;top:-140px;left:-160px;width:460px;height:460px;background:#c60c30;border-radius:50%;clip-path:polygon(0 0,58% 0,0 58%);}
-  .theme-red .edm-deco::after{content:"";position:absolute;top:-118px;left:-140px;width:430px;height:430px;border:3px solid #d4b06a;border-radius:50%;clip-path:polygon(0 0,60% 0,0 60%);opacity:.7;}
 
   /* Theme 05 科技未來 */
   .theme-ai{--bg:#070a24;--text:#dbe6ff;--muted:#9fb3e6;--brand:#8fd0ff;--accent:#34d6ff;--name:#eaf6ff;--slogan:#dbe6ff;--date:#34d6ff;--icon-bg:rgba(52,214,255,.12);--icon-fg:#34d6ff;--line:rgba(109,59,255,.5);--photo-empty:rgba(255,255,255,.06);--photo-radius:8px;
@@ -234,7 +232,6 @@
   /* Theme 06 優雅極簡 */
   .theme-minimal{--bg:#f8f6f1;--text:#4a423a;--muted:#8a7f70;--brand:#6a5c4a;--accent:#9a836e;--name:#5a4e40;--slogan:#4a423a;--date:#9a836e;--icon-bg:transparent;--icon-fg:#9a836e;--line:#d7c6aa;--photo-empty:#efe9df;--bni-bg:#9a836e;
     background:#f8f6f1;}
-  .theme-minimal .edm-deco::before{content:"";position:absolute;top:44px;left:50%;transform:translateX(-50%);width:430px;height:540px;border:1.5px solid #e4dccb;border-radius:220px 220px 0 0;}
   .theme-minimal .edm-refs .ico{border:1.5px solid #d7c6aa;}
 
   /* ---------- 模板〇：經典紅 ---------- */
@@ -493,7 +490,69 @@
     <div class="preview-scale">
       <!-- ========== 共用 EDM（6 主題切換） ========== -->
       <div id="edm" class="canvas tpl theme-black">
-        <div class="edm-deco"></div>
+        <div class="edm-deco">
+          <!-- 01 尊爵黑金：聚光燈 + 金粉 + 金線 -->
+          <svg class="deco deco-black" viewBox="0 0 600 849" preserveAspectRatio="xMidYMid slice">
+            <defs><radialGradient id="bkSpot" cx="52%" cy="2%" r="62%"><stop offset="0" stop-color="#ffe6ad" stop-opacity=".42"/><stop offset="55%" stop-color="#ffe6ad" stop-opacity="0"/></radialGradient></defs>
+            <ellipse cx="312" cy="14" rx="300" ry="240" fill="url(#bkSpot)"/>
+            <polygon points="312,-10 150,470 474,470" fill="url(#bkSpot)" opacity=".7"/>
+            <g fill="#d9b56d"><circle cx="120" cy="200" r="2.6" opacity=".85"/><circle cx="96" cy="286" r="1.8" opacity=".6"/><circle cx="150" cy="360" r="2" opacity=".7"/><circle cx="80" cy="430" r="1.6" opacity=".5"/><circle cx="470" cy="250" r="2.2" opacity=".7"/><circle cx="516" cy="330" r="1.6" opacity=".5"/><circle cx="200" cy="150" r="1.6" opacity=".6"/><circle cx="440" cy="140" r="1.8" opacity=".55"/></g>
+            <path d="M30 726 C160 686 250 770 380 706 C470 662 540 726 578 694" stroke="#d9b56d" stroke-width="1.4" fill="none" opacity=".5"/>
+            <path d="M30 752 C150 720 250 792 392 736" stroke="#d9b56d" stroke-width="1" fill="none" opacity=".3"/>
+          </svg>
+          <!-- 02 深藍專業：幾何 + 金線 + 天際線 -->
+          <svg class="deco deco-blue" viewBox="0 0 600 849" preserveAspectRatio="xMidYMid slice">
+            <polygon points="600,0 600,350 250,0" fill="#173b72"/>
+            <polygon points="600,0 600,300 350,0" fill="#112a52"/>
+            <polygon points="560,0 600,0 600,64" fill="#d4b06a"/>
+            <path d="M300 26 L556 26 M334 60 L556 60 M368 94 L556 94" stroke="#d4b06a" stroke-width="1.6" opacity=".7"/>
+            <g fill="#0b1f40" opacity=".45"><rect x="8" y="700" width="34" height="150"/><rect x="46" y="676" width="26" height="174"/><rect x="76" y="712" width="30" height="138"/><rect x="112" y="690" width="22" height="160"/><rect x="140" y="720" width="34" height="130"/><rect x="180" y="700" width="24" height="150"/><rect x="210" y="684" width="30" height="166"/></g>
+          </svg>
+          <!-- 03 自然清新：水彩 + 尤加利葉 + 金線 -->
+          <svg class="deco deco-green" viewBox="0 0 600 849" preserveAspectRatio="xMidYMid slice">
+            <path d="M600 0 C470 40 430 180 500 300 C560 400 610 360 600 240 Z" fill="#9dbf86" opacity=".2"/>
+            <path d="M0 560 C120 520 200 640 120 760 C60 840 -20 800 0 700 Z" fill="#b9cfa0" opacity=".22"/>
+            <g stroke="#7a9a66" stroke-width="1.4" fill="#93b277" opacity=".85">
+              <path d="M576 22 C544 120 512 210 470 300" fill="none"/>
+              <ellipse cx="560" cy="60" rx="15" ry="8" transform="rotate(38 560 60)"/><ellipse cx="536" cy="106" rx="15" ry="8" transform="rotate(30 536 106)"/><ellipse cx="516" cy="156" rx="14" ry="7.5" transform="rotate(24 516 156)"/><ellipse cx="500" cy="208" rx="13" ry="7" transform="rotate(18 500 208)"/><ellipse cx="588" cy="88" rx="14" ry="7.5" transform="rotate(-40 588 88)"/><ellipse cx="566" cy="134" rx="13" ry="7" transform="rotate(-34 566 134)"/><ellipse cx="548" cy="184" rx="12" ry="6.5" transform="rotate(-28 548 184)"/>
+            </g>
+            <g stroke="#7a9a66" stroke-width="1.2" fill="#a6c088" opacity=".7">
+              <path d="M40 720 C70 640 110 590 150 560" fill="none"/>
+              <ellipse cx="60" cy="690" rx="13" ry="7" transform="rotate(-40 60 690)"/><ellipse cx="86" cy="648" rx="12" ry="6.5" transform="rotate(-46 86 648)"/><ellipse cx="118" cy="608" rx="12" ry="6.5" transform="rotate(-52 118 608)"/>
+            </g>
+            <path d="M470 300 C520 340 560 320 588 356" stroke="#c9a24b" stroke-width="1" fill="none" opacity=".6"/>
+          </svg>
+          <!-- 04 活力紅動：紅色切面 -->
+          <svg class="deco deco-red" viewBox="0 0 600 849" preserveAspectRatio="xMidYMid slice">
+            <polygon points="0,0 280,0 0,240" fill="#c60c30"/>
+            <polygon points="0,0 190,0 0,150" fill="#8b1028"/>
+            <polygon points="0,150 130,0 60,0 0,70" fill="#d4b06a" opacity=".55"/>
+            <polygon points="600,849 600,690 470,849" fill="#c60c30"/>
+            <polygon points="600,849 600,760 545,849" fill="#d4b06a" opacity=".6"/>
+            <path d="M300 26 L470 26" stroke="#c60c30" stroke-width="2" opacity=".25"/>
+          </svg>
+          <!-- 05 科技未來：光環 + 電路 + 粒子 -->
+          <svg class="deco deco-ai" viewBox="0 0 600 849" preserveAspectRatio="xMidYMid slice">
+            <circle cx="430" cy="235" r="185" fill="none" stroke="#34d6ff" stroke-width="1.5" opacity=".38"/>
+            <circle cx="430" cy="235" r="150" fill="none" stroke="#6d3bff" stroke-width="1" opacity=".3"/>
+            <circle cx="430" cy="235" r="215" fill="none" stroke="#34d6ff" stroke-width=".8" opacity=".18" stroke-dasharray="4 8"/>
+            <g stroke="#34d6ff" stroke-width="1" fill="none" opacity=".4">
+              <path d="M36 520 H120 V566 H196"/><path d="M36 600 H92 V648 H150"/><path d="M470 470 H540 V520"/>
+            </g>
+            <g fill="#34d6ff"><circle cx="36" cy="520" r="3"/><circle cx="196" cy="566" r="3"/><circle cx="36" cy="600" r="3"/><circle cx="150" cy="648" r="3"/><circle cx="540" cy="520" r="3"/></g>
+            <g fill="#8fd0ff"><circle cx="120" cy="180" r="2" opacity=".8"/><circle cx="90" cy="300" r="1.6" opacity=".6"/><circle cx="500" cy="120" r="2" opacity=".7"/><circle cx="560" cy="420" r="1.6" opacity=".5"/><circle cx="70" cy="440" r="1.6" opacity=".6"/></g>
+          </svg>
+          <!-- 06 優雅極簡：拱形 + 芒草 -->
+          <svg class="deco deco-minimal" viewBox="0 0 600 849" preserveAspectRatio="xMidYMid slice">
+            <path d="M96 600 L96 300 Q96 64 300 64 Q504 64 504 300 L504 600" fill="none" stroke="#e4dccb" stroke-width="1.6"/>
+            <g stroke="#cbb89a" stroke-width="1.2" fill="none" opacity=".8">
+              <path d="M516 849 Q520 700 536 612"/><path d="M540 849 Q548 710 560 636"/><path d="M492 849 Q500 720 516 660"/>
+              <path d="M536 612 Q524 600 520 584 M536 612 Q548 600 552 584 M536 612 Q536 596 536 580 M536 612 Q528 604 520 596 M536 612 Q544 604 552 596"/>
+              <path d="M560 636 Q550 624 546 610 M560 636 Q570 624 574 610 M560 636 Q560 620 560 606"/>
+              <path d="M516 660 Q506 648 502 634 M516 660 Q526 648 530 634 M516 660 Q516 644 516 630"/>
+            </g>
+          </svg>
+        </div>
         <div class="edm-brand">
           <div class="fd">富鼎分會<small>FU DING</small></div>
           <div class="bni">BNI 鈦金名人堂</div>
@@ -636,11 +695,11 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=15"></script>
-<script src="specialties.js?v=15"></script>
-<script src="members.js?v=15"></script>
-<script src="store.js?v=15"></script>
-<script src="app.js?v=15"></script>
-<script src="roster.js?v=15"></script>
+<script src="firebase-config.js?v=16"></script>
+<script src="specialties.js?v=16"></script>
+<script src="members.js?v=16"></script>
+<script src="store.js?v=16"></script>
+<script src="app.js?v=16"></script>
+<script src="roster.js?v=16"></script>
 </body>
 </html>
