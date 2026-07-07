@@ -242,8 +242,19 @@ function buildNewMember(){
 
   const nd = document.getElementById('newDividerBtn');
   if (nd) nd.addEventListener('click', async () => {
-    await Store.upsert(blankDivider());
+    // 排到最前面，讓使用者立刻看到（再自行拖到想要的位置）
+    const minOrder = Store.getAllSorted().reduce((mn, x) => Math.min(mn, x.order != null ? x.order : 0), 0);
+    const d = blankDivider();
+    d.order = minOrder - 1;
+    await Store.upsert(d);
     if (typeof renderRoster === 'function') renderRoster();
+    const listEl = document.getElementById('rosterList');
+    if (listEl) listEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // 聚焦到新分隔頁的名稱輸入框
+    setTimeout(() => {
+      const first = document.querySelector('.divider-row .dv-title-input');
+      if (first) first.focus();
+    }, 300);
   });
 
   document.getElementById('addClose').addEventListener('click', closeAddMember);
