@@ -13,9 +13,23 @@ function nextFrame(){ return new Promise(r => setTimeout(r, 30)); }
 
 let dragId = null;
 
+// 產業鏈名稱下拉清單（用富鼎既有團隊名，仍可自行輸入）
+function buildChainDatalist(){
+  const dl = document.getElementById('chainDatalist');
+  if (!dl || dl.dataset.filled) return;
+  const seen = new Set();
+  (window.BNI_SPECIALTIES || []).forEach(g => {
+    [g.group, /鏈$/.test(g.group) ? null : g.group + '產業鏈'].forEach(v => {
+      if (v && !seen.has(v)){ seen.add(v); const o = document.createElement('option'); o.value = v; dl.appendChild(o); }
+    });
+  });
+  dl.dataset.filled = '1';
+}
+
 function renderRoster(){
   const wrap = document.getElementById('rosterList');
   if (!wrap) return;
+  buildChainDatalist();
   const list = Store.getAllSorted();
   document.getElementById('rosterCount').textContent = list.filter(m => m.type !== 'divider').length;
   document.getElementById('presentCount').textContent = list.filter(m => m.type !== 'divider' && m.present !== false).length;
@@ -33,7 +47,7 @@ function renderRoster(){
         '<span class="ord">' + (idx+1) + '</span>' +
         '<label class="present"><input type="checkbox" ' + (m.present !== false ? 'checked' : '') + '><span>放入</span></label>' +
         '<span class="dv-tag">產業鏈分隔頁</span>' +
-        '<input class="dv-title-input" placeholder="輸入產業鏈名稱，例：品牌造夢者產業鏈" value="' + escapeHtml(m.title || '') + '">' +
+        '<input class="dv-title-input" list="chainDatalist" placeholder="選擇或輸入產業鏈名稱，例：品牌造夢者產業鏈" value="' + escapeHtml(m.title || '') + '">' +
         '<span class="ract">' +
           '<button data-act="up" title="上移">↑</button>' +
           '<button data-act="down" title="下移">↓</button>' +
