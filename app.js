@@ -144,6 +144,7 @@ function loadMemberIntoEditor(m){
   document.getElementById('evNote2').value = m.evNote2 != null ? m.evNote2 : EV_DEFAULT.evNote2;
   document.getElementById('evPlace').value = m.evPlace != null ? m.evPlace : EV_DEFAULT.evPlace;
   document.getElementById('photoPos').value = (m.photoPos != null ? m.photoPos : 18);
+  document.getElementById('photoPosX').value = (m.photoPosX != null ? m.photoPosX : 50);
   updateDayDisplay();
   applyShowFlags(m.show);
   photoDataUrl = m.photo || '';
@@ -176,6 +177,7 @@ function readEditorAsMember(){
     evNote1: val('evNote1'), evNote2: val('evNote2'), evPlace: val('evPlace'),
     show: readShowFlags(),
     photoPos: document.getElementById('photoPos').value,
+    photoPosX: document.getElementById('photoPosX').value,
     photo: photoDataUrl,
     logo: logoDataUrl, product: productDataUrl, introImg: introImgDataUrl
   };
@@ -184,7 +186,7 @@ function readEditorAsMember(){
 function blankMember(){
   return Object.assign({ id:null, name:'', role:'', specialty:'', sloganMain:'', sloganSub:'', usp:'',
            partners:['','',''], general:['','',''], ideal:['','',''], dream:['','',''],
-           clients:['','',''], photo:'', logo:'', product:'', introImg:'', photoPos:18, present:true,
+           clients:['','',''], photo:'', logo:'', product:'', introImg:'', photoPos:18, photoPosX:50, present:true,
            show:{ partners:true, general:true, ideal:true, dream:true, clients:true, usp:true } }, EV_DEFAULT);
 }
 
@@ -303,10 +305,12 @@ function render(){
   const d = currentData();
   paintTemplate(document.getElementById('edm'), d);
 
-  // 照片焦點（上下）套用到各版面
+  // 照片焦點（上下 / 左右）套用到各版面
   const pp = (document.getElementById('photoPos') || {}).value || '18';
-  ['edm','hero','intro'].forEach(id => { const e = document.getElementById(id); if (e) e.style.setProperty('--pp', pp + '%'); });
+  const ppx = (document.getElementById('photoPosX') || {}).value || '50';
+  ['edm','hero','intro'].forEach(id => { const e = document.getElementById(id); if (e){ e.style.setProperty('--pp', pp + '%'); e.style.setProperty('--ppx', ppx + '%'); } });
   const ppv = document.getElementById('photoPosVal'); if (ppv) ppv.textContent = pp + '%';
+  const ppxv = document.getElementById('photoPosXVal'); if (ppxv) ppxv.textContent = ppx + '%';
 
   // 16:9 版面照片
   setPhoto('heroPhoto', '形象照');
@@ -438,8 +442,9 @@ function updateDayDisplay(){
   .forEach(id => document.getElementById(id).addEventListener('input', render));
 // 日期：選日曆 → 自動帶出星期
 document.getElementById('evDate').addEventListener('change', () => { updateDayDisplay(); render(); scheduleSave(); });
-// 照片焦點滑桿
+// 照片焦點滑桿（上下 / 左右）
 document.getElementById('photoPos').addEventListener('input', () => { render(); scheduleSave(); });
+document.getElementById('photoPosX').addEventListener('input', () => { render(); scheduleSave(); });
 // 各類「顯示」勾選
 document.querySelectorAll('.showFlag').forEach(cb =>
   cb.addEventListener('change', () => { render(); scheduleSave(); }));
@@ -448,7 +453,7 @@ document.querySelectorAll('.showFlag').forEach(cb =>
 const STORE_KEY = 'bni_edm_data_v1';
 
 const SINGLE_FIELDS = ['name','role','specialty','sloganMain','sloganSub','usp',
-                       'evDate','evTime','evNote1','evNote2','evPlace','photoPos'];
+                       'evDate','evTime','evNote1','evNote2','evPlace','photoPos','photoPosX'];
 
 function collectData(){
   const single = {};
@@ -573,7 +578,7 @@ document.getElementById('photo').addEventListener('change', e => {
     photoDataUrl = await compressImage(ev.target.result, 640, 0.82);
     document.getElementById('thumb').src = photoDataUrl;
     render();
-    saveData();
+    saveData(); autoSaveMember();
   };
   r.readAsDataURL(f);
 });
@@ -590,10 +595,19 @@ document.getElementById('removePhoto').addEventListener('click', () => {
 /* ---- 額外素材圖：公司 Logo / 產品方形照 / 介紹頁圖 ---- */
 let logoDataUrl = '', productDataUrl = '', introImgDataUrl = '';
 const EXTRA_IMGS = [
-  { key:'logo',     get:()=>logoDataUrl,     set:v=>logoDataUrl=v,     input:'logoUpload',    thumb:'logoThumb',    remove:'logoRemove',    maxW:400,  fmt:'image/png'  },
-  { key:'product',  get:()=>productDataUrl,  set:v=>productDataUrl=v,  input:'productUpload', thumb:'productThumb', remove:'productRemove', maxW:600,  fmt:'image/jpeg' },
-  { key:'introImg', get:()=>introImgDataUrl, set:v=>introImgDataUrl=v, input:'introUpload',   thumb:'introThumb',   remove:'introRemove',   maxW:1280, fmt:'image/jpeg' }
+  { key:'logo',     get:()=>logoDataUrl,     set:v=>logoDataUrl=v,     input:'logoUpload',    thumb:'logoThumb',    remove:'logoRemove',    maxW:340,  fmt:'image/png'  },
+  { key:'product',  get:()=>productDataUrl,  set:v=>productDataUrl=v,  input:'productUpload', thumb:'productThumb', remove:'productRemove', maxW:500,  fmt:'image/jpeg' },
+  { key:'introImg', get:()=>introImgDataUrl, set:v=>introImgDataUrl=v, input:'introUpload',   thumb:'introThumb',   remove:'introRemove',   maxW:1100, fmt:'image/jpeg' }
 ];
+
+// 編輯名冊會員時，自動把目前內容存回雲端（避免圖片沒存就不見）
+async function autoSaveMember(){
+  if (!currentMember || !currentMember.id) return false;
+  const m = readEditorAsMember();
+  if (!m.name.trim()) return false;
+  try { await Store.upsert(m); currentMember = Store.getById(m.id) || m; flashSaved('☁ 已存回雲端'); return true; }
+  catch(e){ flashSaved('⚠ 內容太大未能存雲端，請減小圖片'); return false; }
+}
 function compressImageAs(dataUrl, maxW, fmt, quality){
   return new Promise(resolve => {
     const img = new Image();
@@ -618,13 +632,13 @@ EXTRA_IMGS.forEach(cfg => {
     r.onload = async ev => {
       cfg.set(await compressImageAs(ev.target.result, cfg.maxW, cfg.fmt, 0.85));
       if (th) th.src = cfg.get();
-      render(); saveData();
+      render(); saveData(); autoSaveMember();
     };
     r.readAsDataURL(f);
   });
   if (rm) rm.addEventListener('click', () => {
     cfg.set(''); if (inp) inp.value=''; if (th) th.removeAttribute('src');
-    render(); saveData();
+    render(); saveData(); autoSaveMember();
   });
 });
 // 把某 dataUrl 套進畫布元素（有圖顯示 img，無圖 empty）

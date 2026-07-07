@@ -90,7 +90,7 @@
   .hero-brand .fd small{display:block;font-size:12px;letter-spacing:5px;opacity:.8;margin-top:4px;}
   .hero-brand .bni{margin-top:8px;font-size:12px;background:var(--red);color:#fff;display:inline-block;padding:3px 10px;border-radius:3px;font-weight:700;}
   .hero-photo{position:absolute;top:60px;left:56px;width:300px;height:390px;z-index:4;border-radius:8px;overflow:hidden;border:4px solid rgba(255,255,255,.6);background:#ccc;}
-  .hero-photo img{width:100%;height:100%;object-fit:cover;object-position:center var(--pp,18%);display:block;}
+  .hero-photo img{width:100%;height:100%;object-fit:cover;object-position:var(--ppx,50%) var(--pp,18%);display:block;}
   .hero-photo.empty{display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;background:rgba(255,255,255,.18);}
   .hero-info{position:absolute;left:470px;right:44px;top:150px;z-index:6;}
   .hero-info .hRole{font-size:22px;font-weight:700;color:var(--gold);}
@@ -98,7 +98,8 @@
   .hero-info .hSpec{display:inline-block;font-size:18px;font-weight:700;color:#fff;background:var(--red);padding:4px 14px;border-radius:20px;margin-top:4px;}
   .hero-info .hSlogan{font-size:26px;font-weight:700;color:var(--red-dark);margin-top:22px;line-height:1.35;}
   .hero-foot{position:absolute;bottom:0;left:0;right:0;height:34px;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;letter-spacing:2px;z-index:6;}
-  .hero-logo{position:absolute;top:150px;left:56px;width:150px;height:70px;z-index:6;}
+  .hero-nameRow{display:flex;align-items:center;gap:18px;}
+  .hero-logo{width:96px;height:72px;flex:0 0 auto;}
   .hero-logo img{width:100%;height:100%;object-fit:contain;display:block;}
   .hero-logo.empty{display:none;}
   .hero-info .hero-partners{font-size:16px;color:#444;margin-top:16px;font-weight:600;}
@@ -116,7 +117,7 @@
   #intro{width:960px;height:540px;background:#fff;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18);transform-origin:top center;}
   .intro-head{position:absolute;top:0;left:0;right:0;height:118px;background:linear-gradient(90deg,var(--red-dark),var(--red));display:flex;align-items:center;padding:0 36px;z-index:5;}
   .intro-photo{width:82px;height:82px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,.7);background:#ccc;flex:0 0 auto;}
-  .intro-photo img{width:100%;height:100%;object-fit:cover;object-position:center var(--pp,18%);display:block;}
+  .intro-photo img{width:100%;height:100%;object-fit:cover;object-position:var(--ppx,50%) var(--pp,18%);display:block;}
   .intro-photo.empty{display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;background:rgba(255,255,255,.2);}
   .intro-headtext{margin-left:20px;color:#fff;}
   .intro-headtext .iName{font-size:40px;font-weight:800;line-height:1;}
@@ -186,7 +187,7 @@
   .edm-brand .fd small{display:block;font-family:"Montserrat",sans-serif;font-size:10px;letter-spacing:6px;opacity:.85;margin-top:4px;font-weight:600;}
   .edm-brand .bni{margin-top:8px;font-size:10.5px;background:var(--bni-bg,#c60c30);color:#fff;display:inline-block;padding:2px 8px;border-radius:3px;font-weight:700;letter-spacing:1px;}
   .edm-photo{position:absolute;top:34px;right:16px;width:266px;height:566px;z-index:2;overflow:hidden;border-radius:var(--photo-radius,4px);}
-  .edm-photo img{width:100%;height:100%;object-fit:cover;object-position:center var(--pp,18%);display:block;}
+  .edm-photo img{width:100%;height:100%;object-fit:cover;object-position:var(--ppx,50%) var(--pp,18%);display:block;}
   .edm-photo.empty{display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--muted);background:var(--photo-empty,rgba(0,0,0,.05));border:1px dashed var(--line,#ccc);}
   .edm-role{position:absolute;top:196px;left:40px;z-index:6;font-size:19px;font-weight:700;letter-spacing:3px;color:var(--accent);}
   .edm-name{position:absolute;top:224px;left:40px;z-index:6;font-family:"Noto Serif TC",serif;font-weight:900;font-size:48px;line-height:1;color:var(--name);letter-spacing:4px;}
@@ -407,9 +408,11 @@
         <button type="button" id="removePhoto" class="btn-remove">移除</button>
       </div>
       <div class="hint">建議直式、上半身、去背或純色背景效果最佳</div>
-      <label style="margin-top:8px;">照片焦點（上下）：<span id="photoPosVal">18%</span></label>
+      <label style="margin-top:8px;">照片焦點 上下：<span id="photoPosVal">18%</span></label>
       <input type="range" id="photoPos" min="0" max="100" value="18" style="width:100%;">
-      <div class="hint">若圓形／裁切照沒對到臉，左右拖曳調整露出位置（0＝頂端、100＝底部）。</div>
+      <label style="margin-top:6px;">照片焦點 左右：<span id="photoPosXVal">50%</span></label>
+      <input type="range" id="photoPosX" min="0" max="100" value="50" style="width:100%;">
+      <div class="hint">照片沒對到臉時，用這兩條滑桿把照片挪到想露出的位置。</div>
     </div>
 
     <div class="field">
@@ -484,7 +487,7 @@
     <div class="field">
       <label>介紹頁圖片（25 秒輔助用）</label>
       <div class="photo-row"><img id="introThumb" class="thumb" alt=""><input type="file" id="introUpload" accept="image/*"><button type="button" id="introRemove" class="btn-remove">移除</button></div>
-      <div class="hint">請自行設計已合併好的圖片後上傳；若有影片要播放，請另外傳到雲端，影片檔請勿超過 25 秒。</div>
+      <div class="hint">請自行設計已合併好的圖片後上傳。<b>圖片尺寸建議 1920×1080 px（16:9）</b>。若有影片要播放，請另外傳到雲端，影片檔請勿超過 25 秒。</div>
     </div>
 
     <h2 style="margin-top:24px;">⑦ 宣傳文（依上方資料自動生成）</h2>
@@ -620,11 +623,13 @@
           <div class="fd">富鼎分會<small>FU DING</small></div>
           <div class="bni">BNI 鈦金名人堂</div>
         </div>
-        <div class="hero-logo empty" id="heroLogo"></div>
         <div class="hero-photo empty" id="heroPhoto"><span>形象照</span></div>
         <div class="hero-info">
           <div class="hRole" id="hRole">職涯顧問</div>
-          <div class="hName" id="hName">歐陽仁傑</div>
+          <div class="hero-nameRow">
+            <div class="hName" id="hName">歐陽仁傑</div>
+            <div class="hero-logo empty" id="heroLogo"></div>
+          </div>
           <div class="hSpec" id="hSpec">職涯顧問</div>
           <div class="hSlogan" id="hSlogan">幫您找到職業生涯的心之所嚮</div>
           <div class="hero-partners" id="hPartners"></div>
@@ -735,11 +740,11 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=19"></script>
-<script src="specialties.js?v=19"></script>
-<script src="members.js?v=19"></script>
-<script src="store.js?v=19"></script>
-<script src="app.js?v=19"></script>
-<script src="roster.js?v=19"></script>
+<script src="firebase-config.js?v=20"></script>
+<script src="specialties.js?v=20"></script>
+<script src="members.js?v=20"></script>
+<script src="store.js?v=20"></script>
+<script src="app.js?v=20"></script>
+<script src="roster.js?v=20"></script>
 </body>
 </html>
