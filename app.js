@@ -281,8 +281,8 @@ function paintTemplate(root, d){
     const shown = d.show[key] !== false;
     row.classList.toggle('hide', empty || !shown);
   });
-  // 引薦容器若無任何可見列 → 收起整個容器（避免留白與 ◆ 孤立）
-  ['.tr-refs', '.td-refs', '.tn-refs', '.tg-refs'].forEach(sel => {
+  // 引薦容器若無任何可見列 → 收起整個容器
+  ['.edm-refs', '.tr-refs', '.td-refs', '.tn-refs', '.tg-refs'].forEach(sel => {
     const c = root.querySelector(sel);
     if (!c) return;
     const anyVisible = [...c.querySelectorAll('.ref-row, .ref-item')].some(r => !r.classList.contains('hide'));
@@ -297,10 +297,7 @@ function paintTemplate(root, d){
 
 function render(){
   const d = currentData();
-  paintTemplate(document.getElementById('tplRed'), d);
-  paintTemplate(document.getElementById('tplDark'), d);
-  paintTemplate(document.getElementById('tplNavy'), d);
-  paintTemplate(document.getElementById('tplGreen'), d);
+  paintTemplate(document.getElementById('edm'), d);
 
   // 16:9 版面照片
   setPhoto('heroPhoto', '形象照');
@@ -559,39 +556,48 @@ document.getElementById('removePhoto').addEventListener('click', () => {
 });
 
 /* ============ 版面切換 / 縮放 / 下載 ============ */
+// 6 個主題都用同一個 #edm 元素，切換 theme class；hero/intro 為獨立 16:9 元素
 const FORMATS = {
-  tplRed:   { w:600, h:849, label:'經典紅',  zoom:1 },
-  tplDark:  { w:600, h:849, label:'深金聚光', zoom:1 },
-  tplNavy:  { w:600, h:849, label:'深藍典雅', zoom:1 },
-  tplGreen: { w:600, h:849, label:'綠意自然', zoom:1 },
-  hero:     { w:960, h:540, label:'形象頁',  zoom:1 },
-  intro:    { w:960, h:540, label:'介紹頁',  zoom:1 }
+  themeBlack:   { el:'edm', theme:'theme-black',   w:600, h:849, label:'尊爵黑金', zoom:1 },
+  themeBlue:    { el:'edm', theme:'theme-blue',    w:600, h:849, label:'深藍專業', zoom:1 },
+  themeGreen:   { el:'edm', theme:'theme-green',   w:600, h:849, label:'自然清新', zoom:1 },
+  themeRed:     { el:'edm', theme:'theme-red',     w:600, h:849, label:'活力紅動', zoom:1 },
+  themeAi:      { el:'edm', theme:'theme-ai',      w:600, h:849, label:'科技未來', zoom:1 },
+  themeMinimal: { el:'edm', theme:'theme-minimal', w:600, h:849, label:'優雅極簡', zoom:1 },
+  hero:  { el:'hero',  w:960, h:540, label:'形象頁', zoom:1 },
+  intro: { el:'intro', w:960, h:540, label:'介紹頁', zoom:1 }
 };
-let activeFmt = 'tplRed';
-let zoom = FORMATS.tplRed.zoom;
+const CANVAS_ELS = ['edm', 'hero', 'intro'];
+let activeFmt = 'themeBlack';
+let zoom = FORMATS.themeBlack.zoom;
 
-function activeEl(){ return document.getElementById(activeFmt); }
+function activeEl(){ return document.getElementById(FORMATS[activeFmt].el); }
 
 function applyZoom(){
   const el = activeEl();
-  // 用 CSS zoom（會撐開版面尺寸），超出寬度時預覽區可左右捲動
   el.style.zoom = zoom;
   document.getElementById('zoomLabel').textContent = '縮放 ' + Math.round(zoom * 100) + '%';
 }
 
 function switchFmt(fmt){
   activeFmt = fmt;
-  // 顯示/隱藏三個版面
-  Object.keys(FORMATS).forEach(k => {
-    document.getElementById(k).style.display = (k === fmt) ? '' : 'none';
+  const f = FORMATS[fmt];
+  // 只顯示對應的畫布元素
+  CANVAS_ELS.forEach(id => {
+    const e = document.getElementById(id);
+    if (e) e.style.display = (id === f.el) ? '' : 'none';
   });
-  // 分頁按鈕樣式
+  // 若是主題，套用 theme class 到 #edm
+  if (f.theme){
+    const edm = document.getElementById('edm');
+    edm.className = 'canvas tpl ' + f.theme;
+  }
   document.querySelectorAll('.fmt-tab').forEach(b => {
     b.classList.toggle('active', b.dataset.fmt === fmt);
   });
-  zoom = FORMATS[fmt].zoom;
+  zoom = f.zoom;
   applyZoom();
-  document.getElementById('download').textContent = '⬇ 下載' + FORMATS[fmt].label + ' (PNG)';
+  document.getElementById('download').textContent = '⬇ 下載' + f.label + ' (PNG)';
 }
 
 document.querySelectorAll('.fmt-tab').forEach(b => {
@@ -602,12 +608,13 @@ document.getElementById('zoomIn').onclick  = () => { zoom = Math.min(1.5, zoom +
 document.getElementById('zoomOut').onclick = () => { zoom = Math.max(0.3, zoom - 0.1); applyZoom(); };
 
 // ---- 下載目前版面 PNG ----
-document.getElementById('download').addEventListener('click', () => {
+document.getElementById('download').addEventListener('click', async () => {
   const el = activeEl();
   const f = FORMATS[activeFmt];
   const prev = el.style.zoom;
   el.style.zoom = 1;                          // 用原始解析度輸出
-  html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff' })
+  try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch(e){}
+  html2canvas(el, { scale: 2, useCORS: true, backgroundColor: null })
     .then(canvas => {
       const a = document.createElement('a');
       a.download = (val('name') || 'BNI') + '_' + f.label + '.png';
@@ -672,7 +679,7 @@ if (saveRosterBtn) saveRosterBtn.addEventListener('click', saveEditorToRoster);
   loadData();            // 還原個人草稿（個人卡片用途）
   updateDayDisplay();
   render();
-  switchFmt('tplRed');
+  switchFmt('themeBlack');
   updateEditingBanner();
   updateCloudBadge();
 })();

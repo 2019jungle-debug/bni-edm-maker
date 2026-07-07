@@ -148,10 +148,9 @@ async function generatePPT(){
   const intro = document.getElementById('intro');
   const divider = document.getElementById('dividerSlide');
 
-  // 效能優化：擷取時 html2canvas 會複製整份文件，先把不需擷取的重元件（表單、四種 EDM 模板）暫時隱藏
+  // 效能優化：擷取時 html2canvas 會複製整份文件，先把不需擷取的重元件（表單、EDM 版面）暫時隱藏
   const hiddenEls = [document.querySelector('#view-editor .panel'),
-                     document.getElementById('tplRed'), document.getElementById('tplDark'),
-                     document.getElementById('tplNavy'), document.getElementById('tplGreen')];
+                     document.getElementById('edm')];
   const prevDisp = hiddenEls.map(el => el ? el.style.display : '');
   hiddenEls.forEach(el => { if (el) el.style.display = 'none'; });
 

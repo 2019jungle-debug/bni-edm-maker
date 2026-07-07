@@ -7,6 +7,9 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>BNI 富鼎分會｜個人 EDM 即時製作工具</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Noto+Sans+TC:wght@400;500;700&family=Montserrat:wght@600;800&family=Bebas+Neue&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --red:#c0202a;
@@ -72,51 +75,6 @@
     overflow:auto;max-height:calc(100vh - 170px);
     padding-bottom:8px;
   }
-  /* The actual EDM canvas — fixed A-portrait-ish ratio */
-  #edm{
-    width:600px;height:849px;background:#fff;position:relative;overflow:hidden;
-    box-shadow:0 8px 30px rgba(0,0,0,.18);
-    transform-origin:top center;
-  }
-  /* top red swoosh */
-  .edm-top{
-    position:absolute;top:0;left:0;right:0;height:330px;
-    background:linear-gradient(120deg,var(--red-dark) 0%,var(--red) 55%,#d94651 100%);
-    clip-path:polygon(0 0,100% 0,100% 62%,0 100%);
-  }
-  .edm-brand{position:absolute;top:22px;right:26px;text-align:right;color:#fff;z-index:5;}
-  .edm-brand .fd{font-size:26px;font-weight:800;letter-spacing:3px;line-height:1;}
-  .edm-brand .fd small{display:block;font-size:11px;letter-spacing:5px;opacity:.9;margin-top:3px;}
-  .edm-brand .bni{margin-top:8px;font-size:11px;background:#fff;color:var(--red);display:inline-block;padding:2px 8px;border-radius:3px;font-weight:700;}
-  /* photo */
-  .edm-photo{
-    position:absolute;top:34px;left:34px;width:250px;height:300px;z-index:4;
-    border-radius:6px;overflow:hidden;border:3px solid rgba(255,255,255,.5);
-    background:#ccc;
-  }
-  .edm-photo img{width:100%;height:100%;object-fit:cover;display:block;}
-  .edm-photo.empty{display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;background:rgba(255,255,255,.15);}
-  /* role + name over swoosh */
-  .edm-role{position:absolute;top:150px;right:30px;z-index:6;text-align:right;color:var(--gold-light);}
-  .edm-role .r{font-size:20px;font-weight:700;color:#f3d689;}
-  .edm-role .n{font-size:40px;font-weight:800;color:#fff;margin-top:6px;text-shadow:0 2px 6px rgba(0,0,0,.25);}
-  /* slogan */
-  .edm-slogan{position:absolute;top:352px;left:34px;right:34px;z-index:6;}
-  .edm-slogan .main{font-size:34px;font-weight:800;color:var(--ink);line-height:1.2;}
-  .edm-slogan .sub{font-size:21px;font-weight:700;color:var(--red);margin-top:8px;line-height:1.3;}
-  .edm-divider{position:absolute;left:34px;right:34px;top:470px;height:1px;background:var(--line);z-index:5;}
-  .edm-divider::before{content:"◆";position:absolute;left:0;top:-9px;color:var(--gold);font-size:12px;}
-  /* body two columns */
-  .edm-body{position:absolute;top:492px;left:34px;right:34px;z-index:6;display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;}
-  .edm-block .bt{font-size:13px;font-weight:800;color:var(--red);border-left:3px solid var(--gold);padding-left:7px;margin-bottom:5px;}
-  .edm-block ul{margin:0;padding-left:16px;}
-  .edm-block li{font-size:12.5px;line-height:1.65;color:#333;}
-  .edm-block.usp{grid-column:1 / -1;}
-  .edm-block.usp .box{background:var(--grey);border-radius:8px;padding:10px 12px;font-size:13px;color:#333;line-height:1.6;}
-  .edm-block.clients .row{font-size:12.5px;color:#333;line-height:1.7;}
-  /* footer */
-  .edm-foot{position:absolute;bottom:0;left:0;right:0;height:30px;background:var(--gold);color:#fff;
-    display:flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:2px;z-index:6;}
   /* ---------- format tabs ---------- */
   .fmt-tabs{display:flex;gap:6px;justify-content:center;margin-bottom:12px;flex-wrap:wrap;}
   .fmt-tab{border:1px solid var(--line);background:#fff;color:#555;border-radius:20px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
@@ -204,18 +162,80 @@
   .field.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .field.two-col label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:#444;}
 
-  /* ---------- 模板共用 ---------- */
-  .tpl{width:600px;height:849px;position:relative;overflow:hidden;background:#fff;box-shadow:0 8px 30px rgba(0,0,0,.18);transform-origin:top center;}
-  .tpl .hand{font-family:"Microsoft JhengHei","微軟正黑體","PingFang TC","Noto Sans TC",sans-serif;font-weight:800;}
-  .tpl-brand{position:absolute;top:26px;left:34px;z-index:8;}
-  .tpl-brand .fd{font-size:26px;font-weight:800;letter-spacing:3px;line-height:1;color:#1a1a1a;}
-  .tpl-brand .fd small{display:block;font-size:11px;letter-spacing:5px;opacity:.85;margin-top:3px;}
-  .tpl-brand .bni{margin-top:7px;font-size:11px;background:var(--red);color:#fff;display:inline-block;padding:2px 8px;border-radius:3px;font-weight:700;}
-  .tpl-brand.light .fd{color:#fff;}
-  .tpl-brand.green .fd{color:#33472f;}
-  .tpl-photo img{width:100%;height:100%;object-fit:cover;display:block;}
-  .tpl-photo.empty{display:flex;align-items:center;justify-content:center;font-size:15px;}
+  /* ================= 共用 EDM 版面（6 主題） ================= */
+  .tpl{width:600px;height:849px;position:relative;overflow:hidden;transform-origin:top center;
+       box-shadow:0 20px 60px rgba(0,0,0,.18);font-family:"Noto Sans TC",sans-serif;
+       background:var(--bg);color:var(--text);}
+  .tpl *{box-sizing:border-box;}
+  .edm-deco{position:absolute;inset:0;z-index:0;overflow:hidden;}
+  .edm-brand{position:absolute;top:30px;left:40px;z-index:8;}
+  .edm-brand .fd{font-family:"Cinzel","Noto Serif TC",serif;font-size:24px;font-weight:700;letter-spacing:2px;line-height:1;color:var(--brand);}
+  .edm-brand .fd small{display:block;font-family:"Montserrat",sans-serif;font-size:10px;letter-spacing:6px;opacity:.85;margin-top:4px;font-weight:600;}
+  .edm-brand .bni{margin-top:8px;font-size:10.5px;background:var(--bni-bg,#c60c30);color:#fff;display:inline-block;padding:2px 8px;border-radius:3px;font-weight:700;letter-spacing:1px;}
+  .edm-photo{position:absolute;top:34px;right:16px;width:266px;height:566px;z-index:2;overflow:hidden;border-radius:var(--photo-radius,4px);}
+  .edm-photo img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;}
+  .edm-photo.empty{display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--muted);background:var(--photo-empty,rgba(0,0,0,.05));border:1px dashed var(--line,#ccc);}
+  .edm-role{position:absolute;top:196px;left:40px;z-index:6;font-size:19px;font-weight:700;letter-spacing:3px;color:var(--accent);}
+  .edm-name{position:absolute;top:224px;left:40px;z-index:6;font-family:"Noto Serif TC",serif;font-weight:900;font-size:48px;line-height:1;color:var(--name);letter-spacing:4px;}
+  .edm-slogan{position:absolute;top:322px;left:40px;width:260px;z-index:6;font-family:"Noto Serif TC",serif;font-weight:700;font-size:24px;line-height:1.45;color:var(--slogan);}
+  .edm-slogan .s2{text-indent:.7em;}
+  .edm-refs{position:absolute;left:40px;top:436px;width:272px;z-index:6;display:flex;flex-direction:column;gap:8px;}
+  .edm-refs .ref-item{display:flex;align-items:center;gap:11px;}
+  .edm-refs .ico{width:36px;height:36px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:var(--icon-bg);color:var(--icon-fg);}
+  .edm-refs .ico svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round;}
+  .edm-refs .rt{display:flex;flex-direction:column;line-height:1.25;min-width:0;}
+  .edm-refs .lbl{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:1px;}
+  .edm-refs .val{font-size:12px;color:var(--text);}
+  .edm-date{position:absolute;left:40px;bottom:110px;z-index:6;font-family:"Bebas Neue","Montserrat",sans-serif;color:var(--date);line-height:.9;}
+  .edm-date .dd{font-size:60px;font-weight:800;letter-spacing:1px;}
+  .edm-date .dw{font-size:21px;font-family:"Noto Sans TC",sans-serif;font-weight:800;margin-left:4px;}
+  .edm-date .time{font-family:"Montserrat",sans-serif;font-size:15px;font-weight:600;color:var(--muted);margin-top:6px;letter-spacing:1px;}
+  .edm-notes{position:absolute;left:40px;right:34px;bottom:30px;z-index:6;display:flex;flex-direction:column;gap:5px;}
+  .edm-notes .note{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);}
+  .edm-notes .ni svg{width:15px;height:15px;fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round;flex:0 0 auto;}
   .ref-row.hide,.ref-item.hide{display:none !important;}
+
+  /* Theme 01 尊爵黑金 */
+  .theme-black{--bg:#0f0f10;--text:#e6dabf;--muted:#c6b489;--brand:#e8d4a2;--accent:#d9b56d;--name:#ffffff;--slogan:#f3e9cf;--date:#d9b56d;--icon-bg:rgba(217,181,109,.16);--icon-fg:#d9b56d;--line:rgba(217,181,109,.4);--photo-empty:rgba(255,255,255,.06);--photo-radius:6px;
+    background:radial-gradient(120% 55% at 52% -5%,#3a2f1c 0%,#171208 45%,#0c0a06 100%);}
+  .theme-black .edm-deco{background:radial-gradient(ellipse 55% 38% at 55% 6%,rgba(255,214,130,.26),transparent 60%);}
+  .theme-black .edm-deco::after{content:"";position:absolute;inset:14px;border:1px solid rgba(217,181,109,.35);border-radius:6px;}
+  .theme-black .edm-name{text-shadow:0 2px 16px rgba(0,0,0,.6);}
+  .theme-black .edm-photo{box-shadow:-24px 0 50px rgba(0,0,0,.5);}
+
+  /* Theme 02 深藍專業 */
+  .theme-blue{--bg:#f5f7fb;--text:#2a3a5a;--muted:#5a6a8a;--brand:#173b72;--accent:#c19b53;--name:#173b72;--slogan:#173b72;--date:#173b72;--icon-bg:#173b72;--icon-fg:#fff;--line:#cdd6e6;--photo-empty:#e7ecf5;}
+  .theme-blue .edm-deco::before{content:"";position:absolute;top:0;right:0;width:300px;height:330px;background:linear-gradient(135deg,#173b72,#112a52);clip-path:polygon(35% 0,100% 0,100% 72%);}
+  .theme-blue .edm-deco::after{content:"";position:absolute;left:0;right:0;bottom:0;height:96px;background:#112a52;}
+  .theme-blue .edm-notes{bottom:22px;left:34px;right:34px;flex-direction:row;justify-content:space-between;gap:10px;}
+  .theme-blue .edm-notes .note{color:#dbe4f5;flex:1;font-size:11px;}
+  .theme-blue .edm-notes .ni svg{stroke:#c19b53;}
+  .theme-blue .edm-date{bottom:120px;}
+
+  /* Theme 03 自然清新 */
+  .theme-green{--bg:#f7f5ee;--text:#3a4a3a;--muted:#6a7a62;--brand:#33472f;--accent:#5a7a4e;--name:#33472f;--slogan:#33472f;--date:#5a7a4e;--icon-bg:#5a7a4e;--icon-fg:#fff;--line:#cdd6c0;--photo-empty:#e6e8d8;--photo-radius:12px;
+    background:linear-gradient(160deg,#f7f5ee,#eef0e4);}
+  .theme-green .edm-deco::before{content:"🌿";position:absolute;top:-34px;right:2px;font-size:168px;opacity:.26;filter:saturate(.7);}
+  .theme-green .edm-deco::after{content:"🍃";position:absolute;bottom:36px;left:-22px;font-size:128px;opacity:.2;transform:rotate(24deg);}
+
+  /* Theme 04 活力紅動 */
+  .theme-red{--bg:#ffffff;--text:#2b2b2b;--muted:#555;--brand:#111;--accent:#c60c30;--name:#1a1a1a;--slogan:#1a1a1a;--date:#c60c30;--icon-bg:#c60c30;--icon-fg:#fff;--line:#e5c9cf;--photo-empty:rgba(0,0,0,.05);--bni-bg:#c60c30;
+    background:linear-gradient(160deg,#ffffff,#f3f4f6);}
+  .theme-red .edm-deco::before{content:"";position:absolute;top:-140px;left:-160px;width:460px;height:460px;background:#c60c30;border-radius:50%;clip-path:polygon(0 0,58% 0,0 58%);}
+  .theme-red .edm-deco::after{content:"";position:absolute;top:-118px;left:-140px;width:430px;height:430px;border:3px solid #d4b06a;border-radius:50%;clip-path:polygon(0 0,60% 0,0 60%);opacity:.7;}
+
+  /* Theme 05 科技未來 */
+  .theme-ai{--bg:#070a24;--text:#dbe6ff;--muted:#9fb3e6;--brand:#8fd0ff;--accent:#34d6ff;--name:#eaf6ff;--slogan:#dbe6ff;--date:#34d6ff;--icon-bg:rgba(52,214,255,.12);--icon-fg:#34d6ff;--line:rgba(109,59,255,.5);--photo-empty:rgba(255,255,255,.06);--photo-radius:8px;
+    background:radial-gradient(120% 80% at 20% 0%,#241b6b 0%,#0e1240 45%,#070a24 100%);}
+  .theme-ai .edm-deco{background:radial-gradient(circle at 82% 24%,rgba(52,214,255,.22),transparent 40%),radial-gradient(circle at 12% 72%,rgba(109,59,255,.28),transparent 45%);}
+  .theme-ai .edm-refs .ico{border:1px solid rgba(52,214,255,.5);}
+  .theme-ai .edm-name{text-shadow:0 0 18px rgba(52,214,255,.4);}
+
+  /* Theme 06 優雅極簡 */
+  .theme-minimal{--bg:#f8f6f1;--text:#4a423a;--muted:#8a7f70;--brand:#6a5c4a;--accent:#9a836e;--name:#5a4e40;--slogan:#4a423a;--date:#9a836e;--icon-bg:transparent;--icon-fg:#9a836e;--line:#d7c6aa;--photo-empty:#efe9df;--bni-bg:#9a836e;
+    background:#f8f6f1;}
+  .theme-minimal .edm-deco::before{content:"";position:absolute;top:44px;left:50%;transform:translateX(-50%);width:430px;height:540px;border:1.5px solid #e4dccb;border-radius:220px 220px 0 0;}
+  .theme-minimal .edm-refs .ico{border:1.5px solid #d7c6aa;}
 
   /* ---------- 模板〇：經典紅 ---------- */
   .tpl-red{background:linear-gradient(160deg,#fcfcfc 0%,#eceef0 100%);color:#2b2b2b;}
@@ -456,10 +476,12 @@
   <!-- ================= PREVIEW ================= -->
   <div class="preview-wrap">
     <div class="fmt-tabs">
-      <button class="fmt-tab active" data-fmt="tplRed">經典紅</button>
-      <button class="fmt-tab" data-fmt="tplDark">深金聚光</button>
-      <button class="fmt-tab" data-fmt="tplNavy">深藍典雅</button>
-      <button class="fmt-tab" data-fmt="tplGreen">綠意自然</button>
+      <button class="fmt-tab active" data-fmt="themeBlack">尊爵黑金</button>
+      <button class="fmt-tab" data-fmt="themeBlue">深藍專業</button>
+      <button class="fmt-tab" data-fmt="themeGreen">自然清新</button>
+      <button class="fmt-tab" data-fmt="themeRed">活力紅動</button>
+      <button class="fmt-tab" data-fmt="themeAi">科技未來</button>
+      <button class="fmt-tab" data-fmt="themeMinimal">優雅極簡</button>
       <button class="fmt-tab" data-fmt="hero">形象頁 16:9</button>
       <button class="fmt-tab" data-fmt="intro">介紹頁 16:9</button>
     </div>
@@ -469,116 +491,30 @@
       <button id="zoomIn">+</button>
     </div>
     <div class="preview-scale">
-      <!-- ========== 模板〇：經典紅 (A4 直式) ========== -->
-      <div id="tplRed" class="canvas tpl tpl-red">
-        <svg class="tr-bg" viewBox="0 0 600 849" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- 左上主紅弧 -->
-          <path d="M0 0 L250 0 C180 150 130 270 235 360 C120 405 55 335 0 400 Z" fill="#c9202a"/>
-          <!-- 金色細線點綴 -->
-          <path d="M258 0 C190 150 138 268 240 358" stroke="#cfa94d" stroke-width="3" fill="none" opacity=".85"/>
-          <!-- 右側紅弧（避開姓名，位於照片右側中段） -->
-          <path d="M600 315 C485 400 490 520 600 560 L600 315 Z" fill="#c9202a"/>
-          <!-- 底部淺灰層次 -->
-          <path d="M0 726 C180 700 360 762 600 706 L600 849 L0 849 Z" fill="#ededed"/>
-        </svg>
-        <div class="tpl-brand tr-brand">
+      <!-- ========== 共用 EDM（6 主題切換） ========== -->
+      <div id="edm" class="canvas tpl theme-black">
+        <div class="edm-deco"></div>
+        <div class="edm-brand">
           <div class="fd">富鼎分會<small>FU DING</small></div>
           <div class="bni">BNI 鈦金名人堂</div>
         </div>
-        <div class="tr-photo tpl-photo empty" data-photo="形象照"><span>形象照</span></div>
-        <div class="tr-role" data-f="role"></div>
-        <div class="tr-name hand" data-f="name"></div>
-        <div class="tr-slogan"><div data-f="main"></div><div data-f="sub"></div></div>
-        <div class="tr-refs" data-block="referrals">
-          <div class="ref-row"><span class="lbl">合作對象</span><span class="bar">｜</span><span class="val" data-inline="partners"></span></div>
-          <div class="ref-row"><span class="lbl">一般引薦</span><span class="bar">｜</span><span class="val" data-inline="general"></span></div>
-          <div class="ref-row"><span class="lbl">理想引薦</span><span class="bar">｜</span><span class="val" data-inline="ideal"></span></div>
-          <div class="ref-row"><span class="lbl">夢幻引薦</span><span class="bar">｜</span><span class="val" data-inline="dream"></span></div>
-          <div class="ref-row" data-block="clients"><span class="lbl">代表客戶</span><span class="bar">｜</span><span class="val" data-inline="clients"></span></div>
-          <div class="ref-row" data-block="clients"><span class="lbl">獨特主張</span><span class="bar">｜</span><span class="val" data-f="usp"></span></div>
+        <div class="edm-photo tpl-photo empty" data-photo="形象照"><span>形象照</span></div>
+        <div class="edm-role" data-f="role"></div>
+        <div class="edm-name hand" data-f="name"></div>
+        <div class="edm-slogan"><div class="s1" data-f="main"></div><div class="s2" data-f="sub"></div></div>
+        <div class="edm-refs" data-block="referrals">
+          <div class="ref-item"><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg></span><div class="rt"><span class="lbl">合作對象</span><span class="val" data-inline="partners"></span></div></div>
+          <div class="ref-item"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M2 20c0-3 3-5 6-5s6 2 6 5M12 20c0-2 2-4 4-4s6 1 6 4"/></svg></span><div class="rt"><span class="lbl">一般引薦</span><span class="val" data-inline="general"></span></div></div>
+          <div class="ref-item"><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.5 1.6 6.7L12 17l-6.2 3.6 1.6-6.7L2.2 8.9l6.9-.6z"/></svg></span><div class="rt"><span class="lbl">理想引薦</span><span class="val" data-inline="ideal"></span></div></div>
+          <div class="ref-item"><span class="ico"><svg viewBox="0 0 24 24"><path d="M4 21V6l7-3v18M13 21V9l7-2v14M2 21h20M7 8v0M7 12v0M7 16v0"/></svg></span><div class="rt"><span class="lbl">夢幻引薦</span><span class="val" data-inline="dream"></span></div></div>
+          <div class="ref-item" data-block="clients"><span class="ico"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/></svg></span><div class="rt"><span class="lbl">代表客戶</span><span class="val" data-inline="clients"></span></div></div>
+          <div class="ref-item" data-block="clients"><span class="ico"><svg viewBox="0 0 24 24"><path d="M6 3h12l3 6-9 12L3 9z"/><path d="M3 9h18M9 3l3 18M15 3l-3 18"/></svg></span><div class="rt"><span class="lbl">獨特主張</span><span class="val" data-f="usp"></span></div></div>
         </div>
-        <div class="tr-date"><span data-f="date"></span> <small data-f="day"></small><div class="time" data-f="time"></div></div>
-        <div class="tr-notes"><ul><li data-f="note1"></li><li data-f="note2"></li><li data-f="place"></li></ul></div>
-      </div>
-
-      <!-- ========== 模板一：深金聚光 (portrait) ========== -->
-      <div id="tplDark" class="canvas tpl tpl-dark">
-        <div class="td-glow"></div>
-        <div class="td-corner tl"></div><div class="td-corner tr"></div>
-        <div class="td-corner bl"></div><div class="td-corner br"></div>
-        <div class="tpl-brand light">
-          <div class="fd">富鼎分會<small>FU DING</small></div>
-          <div class="bni">BNI 鈦金名人堂</div>
-        </div>
-        <div class="td-photo tpl-photo empty" data-photo="形象照"><span>形象照</span></div>
-        <div class="td-role" data-f="role"></div>
-        <div class="td-name hand" data-f="name"></div>
-        <div class="td-slogan"><div data-f="main"></div><div data-f="sub"></div></div>
-        <div class="td-refs" data-block="referrals">
-          <div class="ref-row"><span class="lbl">合作對象</span><span class="bar">｜</span><span class="val" data-inline="partners"></span></div>
-          <div class="ref-row"><span class="lbl">一般引薦</span><span class="bar">｜</span><span class="val" data-inline="general"></span></div>
-          <div class="ref-row"><span class="lbl">理想引薦</span><span class="bar">｜</span><span class="val" data-inline="ideal"></span></div>
-          <div class="ref-row"><span class="lbl">夢幻引薦</span><span class="bar">｜</span><span class="val" data-inline="dream"></span></div>
-          <div class="ref-row cli" data-block="clients"><span class="lbl">代表客戶</span><span class="bar">｜</span><span class="val" data-inline="clients"></span></div>
-          <div class="ref-row usp" data-block="clients"><span class="lbl">獨特主張</span><span class="bar">｜</span><span class="val" data-f="usp"></span></div>
-        </div>
-        <div class="td-event">
-          <div class="date"><span data-f="date"></span> <small data-f="day"></small></div>
-          <div class="time" data-f="time"></div>
-          <ul><li data-f="note1"></li><li data-f="note2"></li><li data-f="place"></li></ul>
-        </div>
-      </div>
-
-      <!-- ========== 模板二：深藍典雅 (portrait) ========== -->
-      <div id="tplNavy" class="canvas tpl tpl-navy" style="display:none;">
-        <div class="tn-swoosh"></div>
-        <div class="tpl-brand">
-          <div class="fd">富鼎分會<small>FU DING</small></div>
-          <div class="bni">BNI 鈦金名人堂</div>
-        </div>
-        <div class="tn-photo tpl-photo empty" data-photo="形象照"><span>形象照</span></div>
-        <div class="tn-role" data-f="role"></div>
-        <div class="tn-name hand" data-f="name"></div>
-        <div class="tn-slogan"><div data-f="main"></div><div data-f="sub"></div></div>
-        <div class="tn-refs" data-block="referrals">
-          <div class="ref-item"><span class="ico">👥</span><div><span class="lbl">合作對象</span><span class="val" data-inline="partners"></span></div></div>
-          <div class="ref-item"><span class="ico">🌱</span><div><span class="lbl">一般引薦</span><span class="val" data-inline="general"></span></div></div>
-          <div class="ref-item"><span class="ico">🏢</span><div><span class="lbl">理想引薦</span><span class="val" data-inline="ideal"></span></div></div>
-          <div class="ref-item"><span class="ico">🏙️</span><div><span class="lbl">夢幻引薦</span><span class="val" data-inline="dream"></span></div></div>
-          <div class="ref-item" data-block="clients"><span class="ico">🤝</span><div><span class="lbl">代表客戶</span><span class="val" data-inline="clients"></span></div></div>
-          <div class="ref-item" data-block="clients"><span class="ico">💎</span><div><span class="lbl">獨特主張</span><span class="val" data-f="usp"></span></div></div>
-        </div>
-        <div class="tn-date"><span data-f="date"></span> <small data-f="day"></small></div>
-        <div class="tn-time" data-f="time"></div>
-        <div class="tn-footbar">
-          <div class="col"><span class="ico">🧑</span><span data-f="note1"></span></div>
-          <div class="col"><span class="ico">💳</span><span data-f="note2"></span></div>
-          <div class="col"><span class="ico">📍</span><span data-f="place"></span></div>
-        </div>
-      </div>
-
-      <!-- ========== 模板三：綠意自然 (landscape) ========== -->
-      <div id="tplGreen" class="canvas tpl tpl-green" style="display:none;">
-        <div class="tg-leaf tg-leaf1">🌿</div><div class="tg-leaf tg-leaf2">🍃</div>
-        <div class="tpl-brand green">
-          <div class="fd">富鼎分會<small>FU DING</small></div>
-          <div class="bni">BNI 鈦金名人堂</div>
-        </div>
-        <div class="tg-role" data-f="role"></div>
-        <div class="tg-name hand" data-f="name"></div>
-        <div class="tg-slogan"><div data-f="main"></div><div data-f="sub"></div></div>
-        <div class="tg-photo tpl-photo empty" data-photo="形象照"><span>形象照</span></div>
-        <div class="tg-refs" data-block="referrals">
-          <div class="ref-item"><span class="ico">👥</span><span class="lbl">合作對象</span><span class="val" data-inline="partners"></span></div>
-          <div class="ref-item"><span class="ico">🌱</span><span class="lbl">一般引薦</span><span class="val" data-inline="general"></span></div>
-          <div class="ref-item"><span class="ico">🏢</span><span class="lbl">理想引薦</span><span class="val" data-inline="ideal"></span></div>
-          <div class="ref-item"><span class="ico">🏙️</span><span class="lbl">夢幻引薦</span><span class="val" data-inline="dream"></span></div>
-          <div class="ref-item" data-block="clients"><span class="ico">🤝</span><span class="lbl">代表客戶</span><span class="val" data-inline="clients"></span></div>
-          <div class="ref-item" data-block="clients"><span class="ico">💎</span><span class="lbl">獨特主張</span><span class="val" data-f="usp"></span></div>
-        </div>
-        <div class="tg-foot">
-          <div class="tg-date"><span data-f="date"></span> <small data-f="day"></small><div class="time" data-f="time"></div></div>
-          <ul><li data-f="note1"></li><li data-f="note2"></li><li data-f="place"></li></ul>
+        <div class="edm-date"><span class="dd" data-f="date"></span> <small class="dw" data-f="day"></small><div class="time" data-f="time"></div></div>
+        <div class="edm-notes">
+          <div class="note"><span class="ni"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v0M11 11h1v6"/></svg></span><span data-f="note1"></span></div>
+          <div class="note"><span class="ni"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span><span data-f="note2"></span></div>
+          <div class="note"><span class="ni"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6-7-11a7 7 0 0114 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span data-f="place"></span></div>
         </div>
       </div>
 
@@ -700,11 +636,11 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=13"></script>
-<script src="specialties.js?v=13"></script>
-<script src="members.js?v=13"></script>
-<script src="store.js?v=13"></script>
-<script src="app.js?v=13"></script>
-<script src="roster.js?v=13"></script>
+<script src="firebase-config.js?v=14"></script>
+<script src="specialties.js?v=14"></script>
+<script src="members.js?v=14"></script>
+<script src="store.js?v=14"></script>
+<script src="app.js?v=14"></script>
+<script src="roster.js?v=14"></script>
 </body>
 </html>
