@@ -204,11 +204,15 @@ async function generatePPT(){
       await nextFrame();
 
       hero.style.display = ''; intro.style.display = 'none'; divider.style.display = 'none'; hero.style.zoom = 1;
+      flattenObjectFit(hero);
       let c = await html2canvas(hero, { scale:2, useCORS:true, backgroundColor:'#ffffff' });
+      unflattenObjectFit(hero);
       pptx.addSlide().addImage({ data: c.toDataURL('image/png'), x:0, y:0, w:13.333, h:7.5 });
 
       intro.style.display = ''; hero.style.display = 'none'; intro.style.zoom = 1;
+      flattenObjectFit(intro);
       c = await html2canvas(intro, { scale:2, useCORS:true, backgroundColor:'#ffffff' });
+      unflattenObjectFit(intro);
       pptx.addSlide().addImage({ data: c.toDataURL('image/png'), x:0, y:0, w:13.333, h:7.5 });
 
       setProgress(overlay, i+1, list.length);

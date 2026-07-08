@@ -403,6 +403,39 @@ function render(){
   document.getElementById('iUsp').textContent = val('usp') || '—';
 }
 
+/* ---- html2canvas 不支援 object-fit，擷取前把圖片改成容器背景（cover/contain 對齊），擷取後還原 ---- */
+function flattenObjectFit(root){
+  if (!root) return;
+  const ppx = ((document.getElementById('photoPosX') || {}).value) || '50';
+  const pp  = ((document.getElementById('photoPos')  || {}).value) || '18';
+  root.querySelectorAll('img').forEach(img => {
+    const src = img.getAttribute('src');
+    if (!src) return;
+    const fit = getComputedStyle(img).objectFit;
+    if (fit !== 'cover' && fit !== 'contain') return;   // fill/none 由 html2canvas 直接處理
+    const box = img.parentElement;
+    if (!box) return;
+    const isPerson = box.classList.contains('hero-photo') || box.classList.contains('intro-photo') || box.classList.contains('edm-photo');
+    box.style.backgroundImage   = 'url("' + src + '")';
+    box.style.backgroundSize     = fit;                 // 'cover' 或 'contain'
+    box.style.backgroundRepeat   = 'no-repeat';
+    box.style.backgroundPosition = isPerson ? (ppx + '% ' + pp + '%') : 'center';
+    box.setAttribute('data-flat', '1');
+    img.style.visibility = 'hidden';
+  });
+}
+function unflattenObjectFit(root){
+  if (!root) return;
+  root.querySelectorAll('[data-flat]').forEach(box => {
+    box.style.backgroundImage = '';
+    box.style.backgroundSize = '';
+    box.style.backgroundRepeat = '';
+    box.style.backgroundPosition = '';
+    box.removeAttribute('data-flat');
+    const img = box.querySelector('img'); if (img) img.style.visibility = '';
+  });
+}
+
 function setPhoto(id, placeholder){
   const ph = document.getElementById(id);
   if (!ph) return;
@@ -869,8 +902,10 @@ document.getElementById('download').addEventListener('click', async () => {
   const prev = el.style.zoom;
   el.style.zoom = 1;                          // 用原始解析度輸出
   try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch(e){}
+  flattenObjectFit(el);
   html2canvas(el, { scale: f.exportScale || 2, useCORS: true, backgroundColor: null })
     .then(canvas => {
+      unflattenObjectFit(el);
       const a = document.createElement('a');
       a.download = (val('name') || 'BNI') + '_' + f.label + '.png';
       a.href = canvas.toDataURL('image/png');
@@ -879,6 +914,7 @@ document.getElementById('download').addEventListener('click', async () => {
       applyZoom();
     })
     .catch(err => {
+      unflattenObjectFit(el);
       alert('下載失敗：' + err.message);
       el.style.zoom = prev;
       applyZoom();
