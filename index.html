@@ -213,40 +213,83 @@
   .theme-black .deco-black,.theme-blue .deco-blue,.theme-green .deco-green,
   .theme-red .deco-red,.theme-ai .deco-ai,.theme-minimal .deco-minimal{display:block;}
 
-  /* Theme 01 尊爵黑金 */
+  /* ===== Theme 01 尊爵黑金 — Executive / Luxury（置中品牌 · 玻璃資訊卡 · 金框 · 聚光） ===== */
   .theme-black{--bg:#0f0f10;--text:#e6dabf;--muted:#c6b489;--brand:#e8d4a2;--accent:#d9b56d;--name:#ffffff;--slogan:#f3e9cf;--date:#d9b56d;--icon-bg:rgba(217,181,109,.16);--icon-fg:#d9b56d;--line:rgba(217,181,109,.4);--photo-empty:rgba(255,255,255,.06);--photo-radius:6px;
     background:radial-gradient(120% 55% at 52% -5%,#3a2f1c 0%,#171208 45%,#0c0a06 100%);}
-  .theme-black .edm-deco::after{content:"";position:absolute;inset:14px;border:1px solid rgba(217,181,109,.35);border-radius:6px;z-index:1;}
-  .theme-black .edm-name{text-shadow:0 2px 16px rgba(0,0,0,.6);}
+  .theme-black .edm-brand{left:40px;right:40px;text-align:center;}
+  .theme-black .edm-brand .bni{margin-top:6px;}
+  .theme-black .edm-deco::after{content:"";position:absolute;inset:16px;border:1px solid rgba(217,181,109,.35);z-index:1;}
+  .theme-black .edm-role{top:210px;}
+  .theme-black .edm-name{top:238px;text-shadow:0 2px 16px rgba(0,0,0,.6);}
+  .theme-black .edm-slogan{top:336px;}
+  .theme-black .edm-refs{top:452px;padding:18px 16px;background:rgba(232,212,162,.07);border:1px solid rgba(217,181,109,.3);border-radius:18px;}
   .theme-black .edm-photo{box-shadow:-24px 0 50px rgba(0,0,0,.5);}
 
-  /* Theme 02 深藍專業 */
-  .theme-blue{--bg:#f5f7fb;--text:#2a3a5a;--muted:#5a6a8a;--brand:#173b72;--accent:#c19b53;--name:#173b72;--slogan:#173b72;--date:#173b72;--icon-bg:#173b72;--icon-fg:#fff;--line:#cdd6e6;--photo-empty:#e7ecf5;}
+  /* ===== Theme 02 深藍專業 — Corporate（頂部深藍色帶 · 白字品牌 · 結構化） ===== */
+  .theme-blue{--bg:#f4f7fc;--text:#2a3a5a;--muted:#5a6a8a;--brand:#ffffff;--accent:#c19b53;--name:#173b72;--slogan:#1d2f52;--date:#173b72;--icon-bg:#173b72;--icon-fg:#fff;--line:#cdd6e6;--photo-empty:#e7ecf5;--bni-bg:#c19b53;
+    background:linear-gradient(180deg,#ffffff 0%,#eef2f9 100%);}
+  .theme-blue .edm-deco::before{content:"";position:absolute;top:0;left:0;right:0;height:150px;background:linear-gradient(115deg,#112a52 0%,#173b72 70%,#1e4a8c 100%);z-index:1;}
   .theme-blue .edm-deco::after{content:"";position:absolute;left:0;right:0;bottom:0;height:96px;background:#112a52;z-index:1;}
+  .theme-blue .edm-brand{top:34px;}
+  .theme-blue .edm-brand .fd small{color:#d4b06a;opacity:1;}
+  .theme-blue .edm-role{top:210px;padding-left:14px;border-left:4px solid #c19b53;}
+  .theme-blue .edm-name{top:236px;}
+  .theme-blue .edm-slogan{top:330px;}
+  .theme-blue .edm-refs{top:452px;}
+  .theme-blue .edm-photo{border:5px solid #fff;box-shadow:0 16px 40px rgba(17,42,82,.28);}
   .theme-blue .edm-notes{bottom:22px;left:34px;right:34px;flex-direction:row;justify-content:space-between;gap:10px;}
   .theme-blue .edm-notes .note{color:#dbe4f5;flex:1;font-size:11px;}
   .theme-blue .edm-notes .ni svg{stroke:#c19b53;}
   .theme-blue .edm-date{bottom:120px;}
 
-  /* Theme 03 自然清新 */
-  .theme-green{--bg:#f7f5ee;--text:#3a4a3a;--muted:#6a7a62;--brand:#33472f;--accent:#5a7a4e;--name:#33472f;--slogan:#33472f;--date:#5a7a4e;--icon-bg:#5a7a4e;--icon-fg:#fff;--line:#cdd6c0;--photo-empty:#e6e8d8;--photo-radius:12px;
-    background:linear-gradient(160deg,#f7f5ee,#eef0e4);}
+  /* ===== Theme 03 自然清新 — Nature / ESG（鏡像構圖：人物在左、文字靠右 · 米色紙感） ===== */
+  .theme-green{--bg:#f7f5ee;--text:#3a4a3a;--muted:#6a7a62;--brand:#33472f;--accent:#5a7a4e;--name:#33472f;--slogan:#33472f;--date:#5a7a4e;--icon-bg:#5a7a4e;--icon-fg:#fff;--line:#cdd6c0;--photo-empty:#e6e8d8;--photo-radius:16px;
+    background:linear-gradient(160deg,#f9f7f0,#eaeede);}
+  .theme-green .edm-photo{left:16px;right:auto;box-shadow:0 16px 40px rgba(77,106,86,.22);}
+  .theme-green .edm-brand{left:auto;right:40px;text-align:right;}
+  .theme-green .edm-brand .bni{margin-left:0;}
+  .theme-green .edm-role{left:auto;right:40px;text-align:right;}
+  .theme-green .edm-name{left:auto;right:40px;text-align:right;}
+  .theme-green .edm-slogan{left:auto;right:40px;text-align:right;}
+  .theme-green .edm-slogan .s2{text-indent:0;}
+  .theme-green .edm-refs{left:auto;right:40px;}
+  .theme-green .edm-refs .ref-item{flex-direction:row-reverse;text-align:right;}
+  .theme-green .edm-refs .rt{align-items:flex-end;}
+  .theme-green .edm-date{left:auto;right:40px;text-align:right;}
+  .theme-green .edm-notes{left:auto;right:40px;width:300px;align-items:flex-end;}
+  .theme-green .edm-notes .note{flex-direction:row-reverse;text-align:right;}
 
-  /* Theme 04 活力紅動 */
-  .theme-red{--bg:#ffffff;--text:#2b2b2b;--muted:#555;--brand:#111;--accent:#c60c30;--name:#1a1a1a;--slogan:#1a1a1a;--date:#c60c30;--icon-bg:#c60c30;--icon-fg:#fff;--line:#e5c9cf;--photo-empty:rgba(0,0,0,.05);--bni-bg:#c60c30;
+  /* ===== Theme 04 活力紅動 — BNI / Sales（紅色緞帶 · 資訊卡片化 · 大標） ===== */
+  .theme-red{--bg:#ffffff;--text:#2b2b2b;--muted:#555;--brand:#111;--accent:#c60c30;--name:#111;--slogan:#1a1a1a;--date:#c60c30;--icon-bg:#c60c30;--icon-fg:#fff;--line:#e5c9cf;--photo-empty:rgba(0,0,0,.05);--bni-bg:#c60c30;
     background:linear-gradient(160deg,#ffffff,#f3f4f6);}
+  .theme-red .edm-role{top:206px;color:#fff;background:var(--red,#c60c30);display:inline-block;padding:5px 14px;border-radius:0 14px 14px 0;left:0;box-shadow:0 6px 16px rgba(198,12,48,.3);}
+  .theme-red .edm-name{top:246px;font-size:54px;}
+  .theme-red .edm-slogan{top:344px;}
+  .theme-red .edm-refs{top:452px;gap:9px;}
+  .theme-red .edm-refs .ref-item{background:#fff;border:1px solid #efd6db;border-radius:14px;padding:8px 12px;box-shadow:0 6px 18px rgba(198,12,48,.08);}
+  .theme-red .edm-photo{box-shadow:-18px 0 44px rgba(0,0,0,.12);}
 
-  /* Theme 05 科技未來 */
-  .theme-ai{--bg:#070a24;--text:#dbe6ff;--muted:#9fb3e6;--brand:#8fd0ff;--accent:#34d6ff;--name:#eaf6ff;--slogan:#dbe6ff;--date:#34d6ff;--icon-bg:rgba(52,214,255,.12);--icon-fg:#34d6ff;--line:rgba(109,59,255,.5);--photo-empty:rgba(255,255,255,.06);--photo-radius:8px;
+  /* ===== Theme 05 科技未來 — Tech / AI（Mesh 漸層 · 光暈 · 玻璃卡 · 霓虹） ===== */
+  .theme-ai{--bg:#070a24;--text:#dbe6ff;--muted:#9fb3e6;--brand:#8fd0ff;--accent:#34d6ff;--name:#eaf6ff;--slogan:#dbe6ff;--date:#34d6ff;--icon-bg:rgba(52,214,255,.14);--icon-fg:#34d6ff;--line:rgba(109,59,255,.5);--photo-empty:rgba(255,255,255,.06);--photo-radius:10px;--bni-bg:#6d3bff;
     background:radial-gradient(120% 80% at 20% 0%,#241b6b 0%,#0e1240 45%,#070a24 100%);}
-  .theme-ai .edm-deco{background:radial-gradient(circle at 82% 24%,rgba(52,214,255,.22),transparent 40%),radial-gradient(circle at 12% 72%,rgba(109,59,255,.28),transparent 45%);}
+  .theme-ai .edm-deco{background:radial-gradient(circle at 82% 20%,rgba(52,214,255,.24),transparent 40%),radial-gradient(circle at 8% 70%,rgba(109,59,255,.3),transparent 45%);}
+  .theme-ai .edm-role{top:210px;}
+  .theme-ai .edm-name{top:238px;text-shadow:0 0 18px rgba(52,214,255,.45);}
+  .theme-ai .edm-slogan{top:336px;}
+  .theme-ai .edm-refs{top:452px;padding:18px 16px;background:rgba(52,214,255,.07);border:1px solid rgba(52,214,255,.32);border-radius:20px;}
   .theme-ai .edm-refs .ico{border:1px solid rgba(52,214,255,.5);}
-  .theme-ai .edm-name{text-shadow:0 0 18px rgba(52,214,255,.4);}
+  .theme-ai .edm-photo{box-shadow:-14px 0 46px rgba(52,214,255,.2);border:1px solid rgba(52,214,255,.3);}
 
-  /* Theme 06 優雅極簡 */
-  .theme-minimal{--bg:#f8f6f1;--text:#4a423a;--muted:#8a7f70;--brand:#6a5c4a;--accent:#9a836e;--name:#5a4e40;--slogan:#4a423a;--date:#9a836e;--icon-bg:transparent;--icon-fg:#9a836e;--line:#d7c6aa;--photo-empty:#efe9df;--bni-bg:#9a836e;
-    background:#f8f6f1;}
-  .theme-minimal .edm-refs .ico{border:1.5px solid #d7c6aa;}
+  /* ===== Theme 06 優雅極簡 — Apple / Nordic（大量留白 · 拱形 · 細字 · 極簡卡） ===== */
+  .theme-minimal{--bg:#f8f6f1;--text:#4a423a;--muted:#8a7f70;--brand:#6a5c4a;--accent:#9a836e;--name:#4a3f34;--slogan:#5a4e40;--date:#9a836e;--icon-bg:transparent;--icon-fg:#9a836e;--line:#e0d5c2;--photo-empty:#efe9df;--bni-bg:#9a836e;
+    background:linear-gradient(180deg,#faf8f3,#f2ede4);}
+  .theme-minimal .edm-role{top:214px;font-weight:600;letter-spacing:6px;font-size:16px;}
+  .theme-minimal .edm-name{top:244px;font-weight:600;letter-spacing:10px;}
+  .theme-minimal .edm-slogan{top:340px;font-weight:500;}
+  .theme-minimal .edm-refs{top:470px;gap:14px;}
+  .theme-minimal .edm-refs .ico{border:1.5px solid #d7c6aa;background:transparent;}
+  .theme-minimal .edm-refs .lbl{font-weight:600;letter-spacing:2px;}
+  .theme-minimal .edm-photo{box-shadow:0 20px 50px rgba(0,0,0,.1);}
 
   /* ---------- 模板〇：經典紅 ---------- */
   .tpl-red{background:linear-gradient(160deg,#fcfcfc 0%,#eceef0 100%);color:#2b2b2b;}
@@ -340,13 +383,23 @@
   .tg-foot ul{margin:0;padding-left:18px;}
   .tg-foot li{font-size:14px;line-height:1.75;color:#3a3a3a;}
 
-  /* ---------- 產業鏈分隔頁 16:9 ---------- */
-  #dividerSlide{width:960px;height:540px;background:#f7f7f7;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18);transform-origin:top center;}
-  #dividerSlide .dv-top{position:absolute;top:0;left:0;right:0;height:150px;background:linear-gradient(120deg,var(--red-dark),var(--red));clip-path:polygon(0 0,100% 0,100% 62%,0 100%);}
-  #dividerSlide .dv-bottom{position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(120deg,var(--red),var(--red-dark));clip-path:polygon(0 40%,100% 0,100% 100%,0 100%);}
-  #dividerSlide .dv-brand{position:absolute;top:46px;left:0;right:0;text-align:center;color:#fff;font-size:20px;letter-spacing:3px;font-weight:700;z-index:5;}
-  #dividerSlide .dv-team{position:absolute;top:44%;left:0;right:0;transform:translateY(-50%);text-align:center;font-size:64px;font-weight:800;color:var(--red-dark);z-index:5;}
-  #dividerSlide .dv-sub{position:absolute;top:60%;left:0;right:0;text-align:center;font-size:26px;color:var(--gold);font-weight:700;z-index:5;}
+  /* ---------- 產業鏈分隔頁 16:9（尊爵黑金 · 母片） ---------- */
+  #dividerSlide{width:960px;height:540px;position:relative;overflow:hidden;transform-origin:top center;
+    font-family:"Noto Sans TC",sans-serif;
+    background:radial-gradient(120% 90% at 50% -10%,#3a2f1c 0%,#1a1408 42%,#0c0a06 100%);
+    box-shadow:0 20px 60px rgba(0,0,0,.28);}
+  #dividerSlide .dv-deco{position:absolute;inset:0;z-index:1;}
+  #dividerSlide .dv-frame{position:absolute;inset:26px;border:1px solid rgba(217,181,109,.38);z-index:2;pointer-events:none;}
+  #dividerSlide .dv-frame::before,#dividerSlide .dv-frame::after{content:"";position:absolute;width:34px;height:34px;border:2px solid var(--gold);}
+  #dividerSlide .dv-frame::before{top:-3px;left:-3px;border-right:none;border-bottom:none;}
+  #dividerSlide .dv-frame::after{bottom:-3px;right:-3px;border-left:none;border-top:none;}
+  #dividerSlide .dv-brand{position:absolute;top:66px;left:0;right:0;text-align:center;color:var(--gold);font-size:16px;letter-spacing:6px;font-weight:600;z-index:5;}
+  #dividerSlide .dv-eyebrow{position:absolute;top:196px;left:0;right:0;text-align:center;color:rgba(232,212,162,.7);font-family:"Montserrat",sans-serif;font-size:14px;letter-spacing:10px;font-weight:600;z-index:5;text-transform:uppercase;}
+  #dividerSlide .dv-team{position:absolute;top:236px;left:60px;right:60px;text-align:center;font-family:"Noto Serif TC",serif;font-size:66px;font-weight:900;line-height:1.1;color:#fff;letter-spacing:4px;z-index:5;text-shadow:0 4px 24px rgba(0,0,0,.6);}
+  #dividerSlide .dv-rule{position:absolute;top:352px;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);z-index:5;}
+  #dividerSlide .dv-rule::before,#dividerSlide .dv-rule::after{content:"";position:absolute;top:-3px;width:8px;height:8px;background:var(--gold);transform:rotate(45deg);}
+  #dividerSlide .dv-rule::before{left:-14px;} #dividerSlide .dv-rule::after{right:-14px;}
+  #dividerSlide .dv-sub{position:absolute;top:378px;left:0;right:0;text-align:center;font-size:22px;color:var(--gold);font-weight:600;letter-spacing:6px;z-index:5;}
 
   /* ---------- 宣傳文彈窗 ---------- */
   .btn-promo{background:#7b52c4;color:#fff;}
@@ -676,10 +729,22 @@
 
       <!-- ---------- 產業鏈分隔頁（PPT 用，平時隱藏） ---------- -->
       <div id="dividerSlide" class="canvas" style="display:none;">
-        <div class="dv-top"></div><div class="dv-bottom"></div>
+        <svg class="dv-deco" viewBox="0 0 960 540" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="dvSpot" cx="50%" cy="0%" r="70%"><stop offset="0" stop-color="#ffe6ad" stop-opacity=".28"/><stop offset="60%" stop-color="#ffe6ad" stop-opacity="0"/></radialGradient>
+          </defs>
+          <ellipse cx="480" cy="20" rx="520" ry="300" fill="url(#dvSpot)"/>
+          <circle cx="480" cy="300" r="235" fill="none" stroke="#d9b56d" stroke-width="1" opacity=".18"/>
+          <circle cx="480" cy="300" r="285" fill="none" stroke="#d9b56d" stroke-width=".8" opacity=".1" stroke-dasharray="3 9"/>
+          <g fill="#d9b56d"><circle cx="150" cy="150" r="2.4" opacity=".7"/><circle cx="815" cy="180" r="2" opacity=".6"/><circle cx="120" cy="400" r="1.8" opacity=".5"/><circle cx="840" cy="420" r="2.2" opacity=".6"/><circle cx="220" cy="470" r="1.6" opacity=".45"/><circle cx="740" cy="90" r="1.6" opacity=".5"/></g>
+          <path d="M60 486 C260 456 380 512 520 476 C650 444 780 500 900 466" stroke="#d9b56d" stroke-width="1.2" fill="none" opacity=".35"/>
+        </svg>
+        <div class="dv-frame"></div>
         <div class="dv-brand">富鼎分會 · FU DING｜BNI 鈦金名人堂</div>
+        <div class="dv-eyebrow">INDUSTRY CHAIN</div>
         <div class="dv-team" id="dvTeam">產業鏈</div>
-        <div class="dv-sub" id="dvSub">請準備</div>
+        <div class="dv-rule"></div>
+        <div class="dv-sub" id="dvSub">產業服務鏈</div>
       </div>
     </div>
   </div>
@@ -768,11 +833,11 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=23"></script>
-<script src="specialties.js?v=23"></script>
-<script src="members.js?v=23"></script>
-<script src="store.js?v=23"></script>
-<script src="app.js?v=23"></script>
-<script src="roster.js?v=23"></script>
+<script src="firebase-config.js?v=24"></script>
+<script src="specialties.js?v=24"></script>
+<script src="members.js?v=24"></script>
+<script src="store.js?v=24"></script>
+<script src="app.js?v=24"></script>
+<script src="roster.js?v=24"></script>
 </body>
 </html>
