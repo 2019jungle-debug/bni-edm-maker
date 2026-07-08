@@ -50,16 +50,28 @@ function renderRoster(){
 
     if (m.type === 'divider'){
       row.className = 'roster-row divider-row';
+      const viewBtn = '<button data-act="view" title="檢視分隔頁">👁 檢視</button>';
       row.innerHTML =
         '<span class="drag" title="拖曳調整順序">⠿</span>' +
         '<span class="ord">' + (idx+1) + '</span>' +
         '<label class="present"><input type="checkbox" ' + (m.present !== false ? 'checked' : '') + (admin?'':' disabled') + '><span>放入</span></label>' +
         '<span class="dv-tag">產業鏈分隔頁</span>' +
-        (admin ? '<input class="dv-title-input" list="chainDatalist" placeholder="選擇或輸入產業鏈名稱" value="' + escapeHtml(m.title || '') + '">'
-               : '<span class="rspec" style="flex:1;font-weight:700;color:var(--red-dark);">' + escapeHtml(m.title || '(未命名產業鏈)') + '</span>') +
-        '<span class="ract">' + adminActs + '</span>';
+        (admin
+          ? '<span class="dv-fields" style="flex:1;display:flex;gap:6px;flex-wrap:wrap;">' +
+              '<input class="dv-title-input" list="chainDatalist" placeholder="產業鏈名稱（主標）" value="' + escapeHtml(m.title || '') + '" style="flex:1;min-width:150px;">' +
+              '<input class="dv-sub-input" placeholder="副標（例：產業服務鏈）" value="' + escapeHtml(m.sub == null ? '產業服務鏈' : m.sub) + '" style="flex:1;min-width:130px;">' +
+            '</span>'
+          : '<span class="dv-fields" style="flex:1;">' +
+              '<span class="rspec" style="font-weight:700;color:var(--red-dark);">' + escapeHtml(m.title || '(未命名產業鏈)') + '</span>' +
+              (m.sub ? '<span class="rspec" style="color:var(--gold);margin-left:8px;">' + escapeHtml(m.sub) + '</span>' : '') +
+            '</span>') +
+        '<span class="ract">' + viewBtn + adminActs + '</span>';
       const ti = row.querySelector('.dv-title-input');
       if (ti) ti.addEventListener('change', e => { const item = Store.getById(m.id); if (item){ item.title = e.target.value; Store.upsert(item); } });
+      const si = row.querySelector('.dv-sub-input');
+      if (si) si.addEventListener('change', e => { const item = Store.getById(m.id); if (item){ item.sub = e.target.value; Store.upsert(item); } });
+      const vb = row.querySelector('[data-act=view]');
+      if (vb) vb.addEventListener('click', () => previewDivider(m.id));
     } else {
       row.className = 'roster-row';
       row.innerHTML =
@@ -178,7 +190,7 @@ async function generatePPT(){
       if (item.type === 'divider'){
         // 產業鏈分隔頁（使用名冊中自填的名稱）
         document.getElementById('dvTeam').textContent = item.title || '產業鏈';
-        document.getElementById('dvSub').textContent = item.title ? '' : '產業服務鏈';
+        document.getElementById('dvSub').textContent = (item.sub != null ? item.sub : (item.title ? '產業服務鏈' : '請準備'));
         hero.style.display = 'none'; intro.style.display = 'none'; divider.style.display = ''; divider.style.zoom = 1;
         await nextFrame();
         const dc = await html2canvas(divider, { scale:2, useCORS:true, backgroundColor:'#ffffff' });
@@ -321,4 +333,49 @@ function buildNewMember(){
     imBtn.addEventListener('click', () => imInput.click());
     imInput.addEventListener('change', e => { if (e.target.files[0]) importRoster(e.target.files[0]); });
   }
+
+  // 分隔頁檢視 modal 關閉
+  const dpc = document.getElementById('dividerPreviewClose');
+  if (dpc) dpc.addEventListener('click', closeDividerPreview);
+  const dpm = document.getElementById('dividerPreviewModal');
+  if (dpm) dpm.addEventListener('click', e => { if (e.target.id === 'dividerPreviewModal') closeDividerPreview(); });
 })();
+
+function closeDividerPreview(){
+  const m = document.getElementById('dividerPreviewModal');
+  if (m) m.classList.remove('show');
+}
+
+// 檢視某張產業鏈分隔頁：依名冊資料即時渲染實際 PPT 樣式
+async function previewDivider(id){
+  const item = Store.getById(id); if (!item) return;
+  const modal = document.getElementById('dividerPreviewModal');
+  const body  = document.getElementById('dividerPreviewBody');
+  body.innerHTML = '<div style="color:#666;padding:40px;">產生預覽中…</div>';
+  modal.classList.add('show');
+
+  const dv = document.getElementById('dividerSlide');
+  document.getElementById('dvTeam').textContent = item.title || '產業鏈';
+  document.getElementById('dvSub').textContent  = (item.sub != null ? item.sub : (item.title ? '產業服務鏈' : '請準備'));
+
+  // 暫時移到 body 底下並顯示（避開祖先 display:none 導致擷取空白）
+  const parent = dv.parentNode, next = dv.nextSibling;
+  const prev = { display: dv.style.display, position: dv.style.position, left: dv.style.left, top: dv.style.top, zoom: dv.style.zoom };
+  document.body.appendChild(dv);
+  dv.style.display = ''; dv.style.position = 'fixed'; dv.style.left = '-3000px'; dv.style.top = '0'; dv.style.zoom = 1;
+  try {
+    await new Promise(r => setTimeout(r, 30));
+    const c = await html2canvas(dv, { scale:2, useCORS:true, backgroundColor:'#ffffff' });
+    body.innerHTML = '';
+    const img = new Image();
+    img.src = c.toDataURL('image/png');
+    img.style.cssText = 'max-width:100%;height:auto;border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,.2);';
+    body.appendChild(img);
+  } catch(e){
+    body.innerHTML = '<div style="color:#c00;padding:30px;">預覽失敗：' + e.message + '</div>';
+  } finally {
+    dv.style.display = prev.display || 'none';
+    dv.style.position = prev.position; dv.style.left = prev.left; dv.style.top = prev.top; dv.style.zoom = prev.zoom;
+    if (next) parent.insertBefore(dv, next); else parent.appendChild(dv);
+  }
+}

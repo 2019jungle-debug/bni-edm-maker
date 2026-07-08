@@ -193,7 +193,7 @@ function blankMember(){
 
 // 產業鏈分隔頁項目（放在名冊中，PPT 產生時變成一張分隔投影片）
 function blankDivider(){
-  return { id:null, type:'divider', title:'', present:true, order:null };
+  return { id:null, type:'divider', title:'', sub:'產業服務鏈', present:true, order:null };
 }
 
 async function saveEditorToRoster(){
@@ -456,39 +456,132 @@ function genPromo(){
   s += '🗣 積極邀請合作的行業別：\n' + refLines + '\n\n';
   s += '🔥 心動不如馬上行動，趕快手刀報名' + (d.date ? d.date + ' ' : '') + '專題簡報！\n';
   s += '富鼎富鼎，又富又鼎 💪';
-  return s;
+  return limit500(s);
+}
+
+// 控制在 500 字內（以字元計，含 emoji）
+function limit500(text){
+  const t = (text || '').trim();
+  const arr = Array.from(t);          // 以碼位切，避免切壞 emoji
+  if (arr.length <= 500) return t;
+  return arr.slice(0, 499).join('') + '…';
+}
+
+// ---- AI 金鑰（只存本機瀏覽器）----
+const AI_KEY_LS = 'bni_ai_key';
+function getAiKey(){ try { return (localStorage.getItem(AI_KEY_LS) || '').trim(); } catch(e){ return ''; } }
+function setAiKey(v){ try { if (v) localStorage.setItem(AI_KEY_LS, v); else localStorage.removeItem(AI_KEY_LS); } catch(e){} }
+
+// 呼叫 Claude 潤飾。回傳潤飾後文字；失敗則回 null（改用套版）
+async function aiPolishPromo(d){
+  const key = getAiKey();
+  if (!key) return null;
+  const base = genPromo();            // 先給模型套版稿當骨架
+  const facts = [
+    '姓名：' + (d.name || ''),
+    '專業別：' + (d.specialty || d.role || ''),
+    '主題：' + [d.main, d.sub].filter(Boolean).join('，'),
+    '獨特銷售主張：' + (d.usp || ''),
+    '日期：' + (d.date || '') + ' ' + (d.day || ''),
+    '時間：' + (d.time || '06:30－09:30'),
+    '地點：' + (d.place || ''),
+    '想邀請的行業別：' + [d.partners, d.general, d.ideal, d.dream].flat().filter(Boolean).join('、')
+  ].join('\n');
+  const prompt =
+    '你是台灣 BNI 富鼎分會的社群小編。請根據以下會員資料，寫一篇 LINE／FB 專題簡報宣傳文（繁體中文）。\n' +
+    '要求：\n' +
+    '1) 語氣熱情、專業、口語，適度使用 emoji（🎬📆⏰👉📑🗣✨💯🔥💪 等）。\n' +
+    '2) 開頭保留「🎬 富鼎鈦金名人堂專題簡報」與日期／時間／地點資訊。\n' +
+    '3) 中段用 2～3 句吸引人的介紹，帶出主題與價值。\n' +
+    '4) 條列「積極邀請合作的行業別」。\n' +
+    '5) 結尾呼籲報名，可用「富鼎富鼎，又富又鼎 💪」收尾。\n' +
+    '6) 全文總字數務必在 500 字以內。\n' +
+    '7) 只輸出宣傳文本身，不要任何解釋或前後綴。\n\n' +
+    '【會員資料】\n' + facts + '\n\n' +
+    '【可參考的套版骨架】\n' + base;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-5',
+        max_tokens: 1200,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    if (!res.ok){ console.warn('AI 潤飾失敗', res.status, await res.text().catch(()=>'')); return null; }
+    const data = await res.json();
+    const txt = (data.content || []).map(b => b.text || '').join('').trim();
+    return txt ? limit500(txt) : null;
+  } catch(e){ console.warn('AI 潤飾例外', e); return null; }
+}
+
+// 統一產生（有金鑰 → AI 潤飾；否則套版），並回填字數
+async function buildPromo(statusEl){
+  const d = currentData();
+  const hasKey = !!getAiKey();
+  if (statusEl) statusEl.textContent = hasKey ? '🤖 AI 潤飾中…' : '';
+  let out = null;
+  if (hasKey) out = await aiPolishPromo(d);
+  if (!out) out = genPromo();          // 無金鑰或失敗 → 套版
+  if (statusEl){
+    const n = Array.from(out).length;
+    statusEl.textContent = (hasKey && out ? '✓ AI 生成' : '✓ 套版生成') + '　' + n + '/500 字';
+  }
+  return out;
 }
 
 // 內嵌區塊（表單最下方）
-document.getElementById('genPromoBtn').addEventListener('click', () => {
-  document.getElementById('promoOut').value = genPromo();
-  flashSaved('✓ 已生成宣傳文');
+document.getElementById('genPromoBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('genPromoBtn');
+  const st = document.getElementById('promoGenStatus');
+  btn.disabled = true;
+  try {
+    document.getElementById('promoOut').value = await buildPromo(st);
+    flashSaved('✓ 已生成宣傳文');
+  } finally { btn.disabled = false; }
 });
 document.getElementById('copyPromoBtn').addEventListener('click', async () => {
   const t = document.getElementById('promoOut');
-  if (!t.value.trim()) t.value = genPromo();
+  if (!t.value.trim()) t.value = await buildPromo(document.getElementById('promoGenStatus'));
   await copyText(t.value, () => flashSaved('✓ 已複製宣傳文'));
 });
+// AI 金鑰欄位：載入 + 即時存本機
+(function initAiKey(){
+  const el = document.getElementById('aiKey');
+  if (!el) return;
+  el.value = getAiKey();
+  el.addEventListener('input', () => setAiKey(el.value.trim()));
+})();
 
 // 彈出視窗（預覽區旁的「✨ 宣傳文」按鈕）
 async function copyText(text, onOk){
   try { await navigator.clipboard.writeText(text); onOk && onOk(); }
   catch(e){ const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); onOk && onOk(); }
 }
-function openPromoModal(){
-  const txt = genPromo();
+async function openPromoModal(){
+  const status = document.getElementById('promoModalStatus');
+  document.getElementById('promoModalText').value = genPromo();  // 先秀套版
+  document.getElementById('promoModal').classList.add('show');
+  const txt = await buildPromo(status);
   document.getElementById('promoModalText').value = txt;
   document.getElementById('promoOut').value = txt;   // 同步內嵌區
-  document.getElementById('promoModalStatus').textContent = '';
-  document.getElementById('promoModal').classList.add('show');
 }
 function closePromoModal(){ document.getElementById('promoModal').classList.remove('show'); }
 document.getElementById('openPromoBtn').addEventListener('click', openPromoModal);
 document.getElementById('promoClose').addEventListener('click', closePromoModal);
 document.getElementById('promoModal').addEventListener('click', e => { if (e.target.id === 'promoModal') closePromoModal(); });
-document.getElementById('promoModalRegen').addEventListener('click', () => {
-  document.getElementById('promoModalText').value = genPromo();
-  document.getElementById('promoModalStatus').textContent = '已重新生成';
+document.getElementById('promoModalRegen').addEventListener('click', async (e) => {
+  const status = document.getElementById('promoModalStatus');
+  e.target.disabled = true;
+  try {
+    document.getElementById('promoModalText').value = await buildPromo(status);
+  } finally { e.target.disabled = false; }
 });
 document.getElementById('promoModalCopy').addEventListener('click', () => {
   copyText(document.getElementById('promoModalText').value, () => {
