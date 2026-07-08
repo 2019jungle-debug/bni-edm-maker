@@ -59,17 +59,21 @@ function renderRoster(){
         (admin
           ? '<span class="dv-fields" style="flex:1;display:flex;gap:6px;flex-wrap:wrap;">' +
               '<input class="dv-title-input" list="chainDatalist" placeholder="產業鏈名稱（主標）" value="' + escapeHtml(m.title || '') + '" style="flex:1;min-width:150px;">' +
-              '<input class="dv-sub-input" placeholder="副標（例：產業服務鏈）" value="' + escapeHtml(m.sub == null ? '產業服務鏈' : m.sub) + '" style="flex:1;min-width:130px;">' +
+              '<input class="dv-sub-input" placeholder="紅底副標（例：產業服務鏈）" value="' + escapeHtml(m.sub == null ? '產業服務鏈' : m.sub) + '" style="flex:1;min-width:120px;">' +
+              '<input class="dv-eng-input" placeholder="英文副標（選填）" value="' + escapeHtml(m.eng || '') + '" style="flex:1;min-width:150px;">' +
             '</span>'
           : '<span class="dv-fields" style="flex:1;">' +
               '<span class="rspec" style="font-weight:700;color:var(--red-dark);">' + escapeHtml(m.title || '(未命名產業鏈)') + '</span>' +
               (m.sub ? '<span class="rspec" style="color:var(--gold);margin-left:8px;">' + escapeHtml(m.sub) + '</span>' : '') +
+              (m.eng ? '<span class="rspec" style="color:#999;margin-left:8px;font-size:12px;">' + escapeHtml(m.eng) + '</span>' : '') +
             '</span>') +
         '<span class="ract">' + viewBtn + adminActs + '</span>';
       const ti = row.querySelector('.dv-title-input');
       if (ti) ti.addEventListener('change', e => { const item = Store.getById(m.id); if (item){ item.title = e.target.value; Store.upsert(item); } });
       const si = row.querySelector('.dv-sub-input');
       if (si) si.addEventListener('change', e => { const item = Store.getById(m.id); if (item){ item.sub = e.target.value; Store.upsert(item); } });
+      const ei = row.querySelector('.dv-eng-input');
+      if (ei) ei.addEventListener('change', e => { const item = Store.getById(m.id); if (item){ item.eng = e.target.value; Store.upsert(item); } });
       const vb = row.querySelector('[data-act=view]');
       if (vb) vb.addEventListener('click', () => previewDivider(m.id));
     } else {
@@ -189,8 +193,7 @@ async function generatePPT(){
 
       if (item.type === 'divider'){
         // 產業鏈分隔頁（使用名冊中自填的名稱）
-        document.getElementById('dvTeam').textContent = item.title || '產業鏈';
-        document.getElementById('dvSub').textContent = (item.sub != null ? item.sub : (item.title ? '產業服務鏈' : '請準備'));
+        paintDivider(item);
         hero.style.display = 'none'; intro.style.display = 'none'; divider.style.display = ''; divider.style.zoom = 1;
         await nextFrame();
         const dc = await html2canvas(divider, { scale:2, useCORS:true, backgroundColor:'#ffffff' });
@@ -350,6 +353,14 @@ function closeDividerPreview(){
   if (m) m.classList.remove('show');
 }
 
+// 依名冊資料把分隔頁母片的主標／紅底副標／英文副標填上（英文空白則隱藏）
+function paintDivider(item){
+  document.getElementById('dvTeam').textContent = item.title || '產業鏈';
+  document.getElementById('dvSub').textContent  = (item.sub != null && item.sub !== '') ? item.sub : '產業服務鏈';
+  const eng = document.getElementById('dvEng');
+  if (eng){ eng.textContent = item.eng || ''; eng.style.display = item.eng ? '' : 'none'; }
+}
+
 // 檢視某張產業鏈分隔頁：依名冊資料即時渲染實際 PPT 樣式
 async function previewDivider(id){
   const item = Store.getById(id); if (!item) return;
@@ -359,8 +370,7 @@ async function previewDivider(id){
   modal.classList.add('show');
 
   const dv = document.getElementById('dividerSlide');
-  document.getElementById('dvTeam').textContent = item.title || '產業鏈';
-  document.getElementById('dvSub').textContent  = (item.sub != null ? item.sub : (item.title ? '產業服務鏈' : '請準備'));
+  paintDivider(item);
 
   // 暫時移到 body 底下並顯示（避開祖先 display:none 導致擷取空白）
   const parent = dv.parentNode, next = dv.nextSibling;

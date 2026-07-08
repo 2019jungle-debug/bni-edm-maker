@@ -193,7 +193,7 @@ function blankMember(){
 
 // 產業鏈分隔頁項目（放在名冊中，PPT 產生時變成一張分隔投影片）
 function blankDivider(){
-  return { id:null, type:'divider', title:'', sub:'產業服務鏈', present:true, order:null };
+  return { id:null, type:'divider', title:'', sub:'產業服務鏈', eng:'', present:true, order:null };
 }
 
 async function saveEditorToRoster(){

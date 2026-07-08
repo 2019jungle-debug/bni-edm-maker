@@ -383,23 +383,46 @@
   .tg-foot ul{margin:0;padding-left:18px;}
   .tg-foot li{font-size:14px;line-height:1.75;color:#3a3a3a;}
 
-  /* ---------- 產業鏈分隔頁 16:9（尊爵黑金 · 母片） ---------- */
+  /* ---------- 產業鏈分隔頁 16:9（BNI 紅金 · 母片，仿官方主視覺） ---------- */
   #dividerSlide{width:960px;height:540px;position:relative;overflow:hidden;transform-origin:top center;
-    font-family:"Noto Sans TC",sans-serif;
-    background:radial-gradient(120% 90% at 50% -10%,#3a2f1c 0%,#1a1408 42%,#0c0a06 100%);
-    box-shadow:0 20px 60px rgba(0,0,0,.28);}
-  #dividerSlide .dv-deco{position:absolute;inset:0;z-index:1;}
-  #dividerSlide .dv-frame{position:absolute;inset:26px;border:1px solid rgba(217,181,109,.38);z-index:2;pointer-events:none;}
-  #dividerSlide .dv-frame::before,#dividerSlide .dv-frame::after{content:"";position:absolute;width:34px;height:34px;border:2px solid var(--gold);}
-  #dividerSlide .dv-frame::before{top:-3px;left:-3px;border-right:none;border-bottom:none;}
-  #dividerSlide .dv-frame::after{bottom:-3px;right:-3px;border-left:none;border-top:none;}
-  #dividerSlide .dv-brand{position:absolute;top:66px;left:0;right:0;text-align:center;color:var(--gold);font-size:16px;letter-spacing:6px;font-weight:600;z-index:5;}
-  #dividerSlide .dv-eyebrow{position:absolute;top:196px;left:0;right:0;text-align:center;color:rgba(232,212,162,.7);font-family:"Montserrat",sans-serif;font-size:14px;letter-spacing:10px;font-weight:600;z-index:5;text-transform:uppercase;}
-  #dividerSlide .dv-team{position:absolute;top:236px;left:60px;right:60px;text-align:center;font-family:"Noto Serif TC",serif;font-size:66px;font-weight:900;line-height:1.1;color:#fff;letter-spacing:4px;z-index:5;text-shadow:0 4px 24px rgba(0,0,0,.6);}
-  #dividerSlide .dv-rule{position:absolute;top:352px;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);z-index:5;}
-  #dividerSlide .dv-rule::before,#dividerSlide .dv-rule::after{content:"";position:absolute;top:-3px;width:8px;height:8px;background:var(--gold);transform:rotate(45deg);}
-  #dividerSlide .dv-rule::before{left:-14px;} #dividerSlide .dv-rule::after{right:-14px;}
-  #dividerSlide .dv-sub{position:absolute;top:378px;left:0;right:0;text-align:center;font-size:22px;color:var(--gold);font-weight:600;letter-spacing:6px;z-index:5;}
+    font-family:"Noto Sans TC",sans-serif;background:#faf6ee;box-shadow:0 20px 60px rgba(0,0,0,.22);}
+  #dividerSlide .dv-bg{position:absolute;inset:0;z-index:1;width:100%;height:100%;}
+  /* 頂部品牌列 */
+  #dividerSlide .dv-top{position:absolute;top:70px;left:0;right:0;z-index:5;display:flex;align-items:center;justify-content:center;gap:20px;}
+  #dividerSlide .dv-emblem{width:96px;height:88px;flex:0 0 auto;}
+  #dividerSlide .dv-brandtext{font-size:30px;font-weight:800;letter-spacing:1px;color:#2c2016;display:flex;align-items:center;gap:14px;}
+  #dividerSlide .dv-brandtext .en{font-family:"Montserrat",sans-serif;letter-spacing:2px;}
+  #dividerSlide .dv-brandtext .vbar{width:2px;height:32px;background:#d8c7a0;}
+  #dividerSlide .dv-brandtext .bni-red{color:var(--red,#c60c30);font-family:"Montserrat",sans-serif;font-weight:900;}
+  #dividerSlide .dv-brandtext .gold{color:#b8933f;}
+  /* 主標 */
+  #dividerSlide .dv-team{position:absolute;top:172px;left:40px;right:40px;text-align:center;white-space:nowrap;
+    font-family:"Noto Sans TC",sans-serif;font-size:58px;font-weight:900;line-height:1;letter-spacing:2px;z-index:5;
+    color:#2b1d12;text-shadow:0 2px 3px rgba(0,0,0,.12);}
+  #dividerSlide .dv-eng{position:absolute;top:248px;left:0;right:0;text-align:center;z-index:5;
+    font-family:"Montserrat",sans-serif;font-size:18px;font-weight:600;letter-spacing:7px;color:#b8933f;text-transform:uppercase;}
+  /* 連接線 + 紅色緞帶 */
+  #dividerSlide .dv-banner-row{position:absolute;top:292px;left:120px;right:120px;height:46px;z-index:5;display:flex;align-items:center;justify-content:center;}
+  #dividerSlide .dv-banner-row::before,#dividerSlide .dv-banner-row::after{content:"";position:absolute;top:50%;height:1.5px;background:linear-gradient(90deg,#c9a24b,rgba(201,162,75,.15));}
+  #dividerSlide .dv-banner-row::before{left:0;right:52%;}
+  #dividerSlide .dv-banner-row::after{right:0;left:52%;background:linear-gradient(270deg,#c9a24b,rgba(201,162,75,.15));}
+  #dividerSlide .dv-dot{position:absolute;top:50%;transform:translateY(-50%);width:9px;height:9px;border:2px solid #c9a24b;border-radius:50%;background:#faf6ee;}
+  #dividerSlide .dv-dot.l{left:-4px;} #dividerSlide .dv-dot.r{right:-4px;}
+  #dividerSlide .dv-banner{position:relative;z-index:2;padding:9px 46px;background:linear-gradient(180deg,#d21133,#a30d27);color:#fff;font-size:26px;font-weight:800;letter-spacing:8px;
+    clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,14px 100%,0 50%);
+    box-shadow:0 6px 16px rgba(163,13,39,.32);border-top:1px solid rgba(255,255,255,.35);}
+  /* 五個價值圖示 */
+  #dividerSlide .dv-values{position:absolute;top:360px;left:120px;right:120px;z-index:5;display:flex;justify-content:space-between;}
+  #dividerSlide .dv-val{flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;position:relative;}
+  #dividerSlide .dv-val:not(:last-child)::after{content:"";position:absolute;right:0;top:6px;height:78px;width:1px;background:linear-gradient(180deg,transparent,#e0d2b4,transparent);}
+  #dividerSlide .dv-val .ic{width:66px;height:66px;border-radius:50%;border:1.5px solid #cbaf72;display:flex;align-items:center;justify-content:center;background:#fffdf8;box-shadow:0 4px 12px rgba(180,147,63,.14);}
+  #dividerSlide .dv-val .ic svg{width:32px;height:32px;}
+  #dividerSlide .dv-val .vt{font-size:17px;font-weight:700;color:#3a2c1e;letter-spacing:1px;}
+  /* 底部 BNI 波浪 */
+  #dividerSlide .dv-foot{position:absolute;left:0;right:0;bottom:20px;text-align:center;z-index:6;}
+  #dividerSlide .dv-foot .bni{font-family:"Montserrat",sans-serif;font-size:30px;font-weight:900;color:#fff;letter-spacing:1px;}
+  #dividerSlide .dv-foot .bni sup{font-size:12px;}
+  #dividerSlide .dv-foot .slogan{font-family:"Montserrat",sans-serif;font-size:12px;font-weight:500;color:rgba(255,255,255,.9);letter-spacing:.5px;margin-top:-2px;}
 
   /* ---------- 宣傳文彈窗 ---------- */
   .btn-promo{background:#7b52c4;color:#fff;}
@@ -729,22 +752,70 @@
 
       <!-- ---------- 產業鏈分隔頁（PPT 用，平時隱藏） ---------- -->
       <div id="dividerSlide" class="canvas" style="display:none;">
-        <svg class="dv-deco" viewBox="0 0 960 540" preserveAspectRatio="xMidYMid slice">
+        <svg class="dv-bg" viewBox="0 0 960 540" preserveAspectRatio="none">
           <defs>
-            <radialGradient id="dvSpot" cx="50%" cy="0%" r="70%"><stop offset="0" stop-color="#ffe6ad" stop-opacity=".28"/><stop offset="60%" stop-color="#ffe6ad" stop-opacity="0"/></radialGradient>
+            <linearGradient id="dvRed" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d21133"/><stop offset="1" stop-color="#8b1028"/></linearGradient>
+            <linearGradient id="dvRedB" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a30d27"/><stop offset=".5" stop-color="#d21133"/><stop offset="1" stop-color="#a30d27"/></linearGradient>
           </defs>
-          <ellipse cx="480" cy="20" rx="520" ry="300" fill="url(#dvSpot)"/>
-          <circle cx="480" cy="300" r="235" fill="none" stroke="#d9b56d" stroke-width="1" opacity=".18"/>
-          <circle cx="480" cy="300" r="285" fill="none" stroke="#d9b56d" stroke-width=".8" opacity=".1" stroke-dasharray="3 9"/>
-          <g fill="#d9b56d"><circle cx="150" cy="150" r="2.4" opacity=".7"/><circle cx="815" cy="180" r="2" opacity=".6"/><circle cx="120" cy="400" r="1.8" opacity=".5"/><circle cx="840" cy="420" r="2.2" opacity=".6"/><circle cx="220" cy="470" r="1.6" opacity=".45"/><circle cx="740" cy="90" r="1.6" opacity=".5"/></g>
-          <path d="M60 486 C260 456 380 512 520 476 C650 444 780 500 900 466" stroke="#d9b56d" stroke-width="1.2" fill="none" opacity=".35"/>
+          <!-- 左右紅色緞帶 -->
+          <path d="M0,0 L96,0 C70,160 74,384 128,540 L0,540 Z" fill="#8b1028"/>
+          <path d="M0,0 L140,0 C104,150 104,392 178,540 L60,540 C24,392 30,150 70,0 Z" fill="url(#dvRed)"/>
+          <path d="M960,0 L864,0 C890,160 886,384 832,540 L960,540 Z" fill="#8b1028"/>
+          <path d="M960,0 L820,0 C856,150 856,392 782,540 L900,540 C936,392 930,150 890,0 Z" fill="url(#dvRed)"/>
+          <!-- 底部紅色波浪 -->
+          <path d="M0,540 L0,472 C200,506 320,460 480,484 C640,508 760,462 960,490 L960,540 Z" fill="url(#dvRedB)"/>
+          <path d="M0,468 C200,502 320,456 480,480 C640,504 760,458 960,486" fill="none" stroke="#e9c877" stroke-width="1.6" opacity=".7"/>
+          <!-- 金色流線 -->
+          <g fill="none" stroke="#d8b45a" stroke-linecap="round">
+            <path d="M18,54 C150,180 140,360 232,540" stroke-width="2" opacity=".55"/>
+            <path d="M6,120 C118,240 118,404 188,540" stroke-width="1.2" opacity=".4"/>
+            <path d="M150,10 C120,150 128,360 210,540" stroke-width="1" opacity=".3"/>
+            <path d="M942,54 C810,180 820,360 728,540" stroke-width="2" opacity=".55"/>
+            <path d="M954,120 C842,240 842,404 772,540" stroke-width="1.2" opacity=".4"/>
+            <path d="M810,10 C840,150 832,360 750,540" stroke-width="1" opacity=".3"/>
+          </g>
+          <!-- 網點（右上角） -->
+          <g fill="#c9a24b" opacity=".5">
+            <circle cx="726" cy="18" r="1.5"/><circle cx="748" cy="18" r="1.5"/><circle cx="770" cy="18" r="1.5"/><circle cx="792" cy="18" r="1.5"/><circle cx="814" cy="18" r="1.5"/><circle cx="836" cy="18" r="1.5"/><circle cx="858" cy="18" r="1.5"/><circle cx="880" cy="18" r="1.5"/><circle cx="902" cy="18" r="1.5"/><circle cx="924" cy="18" r="1.5"/>
+            <circle cx="748" cy="40" r="1.5"/><circle cx="770" cy="40" r="1.5"/><circle cx="792" cy="40" r="1.5"/><circle cx="814" cy="40" r="1.5"/><circle cx="836" cy="40" r="1.5"/><circle cx="858" cy="40" r="1.5"/><circle cx="880" cy="40" r="1.5"/><circle cx="902" cy="40" r="1.5"/><circle cx="924" cy="40" r="1.5"/>
+            <circle cx="792" cy="62" r="1.5"/><circle cx="814" cy="62" r="1.5"/><circle cx="836" cy="62" r="1.5"/><circle cx="858" cy="62" r="1.5"/><circle cx="880" cy="62" r="1.5"/><circle cx="902" cy="62" r="1.5"/><circle cx="924" cy="62" r="1.5"/>
+            <circle cx="836" cy="84" r="1.5"/><circle cx="858" cy="84" r="1.5"/><circle cx="880" cy="84" r="1.5"/><circle cx="902" cy="84" r="1.5"/><circle cx="924" cy="84" r="1.5"/>
+          </g>
         </svg>
-        <div class="dv-frame"></div>
-        <div class="dv-brand">富鼎分會 · FU DING｜BNI 鈦金名人堂</div>
-        <div class="dv-eyebrow">INDUSTRY CHAIN</div>
-        <div class="dv-team" id="dvTeam">產業鏈</div>
-        <div class="dv-rule"></div>
-        <div class="dv-sub" id="dvSub">產業服務鏈</div>
+
+        <div class="dv-top">
+          <svg class="dv-emblem" viewBox="0 0 120 108">
+            <g stroke="#c9a24b" stroke-width="1.6" fill="#c9a24b">
+              <path d="M60,94 C44,92 32,76 29,46" fill="none"/>
+              <g><ellipse cx="49" cy="89" rx="6" ry="3" transform="rotate(-24 49 89)"/><ellipse cx="41" cy="80" rx="6" ry="3" transform="rotate(-38 41 80)"/><ellipse cx="35" cy="69" rx="5.6" ry="2.8" transform="rotate(-52 35 69)"/><ellipse cx="31" cy="57" rx="5.4" ry="2.8" transform="rotate(-66 31 57)"/><ellipse cx="30" cy="46" rx="5" ry="2.6" transform="rotate(-80 30 46)"/></g>
+              <path d="M60,94 C76,92 88,76 91,46" fill="none"/>
+              <g><ellipse cx="71" cy="89" rx="6" ry="3" transform="rotate(24 71 89)"/><ellipse cx="79" cy="80" rx="6" ry="3" transform="rotate(38 79 80)"/><ellipse cx="85" cy="69" rx="5.6" ry="2.8" transform="rotate(52 85 69)"/><ellipse cx="89" cy="57" rx="5.4" ry="2.8" transform="rotate(66 89 57)"/><ellipse cx="90" cy="46" rx="5" ry="2.6" transform="rotate(80 90 46)"/></g>
+            </g>
+            <polygon points="60,20 86,35 86,67 60,82 34,67 34,35" fill="#fff" stroke="#c9a24b" stroke-width="2"/>
+            <text x="60" y="42" font-size="10" fill="#c9a24b" text-anchor="middle" font-family="Montserrat,sans-serif">★★★</text>
+            <text x="60" y="66" font-size="21" fill="#c60c30" text-anchor="middle" font-weight="900" font-family="Montserrat,Arial,sans-serif">BNI</text>
+          </svg>
+          <div class="dv-brandtext"><span>富鼎分會</span><span class="en gold">· FU DING</span><span class="vbar"></span><span class="bni-red">BNI</span><span class="gold">鈦金名人堂</span></div>
+        </div>
+
+        <div class="dv-team" id="dvTeam">生命健康服務團隊產業鏈</div>
+        <div class="dv-eng" id="dvEng">HEALTH &amp; WELLNESS BUSINESS ALLIANCE</div>
+        <div class="dv-banner-row">
+          <span class="dv-dot l"></span>
+          <div class="dv-banner" id="dvSub">產業服務鏈</div>
+          <span class="dv-dot r"></span>
+        </div>
+        <div class="dv-values">
+          <div class="dv-val"><span class="ic"><svg viewBox="0 0 32 32" fill="none" stroke="#c60c30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 27C16 27 4 20 4 11.5 4 7.4 7 4.5 10.6 4.5c2.2 0 4.1 1.2 5.4 3 1.3-1.8 3.2-3 5.4-3C25 4.5 28 7.4 28 11.5c0 1-.2 2-.5 2.9"/><path d="M5 16h5l2.5-5 3.5 10 2.5-5H28"/></svg></span><span class="vt">跨專業合作</span></div>
+          <div class="dv-val"><span class="ic"><svg viewBox="0 0 32 32" fill="none" stroke="#c60c30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="4"/><circle cx="22" cy="12" r="3.4"/><path d="M4 26c0-4 3.2-6.5 7-6.5s7 2.5 7 6.5M18 25c.2-3 2.4-5 5-5s4.8 1.8 5 5"/></svg></span><span class="vt">資源整合</span></div>
+          <div class="dv-val"><span class="ic"><svg viewBox="0 0 32 32" fill="none" stroke="#c60c30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l5-3 6 4 3-2 4 2 5 3"/><path d="M14 13l3 3c1 1 2.5 1 3.5 0"/><path d="M8 16l4 4c1 1 2.6 1 3.6 0l.9-.9"/><path d="M3 12v9M29 15v6"/></svg></span><span class="vt">創造商機</span></div>
+          <div class="dv-val"><span class="ic"><svg viewBox="0 0 32 32" fill="none" stroke="#c60c30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 28h24"/><rect x="6" y="18" width="5" height="8"/><rect x="14" y="13" width="5" height="13"/><rect x="22" y="8" width="5" height="18"/><path d="M6 12l7-5 4 3 8-6M25 4h4v4"/></svg></span><span class="vt">價值共創</span></div>
+          <div class="dv-val"><span class="ic"><svg viewBox="0 0 32 32" fill="none" stroke="#c60c30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h14l5 7-12 15L4 12z"/><path d="M4 12h24M12 5l4 22M20 5l-4 22"/></svg></span><span class="vt">永續發展</span></div>
+        </div>
+        <div class="dv-foot">
+          <div class="bni">BNI<sup>®</sup></div>
+          <div class="slogan">Changing the Way the World Does Business<sup>®</sup></div>
+        </div>
       </div>
     </div>
   </div>
