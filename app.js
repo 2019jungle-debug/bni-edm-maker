@@ -977,6 +977,9 @@ if (saveTopBtn) saveTopBtn.addEventListener('click', saveEditorToRoster);
   updateEditingBanner();
   updateCloudBadge();
   updateAuthUI();
+  // 把產業鏈母片背景（內嵌 data URI，見 divider-bg.js）套到分隔頁圖片元素
+  const _bgi = document.querySelector('#dividerSlide .dv-bgimg');
+  if (_bgi && window.DIVIDER_BG_DATAURL) _bgi.src = window.DIVIDER_BG_DATAURL;
 })();
 
 function updateCloudBadge(){
