@@ -366,9 +366,12 @@ async function previewDivider(id){
   // 記住原位置，暫時搬進彈窗縮放顯示
   _dvHome = { parent: dv.parentNode, next: dv.nextSibling, prev: { display:dv.style.display, position:dv.style.position, left:dv.style.left, top:dv.style.top, zoom:dv.style.zoom } };
   body.innerHTML = '';
-  dv.style.display = 'block'; dv.style.position = 'static'; dv.style.left = ''; dv.style.top = ''; dv.style.zoom = 0.9;
+  dv.style.display = 'block'; dv.style.position = 'static'; dv.style.left = ''; dv.style.top = ''; dv.style.zoom = 1;
   body.appendChild(dv);
   modal.classList.add('show');
+  // 依彈窗實際寬度縮放，使 960px 母片完整置中顯示、不溢出
+  const avail = body.clientWidth - 4;
+  dv.style.zoom = avail > 0 ? Math.min(1, avail / 960) : 0.94;
 }
 function restoreDividerHome(){
   if (!_dvHome) return;
