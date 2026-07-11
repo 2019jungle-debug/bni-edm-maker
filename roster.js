@@ -190,9 +190,9 @@ async function generatePPT(){
         const bg = (typeof DIVIDER_BG_DATAURL !== 'undefined' && DIVIDER_BG_DATAURL) ? DIVIDER_BG_DATAURL : null;
         if (bg) slide.addImage({ data: bg, x:0, y:0, w:13.333, h:7.5 });
         slide.addText(item.title || '生命健康服務團隊產業鏈', {
-          x:0.5, y:2.35, w:12.33, h:1.35, align:'center', valign:'middle',
-          fontFace:'Microsoft JhengHei', fontSize:60, bold:true, color:'7A1520',
-          charSpacing:1, fit:'shrink'
+          x:0.5, y:2.24, w:12.33, h:2.54, align:'center', valign:'middle',
+          fontFace:'Microsoft JhengHei', fontSize:64, bold:true, color:'7A1520',
+          charSpacing:2, fit:'shrink'
         });
         setProgress(overlay, i+1, list.length);
         continue;
