@@ -370,11 +370,13 @@ function paintTemplate(root, d){
 function render(){
   const d = currentData();
   paintTemplate(document.getElementById('edm'), d);
+  const emEl = document.getElementById('edmMaster');
+  if (emEl) paintTemplate(emEl, d);
 
   // 照片焦點（上下 / 左右）套用到各版面
   const pp = (document.getElementById('photoPos') || {}).value || '18';
   const ppx = (document.getElementById('photoPosX') || {}).value || '50';
-  ['edm','hero','intro'].forEach(id => { const e = document.getElementById(id); if (e){ e.style.setProperty('--pp', pp + '%'); e.style.setProperty('--ppx', ppx + '%'); } });
+  ['edm','edmMaster','hero','intro'].forEach(id => { const e = document.getElementById(id); if (e){ e.style.setProperty('--pp', pp + '%'); e.style.setProperty('--ppx', ppx + '%'); } });
   const ppv = document.getElementById('photoPosVal'); if (ppv) ppv.textContent = pp + '%';
   const ppxv = document.getElementById('photoPosXVal'); if (ppxv) ppxv.textContent = ppx + '%';
 
@@ -415,7 +417,7 @@ function flattenObjectFit(root){
     if (fit !== 'cover' && fit !== 'contain') return;   // fill/none 由 html2canvas 直接處理
     const box = img.parentElement;
     if (!box) return;
-    const isPerson = box.classList.contains('hero-photo') || box.classList.contains('intro-photo') || box.classList.contains('edm-photo');
+    const isPerson = box.classList.contains('hero-photo') || box.classList.contains('intro-photo') || box.classList.contains('edm-photo') || box.classList.contains('em-photo');
     box.style.backgroundImage   = 'url("' + src + '")';
     box.style.backgroundSize     = fit;                 // 'cover' 或 'contain'
     box.style.backgroundRepeat   = 'no-repeat';
@@ -852,10 +854,11 @@ const FORMATS = {
   themeRed:     { el:'edm', theme:'theme-red',     w:600, h:849, label:'活力紅動', zoom:1, exportScale:A4X },
   themeAi:      { el:'edm', theme:'theme-ai',      w:600, h:849, label:'科技未來', zoom:1, exportScale:A4X },
   themeMinimal: { el:'edm', theme:'theme-minimal', w:600, h:849, label:'優雅極簡', zoom:1, exportScale:A4X },
+  masterRed: { el:'edmMaster', master:'red', w:600, h:849, label:'紅金母片', zoom:1, exportScale:A4X },
   hero:  { el:'hero',  w:960, h:540, label:'形象頁', zoom:1, exportScale:2 },
   intro: { el:'intro', w:960, h:540, label:'介紹頁', zoom:1, exportScale:2 }
 };
-const CANVAS_ELS = ['edm', 'hero', 'intro'];
+const CANVAS_ELS = ['edm', 'edmMaster', 'hero', 'intro'];
 let activeFmt = 'themeBlack';
 let zoom = FORMATS.themeBlack.zoom;
 
@@ -879,6 +882,13 @@ function switchFmt(fmt){
   if (f.theme){
     const edm = document.getElementById('edm');
     edm.className = 'canvas tpl ' + f.theme;
+  }
+  // 若是母片版，套上對應母片背景圖並重繪
+  if (f.master){
+    const em = document.getElementById('edmMaster');
+    const bg = (window.EDM_MASTERS || {})[f.master];
+    if (em && bg) em.style.backgroundImage = 'url(' + bg + ')';
+    render();
   }
   document.querySelectorAll('.fmt-tab').forEach(b => {
     b.classList.toggle('active', b.dataset.fmt === fmt);

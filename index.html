@@ -378,6 +378,23 @@
   .tg-foot ul{margin:0;padding-left:18px;}
   .tg-foot li{font-size:14px;line-height:1.75;color:#3a3a3a;}
 
+  /* ---------- 母片版 EDM（官方母片圖 + 可編輯疊字 + 形象照，A4） ---------- */
+  #edmMaster{width:600px;height:849px;position:relative;overflow:hidden;transform-origin:top center;
+    font-family:"Noto Sans TC",sans-serif;background:#fff;background-size:600px 849px;background-repeat:no-repeat;
+    box-shadow:0 20px 60px rgba(0,0,0,.18);}
+  #edmMaster *{box-sizing:border-box;}
+  #edmMaster .em-photo{position:absolute;right:14px;top:150px;width:250px;height:430px;z-index:2;overflow:hidden;}
+  #edmMaster .em-photo img{width:100%;height:100%;object-fit:cover;object-position:var(--ppx,50%) var(--pp,18%);display:block;}
+  #edmMaster .em-photo.empty{display:flex;align-items:center;justify-content:center;color:#bbb;font-size:14px;border:1px dashed #ddd;background:rgba(0,0,0,.02);}
+  #edmMaster .em-spec{position:absolute;left:35px;top:212px;width:176px;height:33px;z-index:3;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:800;letter-spacing:1px;white-space:nowrap;}
+  #edmMaster .em-name{position:absolute;left:42px;top:250px;width:340px;z-index:3;font-size:62px;font-weight:900;color:#1a1a1a;line-height:1;letter-spacing:3px;}
+  #edmMaster .em-slogan{position:absolute;left:46px;top:368px;width:270px;z-index:3;font-size:23px;font-weight:800;color:#1a1a1a;line-height:1.4;}
+  #edmMaster .em-r1,#edmMaster .em-r2,#edmMaster .em-r3{position:absolute;left:96px;width:250px;z-index:3;font-size:15px;color:#333;line-height:1.2;}
+  #edmMaster .em-r1{top:470px;} #edmMaster .em-r2{top:534px;} #edmMaster .em-r3{top:598px;}
+  #edmMaster .em-date{position:absolute;left:36px;top:648px;z-index:3;font-size:50px;font-weight:900;color:#c60c30;font-family:"Bebas Neue","Montserrat",sans-serif;letter-spacing:1px;}
+  #edmMaster .em-day{position:absolute;left:198px;top:672px;z-index:3;font-size:22px;font-weight:800;color:#c60c30;}
+  #edmMaster .em-time{position:absolute;left:36px;top:720px;z-index:3;font-size:15px;color:#555;font-weight:600;}
+
   /* ---------- 產業鏈分隔頁 16:9（直接使用官方母片圖，僅產業鏈名稱可編輯） ---------- */
   #dividerSlide{width:960px;height:540px;position:relative;overflow:hidden;transform-origin:top center;
     font-family:"Noto Sans TC",sans-serif;background:#faf6ee;box-shadow:0 20px 60px rgba(0,0,0,.22);}
@@ -568,6 +585,7 @@
       <button class="fmt-tab" data-fmt="themeRed">活力紅動</button>
       <button class="fmt-tab" data-fmt="themeAi">科技未來</button>
       <button class="fmt-tab" data-fmt="themeMinimal">優雅極簡</button>
+      <button class="fmt-tab" data-fmt="masterRed">🖼 紅金母片</button>
       <button class="fmt-tab" data-fmt="hero">形象頁 16:9</button>
       <button class="fmt-tab" data-fmt="intro">介紹頁 16:9</button>
     </div>
@@ -664,6 +682,20 @@
           <div class="note"><span class="ni"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span><span data-f="note2"></span></div>
           <div class="note"><span class="ni"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6-7-11a7 7 0 0114 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span data-f="place"></span></div>
         </div>
+      </div>
+
+      <!-- ---------- 母片版 EDM（用官方母片圖 + 可編輯疊字 + 形象照） ---------- -->
+      <div id="edmMaster" class="canvas" style="display:none;">
+        <div class="em-photo" data-photo="形象照"></div>
+        <div class="em-spec" data-f="specialty"></div>
+        <div class="em-name" data-f="name"></div>
+        <div class="em-slogan"><div class="s1" data-f="main"></div><div class="s2" data-f="sub"></div></div>
+        <div class="em-r1" data-inline="partners"></div>
+        <div class="em-r2" data-inline="ideal"></div>
+        <div class="em-r3" data-inline="dream"></div>
+        <div class="em-date" data-f="date"></div>
+        <div class="em-day" data-f="day"></div>
+        <div class="em-time" data-f="time"></div>
       </div>
 
       <!-- ---------- 形象頁 16:9 ---------- -->
@@ -806,12 +838,13 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=28"></script>
-<script src="specialties.js?v=28"></script>
-<script src="members.js?v=28"></script>
-<script src="store.js?v=28"></script>
-<script src="divider-bg.js?v=28"></script>
-<script src="app.js?v=28"></script>
-<script src="roster.js?v=28"></script>
+<script src="firebase-config.js?v=29"></script>
+<script src="specialties.js?v=29"></script>
+<script src="members.js?v=29"></script>
+<script src="store.js?v=29"></script>
+<script src="divider-bg.js?v=29"></script>
+<script src="edm-masters.js?v=29"></script>
+<script src="app.js?v=29"></script>
+<script src="roster.js?v=29"></script>
 </body>
 </html>
