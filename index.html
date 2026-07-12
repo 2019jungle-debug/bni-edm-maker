@@ -383,17 +383,79 @@
     font-family:"Noto Sans TC",sans-serif;background:#fff;background-size:600px 849px;background-repeat:no-repeat;
     box-shadow:0 20px 60px rgba(0,0,0,.18);}
   #edmMaster *{box-sizing:border-box;}
-  #edmMaster .em-photo{position:absolute;right:14px;top:150px;width:250px;height:430px;z-index:2;overflow:hidden;}
   #edmMaster .em-photo img{width:100%;height:100%;object-fit:cover;object-position:var(--ppx,50%) var(--pp,18%);display:block;}
-  #edmMaster .em-photo.empty{display:flex;align-items:center;justify-content:center;color:#bbb;font-size:14px;border:1px dashed #ddd;background:rgba(0,0,0,.02);}
-  #edmMaster .em-spec{position:absolute;left:35px;top:212px;width:176px;height:33px;z-index:3;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:800;letter-spacing:1px;white-space:nowrap;}
-  #edmMaster .em-name{position:absolute;left:42px;top:250px;width:340px;z-index:3;font-size:62px;font-weight:900;color:#1a1a1a;line-height:1;letter-spacing:3px;}
-  #edmMaster .em-slogan{position:absolute;left:46px;top:368px;width:270px;z-index:3;font-size:23px;font-weight:800;color:#1a1a1a;line-height:1.4;}
-  #edmMaster .em-r1,#edmMaster .em-r2,#edmMaster .em-r3{position:absolute;left:96px;width:250px;z-index:3;font-size:15px;color:#333;line-height:1.2;}
-  #edmMaster .em-r1{top:470px;} #edmMaster .em-r2{top:534px;} #edmMaster .em-r3{top:598px;}
-  #edmMaster .em-date{position:absolute;left:36px;top:648px;z-index:3;font-size:50px;font-weight:900;color:#c60c30;font-family:"Bebas Neue","Montserrat",sans-serif;letter-spacing:1px;}
-  #edmMaster .em-day{position:absolute;left:198px;top:672px;z-index:3;font-size:22px;font-weight:800;color:#c60c30;}
-  #edmMaster .em-time{position:absolute;left:36px;top:720px;z-index:3;font-size:15px;color:#555;font-weight:600;}
+  #edmMaster .em-photo.empty{display:flex;align-items:center;justify-content:center;color:#bbb;font-size:14px;border:1px dashed rgba(180,180,180,.5);background:transparent;}
+  /* 共用預設欄位樣式 */
+  #edmMaster .em-spec, #edmMaster .em-name, #edmMaster .em-slogan,
+  #edmMaster .em-r1, #edmMaster .em-r2, #edmMaster .em-r3,
+  #edmMaster .em-date, #edmMaster .em-day, #edmMaster .em-time{position:absolute;z-index:3;line-height:1.15;}
+  #edmMaster .em-slogan{line-height:1.35;}
+
+  /* ---- 紅金母片（左欄，白底，紅字） ---- */
+  #edmMaster.em-red .em-photo{position:absolute;right:14px;top:150px;width:250px;height:430px;z-index:2;overflow:hidden;}
+  #edmMaster.em-red .em-spec{left:35px;top:212px;width:176px;height:33px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:800;letter-spacing:1px;white-space:nowrap;}
+  #edmMaster.em-red .em-name{left:42px;top:250px;width:340px;font-size:62px;font-weight:900;color:#1a1a1a;line-height:1;letter-spacing:3px;}
+  #edmMaster.em-red .em-slogan{left:46px;top:368px;width:270px;font-size:23px;font-weight:800;color:#1a1a1a;}
+  #edmMaster.em-red .em-r1,#edmMaster.em-red .em-r2,#edmMaster.em-red .em-r3{left:96px;width:250px;font-size:15px;color:#333;}
+  #edmMaster.em-red .em-r1{top:470px;} #edmMaster.em-red .em-r2{top:534px;} #edmMaster.em-red .em-r3{top:598px;}
+  #edmMaster.em-red .em-date{left:36px;top:648px;font-size:50px;font-weight:900;color:#c60c30;font-family:"Bebas Neue","Montserrat",sans-serif;letter-spacing:1px;}
+  #edmMaster.em-red .em-day{left:198px;top:672px;font-size:22px;font-weight:800;color:#c60c30;}
+  #edmMaster.em-red .em-time{left:36px;top:720px;font-size:15px;color:#555;font-weight:600;}
+
+  /* ---- 綠意母片（右欄，米底，綠字，形象照放左側裝飾區） ---- */
+  #edmMaster.em-green .em-photo{position:absolute;left:14px;top:180px;width:290px;height:520px;z-index:2;overflow:hidden;}
+  #edmMaster.em-green .em-spec{right:44px;top:210px;text-align:right;color:#5a7a4e;font-size:16px;font-weight:800;letter-spacing:1px;}
+  #edmMaster.em-green .em-name{right:44px;top:244px;text-align:right;font-size:62px;font-weight:900;color:#33472f;line-height:1;letter-spacing:3px;}
+  #edmMaster.em-green .em-slogan{right:44px;top:359px;width:245px;text-align:right;font-size:22px;font-weight:800;color:#33472f;}
+  #edmMaster.em-green .em-r1,#edmMaster.em-green .em-r2,#edmMaster.em-green .em-r3{right:118px;width:230px;text-align:right;font-size:15px;color:#3a4a3a;}
+  #edmMaster.em-green .em-r1{top:475px;} #edmMaster.em-green .em-r2{top:527px;} #edmMaster.em-green .em-r3{top:578px;}
+  #edmMaster.em-green .em-date{right:110px;top:660px;font-size:46px;font-weight:900;color:#5a7a4e;font-family:"Bebas Neue","Montserrat",sans-serif;letter-spacing:1px;}
+  #edmMaster.em-green .em-day{right:44px;top:685px;font-size:22px;font-weight:800;color:#5a7a4e;}
+  #edmMaster.em-green .em-time{right:44px;top:723px;font-size:15px;color:#3a4a3a;font-weight:600;text-align:right;}
+
+  /* ---- 黑金母片（左欄，黑底，白字＋金） ---- */
+  #edmMaster.em-black .em-photo{position:absolute;right:20px;top:200px;width:250px;height:420px;z-index:2;overflow:hidden;}
+  #edmMaster.em-black .em-spec{left:46px;top:208px;color:#d9b56d;font-size:16px;font-weight:800;letter-spacing:1px;}
+  #edmMaster.em-black .em-name{left:43px;top:225px;width:340px;font-size:60px;font-weight:900;color:#fff;line-height:1;letter-spacing:3px;text-shadow:0 2px 12px rgba(0,0,0,.5);}
+  #edmMaster.em-black .em-slogan{left:46px;top:316px;width:280px;font-size:22px;font-weight:800;color:#f3e9cf;}
+  #edmMaster.em-black .em-r1,#edmMaster.em-black .em-r2,#edmMaster.em-black .em-r3{left:97px;width:250px;font-size:14px;color:#eadfc0;}
+  #edmMaster.em-black .em-r1{top:427px;} #edmMaster.em-black .em-r2{top:478px;} #edmMaster.em-black .em-r3{top:529px;}
+  #edmMaster.em-black .em-date{left:46px;top:672px;font-size:46px;font-weight:900;color:#d9b56d;font-family:"Bebas Neue","Montserrat",sans-serif;letter-spacing:1px;}
+  #edmMaster.em-black .em-day{left:196px;top:695px;font-size:22px;font-weight:800;color:#d9b56d;}
+  #edmMaster.em-black .em-time{left:246px;top:700px;font-size:16px;color:#eadfc0;font-weight:600;}
+
+  /* ---- 深藍母片（左欄，米白底，藍字＋金） ---- */
+  #edmMaster.em-blue .em-photo{position:absolute;right:20px;top:210px;width:260px;height:400px;z-index:2;overflow:hidden;}
+  #edmMaster.em-blue .em-spec{left:46px;top:211px;color:#c19b53;font-size:15px;font-weight:800;letter-spacing:1px;}
+  #edmMaster.em-blue .em-name{left:40px;top:228px;width:340px;font-size:60px;font-weight:900;color:#173b72;line-height:1;letter-spacing:3px;}
+  #edmMaster.em-blue .em-slogan{left:40px;top:319px;width:280px;font-size:22px;font-weight:800;color:#173b72;}
+  #edmMaster.em-blue .em-r1,#edmMaster.em-blue .em-r2,#edmMaster.em-blue .em-r3{left:85px;width:250px;font-size:15px;color:#2a3a5a;}
+  #edmMaster.em-blue .em-r1{top:418px;} #edmMaster.em-blue .em-r2{top:470px;} #edmMaster.em-blue .em-r3{top:526px;}
+  #edmMaster.em-blue .em-date{left:34px;top:627px;font-size:46px;font-weight:900;color:#173b72;font-family:"Bebas Neue","Montserrat",sans-serif;letter-spacing:1px;}
+  #edmMaster.em-blue .em-day{left:200px;top:653px;font-size:22px;font-weight:800;color:#173b72;}
+  #edmMaster.em-blue .em-time{left:57px;top:715px;font-size:15px;color:#173b72;font-weight:600;}
+
+  /* ---- 科技母片（左欄，深藍底，青字＋白） ---- */
+  #edmMaster.em-ai .em-photo{position:absolute;right:20px;top:200px;width:260px;height:430px;z-index:2;overflow:hidden;}
+  #edmMaster.em-ai .em-spec{left:46px;top:202px;color:#8fd0ff;font-size:15px;font-weight:800;letter-spacing:1px;}
+  #edmMaster.em-ai .em-name{left:40px;top:219px;width:340px;font-size:60px;font-weight:900;color:#eaf6ff;line-height:1;letter-spacing:3px;text-shadow:0 0 20px rgba(52,214,255,.4);}
+  #edmMaster.em-ai .em-slogan{left:40px;top:307px;width:280px;font-size:22px;font-weight:800;color:#eaf6ff;}
+  #edmMaster.em-ai .em-r1,#edmMaster.em-ai .em-r2,#edmMaster.em-ai .em-r3{left:97px;width:250px;font-size:14px;color:#dbe6ff;}
+  #edmMaster.em-ai .em-r1{top:427px;} #edmMaster.em-ai .em-r2{top:478px;} #edmMaster.em-ai .em-r3{top:529px;}
+  #edmMaster.em-ai .em-date{left:40px;top:680px;font-size:46px;font-weight:900;color:#34d6ff;font-family:"Bebas Neue","Montserrat",sans-serif;letter-spacing:1px;}
+  #edmMaster.em-ai .em-day{left:200px;top:702px;font-size:22px;font-weight:800;color:#34d6ff;}
+  #edmMaster.em-ai .em-time{left:57px;top:762px;font-size:15px;color:#dbe6ff;font-weight:600;}
+
+  /* ---- 極簡母片（左欄，奶油底，棕字） ---- */
+  #edmMaster.em-minimal .em-photo{position:absolute;right:18px;top:180px;width:270px;height:420px;z-index:2;overflow:hidden;}
+  #edmMaster.em-minimal .em-spec{left:43px;top:221px;color:#9a836e;font-size:15px;font-weight:700;letter-spacing:4px;}
+  #edmMaster.em-minimal .em-name{left:40px;top:245px;width:340px;font-size:58px;font-weight:700;color:#5a4e40;line-height:1;letter-spacing:8px;}
+  #edmMaster.em-minimal .em-slogan{left:40px;top:344px;width:280px;font-size:22px;font-weight:600;color:#4a423a;}
+  #edmMaster.em-minimal .em-r1,#edmMaster.em-minimal .em-r2,#edmMaster.em-minimal .em-r3{left:88px;width:250px;font-size:14px;color:#4a423a;}
+  #edmMaster.em-minimal .em-r1{top:452px;} #edmMaster.em-minimal .em-r2{top:503px;} #edmMaster.em-minimal .em-r3{top:557px;}
+  #edmMaster.em-minimal .em-date{left:40px;top:632px;font-size:46px;font-weight:900;color:#9a836e;font-family:"Bebas Neue","Montserrat",sans-serif;letter-spacing:1px;}
+  #edmMaster.em-minimal .em-day{left:190px;top:660px;font-size:22px;font-weight:800;color:#9a836e;}
+  #edmMaster.em-minimal .em-time{left:40px;top:691px;font-size:15px;color:#4a423a;font-weight:600;}
 
   /* ---------- 產業鏈分隔頁 16:9（直接使用官方母片圖，僅產業鏈名稱可編輯） ---------- */
   #dividerSlide{width:960px;height:540px;position:relative;overflow:hidden;transform-origin:top center;
@@ -586,6 +648,11 @@
       <button class="fmt-tab" data-fmt="themeAi">科技未來</button>
       <button class="fmt-tab" data-fmt="themeMinimal">優雅極簡</button>
       <button class="fmt-tab" data-fmt="masterRed">🖼 紅金母片</button>
+      <button class="fmt-tab" data-fmt="masterGreen">🖼 綠意母片</button>
+      <button class="fmt-tab" data-fmt="masterBlack">🖼 黑金母片</button>
+      <button class="fmt-tab" data-fmt="masterBlue">🖼 深藍母片</button>
+      <button class="fmt-tab" data-fmt="masterAi">🖼 科技母片</button>
+      <button class="fmt-tab" data-fmt="masterMinimal">🖼 極簡母片</button>
       <button class="fmt-tab" data-fmt="hero">形象頁 16:9</button>
       <button class="fmt-tab" data-fmt="intro">介紹頁 16:9</button>
     </div>
@@ -838,13 +905,13 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=30"></script>
-<script src="specialties.js?v=30"></script>
-<script src="members.js?v=30"></script>
-<script src="store.js?v=30"></script>
-<script src="divider-bg.js?v=30"></script>
-<script src="edm-masters.js?v=30"></script>
-<script src="app.js?v=30"></script>
-<script src="roster.js?v=30"></script>
+<script src="firebase-config.js?v=31"></script>
+<script src="specialties.js?v=31"></script>
+<script src="members.js?v=31"></script>
+<script src="store.js?v=31"></script>
+<script src="divider-bg.js?v=31"></script>
+<script src="edm-masters.js?v=31"></script>
+<script src="app.js?v=31"></script>
+<script src="roster.js?v=31"></script>
 </body>
 </html>

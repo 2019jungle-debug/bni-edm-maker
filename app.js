@@ -854,7 +854,12 @@ const FORMATS = {
   themeRed:     { el:'edm', theme:'theme-red',     w:600, h:849, label:'活力紅動', zoom:1, exportScale:A4X },
   themeAi:      { el:'edm', theme:'theme-ai',      w:600, h:849, label:'科技未來', zoom:1, exportScale:A4X },
   themeMinimal: { el:'edm', theme:'theme-minimal', w:600, h:849, label:'優雅極簡', zoom:1, exportScale:A4X },
-  masterRed: { el:'edmMaster', master:'red', w:600, h:849, label:'紅金母片', zoom:1, exportScale:A4X },
+  masterRed:     { el:'edmMaster', master:'red',     themeCls:'em-red',     w:600, h:849, label:'紅金母片', zoom:1, exportScale:A4X },
+  masterGreen:   { el:'edmMaster', master:'green',   themeCls:'em-green',   w:600, h:849, label:'綠意母片', zoom:1, exportScale:A4X },
+  masterBlack:   { el:'edmMaster', master:'black',   themeCls:'em-black',   w:600, h:849, label:'黑金母片', zoom:1, exportScale:A4X },
+  masterBlue:    { el:'edmMaster', master:'blue',    themeCls:'em-blue',    w:600, h:849, label:'深藍母片', zoom:1, exportScale:A4X },
+  masterAi:      { el:'edmMaster', master:'ai',      themeCls:'em-ai',      w:600, h:849, label:'科技母片', zoom:1, exportScale:A4X },
+  masterMinimal: { el:'edmMaster', master:'minimal', themeCls:'em-minimal', w:600, h:849, label:'極簡母片', zoom:1, exportScale:A4X },
   hero:  { el:'hero',  w:960, h:540, label:'形象頁', zoom:1, exportScale:2 },
   intro: { el:'intro', w:960, h:540, label:'介紹頁', zoom:1, exportScale:2 }
 };
@@ -887,7 +892,10 @@ function switchFmt(fmt){
   if (f.master){
     const em = document.getElementById('edmMaster');
     const bg = (window.EDM_MASTERS || {})[f.master];
-    if (em && bg) em.style.backgroundImage = 'url(' + bg + ')';
+    if (em){
+      if (bg) em.style.backgroundImage = 'url(' + bg + ')';
+      em.className = 'canvas ' + (f.themeCls || '');
+    }
     render();
   }
   document.querySelectorAll('.fmt-tab').forEach(b => {
