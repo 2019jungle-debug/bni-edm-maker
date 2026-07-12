@@ -70,14 +70,22 @@ function renderRoster(){
       if (vb) vb.addEventListener('click', () => previewDivider(m.id));
     } else {
       row.className = 'roster-row';
+      const withIntro = m.withIntro !== false;   // 預設含介紹頁
       row.innerHTML =
         '<span class="drag" title="拖曳調整順序">⠿</span>' +
         '<span class="ord">' + (idx+1) + '</span>' +
         '<label class="present"><input type="checkbox" ' + (m.present !== false ? 'checked' : '') + (admin?'':' disabled') + '><span>出場</span></label>' +
+        '<label class="present with-intro" title="下載 PPT 時是否包含介紹頁"><input type="checkbox" class="withIntro" ' + (withIntro ? 'checked' : '') + (admin?'':' disabled') + '><span>+介紹</span></label>' +
         '<span class="rname">' + escapeHtml(m.name || '(未命名)') + '</span>' +
         '<span class="rspec">' + escapeHtml(m.specialty || '') + '</span>' +
         (admin ? '<span class="rspec pwcell" style="flex:0 0 auto;font-family:monospace;color:#7b52c4;">' + (m.pw ? escapeHtml(m.pw) : '—') + '</span>' : '') +
         '<span class="ract">' + adminActs + '</span>';
+      const wi = row.querySelector('.withIntro');
+      if (wi && admin) wi.addEventListener('change', async e => {
+        const item = Store.getById(m.id); if (!item) return;
+        item.withIntro = e.target.checked;
+        await Store.upsert(item);
+      });
       const eb = row.querySelector('[data-act=edit]');
       if (eb) eb.addEventListener('click', () => { loadMemberIntoEditor(Store.getById(m.id)); showView('editor'); });
       const pb = row.querySelector('[data-act=pw]');
@@ -207,11 +215,14 @@ async function generatePPT(){
       unflattenObjectFit(hero);
       pptx.addSlide().addImage({ data: c.toDataURL('image/png'), x:0, y:0, w:13.333, h:7.5 });
 
-      intro.style.display = ''; hero.style.display = 'none'; intro.style.zoom = 1;
-      flattenObjectFit(intro);
-      c = await html2canvas(intro, { scale:2, useCORS:true, backgroundColor:'#ffffff' });
-      unflattenObjectFit(intro);
-      pptx.addSlide().addImage({ data: c.toDataURL('image/png'), x:0, y:0, w:13.333, h:7.5 });
+      // 介紹頁：僅當該會員 withIntro !== false 時匯出
+      if (item.withIntro !== false){
+        intro.style.display = ''; hero.style.display = 'none'; intro.style.zoom = 1;
+        flattenObjectFit(intro);
+        c = await html2canvas(intro, { scale:2, useCORS:true, backgroundColor:'#ffffff' });
+        unflattenObjectFit(intro);
+        pptx.addSlide().addImage({ data: c.toDataURL('image/png'), x:0, y:0, w:13.333, h:7.5 });
+      }
 
       setProgress(overlay, i+1, list.length);
     }
