@@ -346,7 +346,8 @@ function buildNewMember(){
 function closeDividerPreview(){
   const m = document.getElementById('dividerPreviewModal');
   if (m) m.classList.remove('show');
-  restoreDividerHome();
+  const body = document.getElementById('dividerPreviewBody');
+  if (body) body.innerHTML = '';   // 清掉 clone
 }
 
 // 母片為官方固定圖，僅產業鏈名稱（主標）可編輯覆蓋
@@ -354,30 +355,40 @@ function paintDivider(item){
   document.getElementById('dvTeam').textContent = item.title || '生命健康服務團隊產業鏈';
 }
 
-// 檢視某張產業鏈分隔頁：直接把實際 DOM（母片圖 + 可編輯名稱）縮放顯示於彈窗
-let _dvHome = null;
-async function previewDivider(id){
+// 檢視某張產業鏈分隔頁：clone 原始 DOM 放進彈窗（不動原本的 #dividerSlide）
+function previewDivider(id){
   const item = Store.getById(id); if (!item) return;
   const modal = document.getElementById('dividerPreviewModal');
   const body  = document.getElementById('dividerPreviewBody');
-  const dv = document.getElementById('dividerSlide');
-  paintDivider(item);
+  const dvOrig = document.getElementById('dividerSlide');
 
-  // 記住原位置，暫時搬進彈窗縮放顯示
-  _dvHome = { parent: dv.parentNode, next: dv.nextSibling, prev: { display:dv.style.display, position:dv.style.position, left:dv.style.left, top:dv.style.top, zoom:dv.style.zoom } };
+  // clone 完整 DOM，並套用當前產業鏈名稱
+  // 注意：原始 #dividerSlide 的 CSS 是靠 id 選擇器，clone 移除 id 後樣式不會套用，
+  // 因此明確給 clone 母片尺寸與定位樣式。
+  const clone = dvOrig.cloneNode(true);
+  clone.id = 'dividerSlideClone';
+  clone.removeAttribute('style');
+  const teamEl = clone.querySelector('#dvTeam') || clone.querySelector('.dv-team');
+  if (teamEl){ teamEl.textContent = item.title || '生命健康服務團隊產業鏈'; teamEl.removeAttribute('id'); }
+  const img = clone.querySelector('.dv-bgimg');
+  if (img){ img.removeAttribute('style'); img.style.cssText = 'position:absolute;top:0;left:0;width:960px;height:540px;z-index:1;display:block;'; }
+  if (teamEl){
+    teamEl.style.cssText = 'position:absolute;top:161px;left:56px;right:56px;height:183px;z-index:3;display:flex;align-items:center;justify-content:center;white-space:nowrap;font-family:"Noto Sans TC",sans-serif;font-weight:900;font-size:66px;line-height:1.06;letter-spacing:2px;color:#7a1520;text-shadow:0 1px 1px rgba(0,0,0,.08);';
+  }
+  clone.style.cssText = 'width:960px;height:540px;position:relative;overflow:hidden;transform-origin:top center;font-family:"Noto Sans TC",sans-serif;background:#faf6ee;box-shadow:0 20px 60px rgba(0,0,0,.22);display:block;flex:0 0 auto;';
+
   body.innerHTML = '';
-  dv.style.display = 'block'; dv.style.position = 'static'; dv.style.left = ''; dv.style.top = ''; dv.style.zoom = 1;
-  body.appendChild(dv);
+  body.appendChild(clone);
   modal.classList.add('show');
-  // 依彈窗實際寬度縮放，使 960px 母片完整置中顯示、不溢出
-  const avail = body.clientWidth - 4;
-  dv.style.zoom = avail > 0 ? Math.min(1, avail / 960) : 0.94;
-}
-function restoreDividerHome(){
-  if (!_dvHome) return;
-  const dv = document.getElementById('dividerSlide');
-  const p = _dvHome.prev;
-  dv.style.display = 'none'; dv.style.position = p.position; dv.style.left = p.left; dv.style.top = p.top; dv.style.zoom = p.zoom;
-  if (_dvHome.next) _dvHome.parent.insertBefore(dv, _dvHome.next); else _dvHome.parent.appendChild(dv);
-  _dvHome = null;
+
+  // 依彈窗實際寬度縮放
+  // 先立即套用一次備援值，避免 flex 尚未計算 clientWidth 時整張母片超出彈窗
+  clone.style.zoom = 0.93;
+  const applyZoom = () => {
+    const avail = body.clientWidth - 4;
+    if (avail > 0) clone.style.zoom = Math.min(1, avail / 960);
+  };
+  // 兩次量測（rAF 對背景分頁可能不跑，setTimeout 保證）
+  setTimeout(applyZoom, 0);
+  setTimeout(applyZoom, 80);
 }
