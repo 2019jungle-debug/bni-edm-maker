@@ -82,6 +82,23 @@
 
   /* ---------- HERO 16:9 (960x540) ---------- */
   #hero{width:960px;height:540px;background:#fff;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18);transform-origin:top center;}
+  /* ---------- 形象頁母片（BNI 官方紅金橫版） ---------- */
+  #heroMaster{width:960px;height:540px;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18);transform-origin:top center;font-family:"Noto Sans TC",sans-serif;background:#fff;background-size:960px 540px;background-repeat:no-repeat;}
+  #heroMaster *{box-sizing:border-box;}
+  #heroMaster .hm-photo{position:absolute;left:24px;top:36px;width:270px;height:470px;z-index:3;overflow:hidden;}
+  #heroMaster .hm-photo img{width:100%;height:100%;object-fit:cover;object-position:var(--ppx,50%) var(--pp,18%);display:block;}
+  #heroMaster .hm-photo.empty{display:flex;align-items:center;justify-content:center;color:#aaa;font-size:14px;background:transparent;}
+  #heroMaster .hm-upload{position:absolute;left:345px;top:145px;width:580px;height:350px;z-index:3;overflow:hidden;border-radius:0;background:transparent;display:flex;align-items:center;justify-content:center;}
+  #heroMaster .hm-upload img{width:100%;height:100%;object-fit:cover;display:block;}
+  #heroMaster .hm-uploadLabel{cursor:pointer;color:#c99a99;font-size:32px;text-align:center;line-height:1.4;padding:20px 30px;border:2px dashed rgba(198,12,48,.35);border-radius:8px;background:rgba(255,255,255,.55);}
+  #heroMaster .hm-uploadLabel small{font-size:14px;color:#888;font-weight:600;}
+  #heroMaster .hm-upload.filled .hm-uploadLabel{display:none;}
+  #heroMaster .hm-ref{position:absolute;left:395px;top:65px;right:230px;z-index:4;display:flex;align-items:center;gap:12px;font-size:26px;color:#1a1a1a;font-weight:800;}
+  #heroMaster .hm-ref .hm-rlbl{color:#b8933f;flex:0 0 auto;}
+  #heroMaster .hm-ref .hm-rsep{color:#b8933f;font-weight:400;}
+  #heroMaster .hm-ref .hm-rval{color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #heroMaster .hm-spec{position:absolute;left:100px;top:428px;min-width:180px;padding:6px 20px;z-index:4;background:linear-gradient(180deg,#c60c30,#a80a26);color:#fff;font-size:20px;font-weight:800;border-radius:30px;letter-spacing:2px;text-align:center;box-shadow:0 3px 8px rgba(198,12,48,.3);white-space:nowrap;}
+  #heroMaster .hm-name{position:absolute;left:112px;top:470px;z-index:4;font-family:"Noto Serif TC",serif;font-size:52px;font-weight:900;color:#1a1a1a;line-height:1;letter-spacing:6px;}
   .hero-top{position:absolute;top:0;left:0;bottom:0;width:430px;
     background:linear-gradient(135deg,var(--red-dark) 0%,var(--red) 70%,#d94651 100%);
     clip-path:polygon(0 0,100% 0,72% 100%,0 100%);}
@@ -700,6 +717,7 @@
       <button class="fmt-tab" data-fmt="masterBlue">🖼 深藍母片</button>
       <button class="fmt-tab" data-fmt="masterAi">🖼 科技母片</button>
       <button class="fmt-tab" data-fmt="masterMinimal">🖼 極簡母片</button>
+      <button class="fmt-tab" data-fmt="heroMaster">🎞 形象頁母片</button>
       <button class="fmt-tab" data-fmt="hero">形象頁 16:9</button>
       <button class="fmt-tab" data-fmt="intro">介紹頁 16:9</button>
     </div>
@@ -822,6 +840,15 @@
         <div class="em-note em-n1"><span class="em-nico">ⓘ</span><span data-f="note1"></span></div>
         <div class="em-note em-n2"><span class="em-nico">💳</span><span data-f="note2"></span></div>
         <div class="em-note em-n3"><span class="em-nico">📍</span><span data-f="place"></span></div>
+      </div>
+
+      <!-- ---------- 形象頁母片 16:9（BNI 官方母片＋可編輯疊字＋照片上傳） ---------- -->
+      <div id="heroMaster" class="canvas" style="display:none;">
+        <div class="hm-photo" data-photo="形象照"></div>
+        <div class="hm-upload"><input type="file" id="hmUploadInput" accept="image/*" hidden><label for="hmUploadInput" class="hm-uploadLabel">📷<br><small>點此上傳照片</small></label></div>
+        <div class="hm-ref"><span class="hm-rlbl">合作對象</span><span class="hm-rsep">|</span><span class="hm-rval" data-inline="partners"></span></div>
+        <div class="hm-spec" data-f="specialty"></div>
+        <div class="hm-name" data-f="name"></div>
       </div>
 
       <!-- ---------- 形象頁 16:9 ---------- -->
@@ -964,13 +991,14 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=40"></script>
-<script src="specialties.js?v=40"></script>
-<script src="members.js?v=40"></script>
-<script src="store.js?v=40"></script>
-<script src="divider-bg.js?v=40"></script>
-<script src="edm-masters.js?v=40"></script>
-<script src="app.js?v=40"></script>
-<script src="roster.js?v=40"></script>
+<script src="firebase-config.js?v=41"></script>
+<script src="specialties.js?v=41"></script>
+<script src="members.js?v=41"></script>
+<script src="store.js?v=41"></script>
+<script src="divider-bg.js?v=41"></script>
+<script src="edm-masters.js?v=41"></script>
+<script src="hero-bg.js?v=41"></script>
+<script src="app.js?v=41"></script>
+<script src="roster.js?v=41"></script>
 </body>
 </html>

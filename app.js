@@ -372,11 +372,32 @@ function render(){
   paintTemplate(document.getElementById('edm'), d);
   const emEl = document.getElementById('edmMaster');
   if (emEl) paintTemplate(emEl, d);
+  const hmEl = document.getElementById('heroMaster');
+  if (hmEl){
+    paintTemplate(hmEl, d);
+    // 母片背景
+    if (window.HERO_MASTER_DATAURL && !hmEl.style.backgroundImage){
+      hmEl.style.backgroundImage = 'url(' + window.HERO_MASTER_DATAURL + ')';
+    }
+    // 中間 pink box：若有 introImg 就顯示
+    const up = hmEl.querySelector('.hm-upload');
+    if (up){
+      const url = introImgDataUrl;
+      let img = up.querySelector('img');
+      if (url){
+        if (!img){ img = document.createElement('img'); up.insertBefore(img, up.firstChild); }
+        img.src = url; up.classList.add('filled');
+      } else {
+        if (img) img.remove();
+        up.classList.remove('filled');
+      }
+    }
+  }
 
   // 照片焦點（上下 / 左右）套用到各版面
   const pp = (document.getElementById('photoPos') || {}).value || '18';
   const ppx = (document.getElementById('photoPosX') || {}).value || '50';
-  ['edm','edmMaster','hero','intro'].forEach(id => { const e = document.getElementById(id); if (e){ e.style.setProperty('--pp', pp + '%'); e.style.setProperty('--ppx', ppx + '%'); } });
+  ['edm','edmMaster','heroMaster','hero','intro'].forEach(id => { const e = document.getElementById(id); if (e){ e.style.setProperty('--pp', pp + '%'); e.style.setProperty('--ppx', ppx + '%'); } });
   const ppv = document.getElementById('photoPosVal'); if (ppv) ppv.textContent = pp + '%';
   const ppxv = document.getElementById('photoPosXVal'); if (ppxv) ppxv.textContent = ppx + '%';
 
@@ -417,7 +438,7 @@ function flattenObjectFit(root){
     if (fit !== 'cover' && fit !== 'contain') return;   // fill/none 由 html2canvas 直接處理
     const box = img.parentElement;
     if (!box) return;
-    const isPerson = box.classList.contains('hero-photo') || box.classList.contains('intro-photo') || box.classList.contains('edm-photo') || box.classList.contains('em-photo');
+    const isPerson = box.classList.contains('hero-photo') || box.classList.contains('intro-photo') || box.classList.contains('edm-photo') || box.classList.contains('em-photo') || box.classList.contains('hm-photo');
     box.style.backgroundImage   = 'url("' + src + '")';
     box.style.backgroundSize     = fit;                 // 'cover' 或 'contain'
     box.style.backgroundRepeat   = 'no-repeat';
@@ -794,6 +815,21 @@ const EXTRA_IMGS = [
   { key:'introImg', get:()=>introImgDataUrl, set:v=>introImgDataUrl=v, input:'introUpload',   thumb:'introThumb',   remove:'introRemove',   maxW:1100, fmt:'image/jpeg' }
 ];
 
+// 形象頁母片：pink box 內建的上傳按鈕（同步到 introImgDataUrl）
+document.addEventListener('DOMContentLoaded', () => {
+  const hmInp = document.getElementById('hmUploadInput');
+  if (hmInp) hmInp.addEventListener('change', e => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = async ev => {
+      introImgDataUrl = await compressImageAs(ev.target.result, 1100, 'image/jpeg', 0.85);
+      const th = document.getElementById('introThumb'); if (th) th.src = introImgDataUrl;
+      render(); saveData(); autoSaveMember();
+    };
+    r.readAsDataURL(f);
+  });
+});
+
 // 編輯名冊會員時，自動把目前內容存回雲端（避免圖片沒存就不見）
 async function autoSaveMember(){
   if (!currentMember || !currentMember.id) return false;
@@ -860,10 +896,11 @@ const FORMATS = {
   masterBlue:    { el:'edmMaster', master:'blue',    themeCls:'em-blue',    w:600, h:849, label:'深藍母片', zoom:1, exportScale:A4X },
   masterAi:      { el:'edmMaster', master:'ai',      themeCls:'em-ai',      w:600, h:849, label:'科技母片', zoom:1, exportScale:A4X },
   masterMinimal: { el:'edmMaster', master:'minimal', themeCls:'em-minimal', w:600, h:849, label:'極簡母片', zoom:1, exportScale:A4X },
+  heroMaster: { el:'heroMaster', w:960, h:540, label:'形象頁母片', zoom:1, exportScale:2 },
   hero:  { el:'hero',  w:960, h:540, label:'形象頁', zoom:1, exportScale:2 },
   intro: { el:'intro', w:960, h:540, label:'介紹頁', zoom:1, exportScale:2 }
 };
-const CANVAS_ELS = ['edm', 'edmMaster', 'hero', 'intro'];
+const CANVAS_ELS = ['edm', 'edmMaster', 'heroMaster', 'hero', 'intro'];
 let activeFmt = 'themeBlack';
 let zoom = FORMATS.themeBlack.zoom;
 
