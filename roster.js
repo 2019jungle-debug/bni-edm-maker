@@ -173,7 +173,7 @@ async function generatePPT(){
   // 讓編輯區可被擷取（藏在遮罩後面）
   document.getElementById('view-editor').style.display = '';
   document.getElementById('view-roster').style.display = 'none';
-  const hero = document.getElementById('hero');
+  const hero = document.getElementById('heroMaster') || document.getElementById('hero');
   const intro = document.getElementById('intro');
   const divider = document.getElementById('dividerSlide');
 
