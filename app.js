@@ -392,6 +392,12 @@ function render(){
         up.classList.remove('filled');
       }
     }
+    // 公司 LOGO
+    const lg = hmEl.querySelector('.hm-logo');
+    if (lg){
+      if (logoDataUrl){ lg.style.backgroundImage = 'url(' + logoDataUrl + ')'; lg.classList.add('filled'); }
+      else { lg.style.backgroundImage = ''; lg.classList.remove('filled'); }
+    }
   }
 
   // 照片焦點（上下 / 左右）套用到各版面

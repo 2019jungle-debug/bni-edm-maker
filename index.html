@@ -85,15 +85,18 @@
   /* ---------- 形象頁母片（BNI 官方紅金橫版） ---------- */
   #heroMaster{width:960px;height:540px;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18);transform-origin:top center;font-family:"Noto Sans TC",sans-serif;background:#fff;background-size:960px 540px;background-repeat:no-repeat;}
   #heroMaster *{box-sizing:border-box;}
-  #heroMaster .hm-photo{position:absolute;left:24px;top:36px;width:270px;height:470px;z-index:3;overflow:hidden;}
+  #heroMaster .hm-photoFrame{position:absolute;left:24px;top:34px;width:280px;height:475px;z-index:3;background:linear-gradient(180deg,#fdf4e0 0%,#f7ead0 100%);border:3px solid #d9b56d;border-radius:8px;box-shadow:0 6px 18px rgba(120,80,20,.25);overflow:hidden;padding:6px;}
+  #heroMaster .hm-photo{position:absolute;left:9px;top:9px;right:9px;bottom:9px;overflow:hidden;border-radius:4px;}
   #heroMaster .hm-photo img{width:100%;height:100%;object-fit:cover;object-position:var(--ppx,50%) var(--pp,18%);display:block;}
-  #heroMaster .hm-photo.empty{display:flex;align-items:center;justify-content:center;color:#aaa;font-size:14px;background:transparent;}
+  #heroMaster .hm-photo.empty{display:flex;align-items:center;justify-content:center;color:#c8b98a;font-size:14px;background:transparent;}
+  #heroMaster .hm-logo{position:absolute;left:325px;top:36px;width:72px;height:72px;z-index:4;background-size:contain;background-repeat:no-repeat;background-position:center;display:none;}
+  #heroMaster .hm-logo.filled{display:block;}
   #heroMaster .hm-upload{position:absolute;left:345px;top:145px;width:580px;height:350px;z-index:3;overflow:hidden;border-radius:0;background:transparent;display:flex;align-items:center;justify-content:center;}
   #heroMaster .hm-upload img{width:100%;height:100%;object-fit:cover;display:block;}
   #heroMaster .hm-uploadLabel{cursor:pointer;color:#c99a99;font-size:32px;text-align:center;line-height:1.4;padding:20px 30px;border:2px dashed rgba(198,12,48,.35);border-radius:8px;background:rgba(255,255,255,.55);}
   #heroMaster .hm-uploadLabel small{font-size:14px;color:#888;font-weight:600;}
   #heroMaster .hm-upload.filled .hm-uploadLabel{display:none;}
-  #heroMaster .hm-ref{position:absolute;left:410px;top:70px;right:150px;z-index:4;display:flex;align-items:center;gap:10px;font-size:24px;color:#1a1a1a;font-weight:800;background:rgba(253,244,227,0.92);padding:2px 12px;border-radius:4px;}
+  #heroMaster .hm-ref{position:absolute;left:490px;top:70px;right:130px;z-index:4;display:flex;align-items:center;gap:10px;font-size:24px;color:#1a1a1a;font-weight:800;background:rgba(253,244,227,0.92);padding:2px 12px;border-radius:4px;}
   #heroMaster .hm-ref .hm-rlbl{color:#b8933f;flex:0 0 auto;}
   #heroMaster .hm-ref .hm-rsep{color:#b8933f;font-weight:400;}
   #heroMaster .hm-ref .hm-rval{color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -844,7 +847,8 @@
 
       <!-- ---------- 形象頁母片 16:9（BNI 官方母片＋可編輯疊字＋照片上傳） ---------- -->
       <div id="heroMaster" class="canvas" style="display:none;">
-        <div class="hm-photo" data-photo="形象照"></div>
+        <div class="hm-photoFrame"><div class="hm-photo" data-photo="形象照"></div></div>
+        <div class="hm-logo"></div>
         <div class="hm-upload"><input type="file" id="hmUploadInput" accept="image/*" hidden><label for="hmUploadInput" class="hm-uploadLabel">📷<br><small>點此上傳照片</small></label></div>
         <div class="hm-ref"><span class="hm-rlbl">合作對象</span><span class="hm-rsep">|</span><span class="hm-rval" data-inline="partners"></span></div>
         <div class="hm-spec" data-f="specialty"></div>
@@ -991,14 +995,14 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=44"></script>
-<script src="specialties.js?v=44"></script>
-<script src="members.js?v=44"></script>
-<script src="store.js?v=44"></script>
-<script src="divider-bg.js?v=44"></script>
-<script src="edm-masters.js?v=44"></script>
-<script src="hero-bg.js?v=44"></script>
-<script src="app.js?v=44"></script>
-<script src="roster.js?v=44"></script>
+<script src="firebase-config.js?v=45"></script>
+<script src="specialties.js?v=45"></script>
+<script src="members.js?v=45"></script>
+<script src="store.js?v=45"></script>
+<script src="divider-bg.js?v=45"></script>
+<script src="edm-masters.js?v=45"></script>
+<script src="hero-bg.js?v=45"></script>
+<script src="app.js?v=45"></script>
+<script src="roster.js?v=45"></script>
 </body>
 </html>
