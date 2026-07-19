@@ -765,6 +765,9 @@ function flashSaved(msg){
 
 // 壓縮上傳照片，避免存進雲端/瀏覽器時過大
 function compressImage(dataUrl, maxW, quality){
+  // 若來源是 PNG (可能為去背照片) → 保留 PNG 格式以維持透明背景
+  // 若來源為 JPEG/其他 → 用 JPEG 壓縮
+  const isPng = dataUrl.startsWith('data:image/png');
   return new Promise(resolve => {
     const img = new Image();
     img.onload = () => {
@@ -773,8 +776,23 @@ function compressImage(dataUrl, maxW, quality){
       const cv = document.createElement('canvas');
       cv.width = w; cv.height = h;
       cv.getContext('2d').drawImage(img, 0, 0, w, h);
-      try { resolve(cv.toDataURL('image/jpeg', quality)); }
-      catch(e){ resolve(dataUrl); }
+      try {
+        if (isPng){
+          // 嘗試 PNG（保留透明）；若太大再退回 JPEG
+          const png = cv.toDataURL('image/png');
+          if (png.length < 900 * 1024) return resolve(png);   // <900KB 直接用
+          // PNG 太大 → 縮小到 500px 寬再試
+          if (w > 500){
+            const cv2 = document.createElement('canvas'); cv2.width = 500; cv2.height = Math.round(h * 500 / w);
+            cv2.getContext('2d').drawImage(img, 0, 0, cv2.width, cv2.height);
+            const png2 = cv2.toDataURL('image/png');
+            if (png2.length < 900 * 1024) return resolve(png2);
+          }
+          // 還是太大 → 用 JPEG（會失去透明，但至少能存）
+          console.warn('PNG 太大，退回 JPEG（會失去透明）');
+        }
+        resolve(cv.toDataURL('image/jpeg', quality));
+      } catch(e){ resolve(dataUrl); }
     };
     img.onerror = () => resolve(dataUrl);
     img.src = dataUrl;
