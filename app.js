@@ -651,6 +651,28 @@ document.getElementById('promoModalCopy').addEventListener('click', () => {
   });
 });
 
+/* ---- 使用說明 modal ---- */
+(function initHelpModal(){
+  const btn = document.getElementById('helpBtn');
+  const modal = document.getElementById('helpModal');
+  const closeBtn = document.getElementById('helpClose');
+  if (!btn || !modal) return;
+  const open = () => modal.classList.add('show');
+  const close = () => modal.classList.remove('show');
+  btn.addEventListener('click', open);
+  if (closeBtn) closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', e => { if (e.target.id === 'helpModal') close(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('show')) close(); });
+  modal.querySelectorAll('.help-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const key = tab.dataset.htab;
+      modal.querySelectorAll('.help-tab').forEach(t => t.classList.toggle('active', t === tab));
+      modal.querySelectorAll('.help-panel').forEach(p => p.style.display = (p.dataset.hpanel === key) ? '' : 'none');
+      const body = modal.querySelector('.help-body'); if (body) body.scrollTop = 0;
+    });
+  });
+})();
+
 // 更新「星期（自動）」顯示
 function updateDayDisplay(){
   const el = document.getElementById('evDayDisplay');
