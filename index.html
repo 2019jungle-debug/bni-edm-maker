@@ -86,7 +86,7 @@
   #heroMaster{width:960px;height:540px;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18);transform-origin:top center;font-family:"Noto Sans TC",sans-serif;background:#fff;background-size:960px 540px;background-repeat:no-repeat;}
   #heroMaster *{box-sizing:border-box;}
   /* 座標依 PPT 原始 XML 換算（1600x900 → 960x540） */
-  #heroMaster .hm-photoFrame{position:absolute;left:41px;top:29px;width:278px;height:374px;z-index:3;overflow:hidden;background:transparent;}
+  #heroMaster .hm-photoFrame{position:absolute;left:41px;top:29px;width:278px;height:360px;z-index:3;overflow:hidden;background:transparent;}
   #heroMaster .hm-photo{position:absolute;inset:0;overflow:hidden;}
   #heroMaster .hm-photo img{width:100%;height:100%;object-fit:cover;object-position:var(--ppx,50%) var(--pp,18%);display:block;}
   #heroMaster .hm-photo.empty{display:flex;align-items:center;justify-content:center;color:#c8b98a;font-size:14px;background:transparent;}
@@ -103,9 +103,9 @@
   #heroMaster .hm-ref .hm-rlbl{color:#b27409;flex:0 0 auto;}
   #heroMaster .hm-ref .hm-rsep{color:#b27409;font-weight:400;}
   #heroMaster .hm-ref .hm-rval{color:#222222;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  /* Spec pill：底部有 baked 紅色 pill 圖，文字疊在上面（若母片被擦除，pill 用 CSS 補 back） */
-  #heroMaster .hm-spec{position:absolute;left:95px;top:400px;width:183px;height:45px;z-index:4;display:flex;align-items:center;justify-content:center;color:#fff;font-size:19px;font-weight:800;font-family:"Noto Sans TC",sans-serif;letter-spacing:1px;text-align:center;white-space:nowrap;background:linear-gradient(180deg,#c60c30,#a80a26);border-radius:28px;box-shadow:0 3px 8px rgba(198,12,48,.3);}
-  #heroMaster .hm-name{position:absolute;left:118px;top:439px;height:50px;z-index:4;font-family:"Noto Sans TC",sans-serif;font-size:43px;font-weight:900;color:#222222;line-height:1;letter-spacing:4px;}
+  /* Spec pill + 姓名：移到照片下方（照片底 y=389），避免壓在人物身上 */
+  #heroMaster .hm-spec{position:absolute;left:95px;top:400px;width:183px;height:38px;z-index:4;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:800;font-family:"Noto Sans TC",sans-serif;letter-spacing:1px;text-align:center;white-space:nowrap;background:linear-gradient(180deg,#c60c30,#a80a26);border-radius:24px;box-shadow:0 3px 8px rgba(198,12,48,.3);}
+  #heroMaster .hm-name{position:absolute;left:110px;top:448px;height:50px;z-index:4;font-family:"Noto Sans TC",sans-serif;font-size:40px;font-weight:900;color:#222222;line-height:1;letter-spacing:4px;}
   .hero-top{position:absolute;top:0;left:0;bottom:0;width:430px;
     background:linear-gradient(135deg,var(--red-dark) 0%,var(--red) 70%,#d94651 100%);
     clip-path:polygon(0 0,100% 0,72% 100%,0 100%);}
@@ -999,14 +999,14 @@
 <!-- Firebase 雲端同步 -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=51"></script>
-<script src="specialties.js?v=51"></script>
-<script src="members.js?v=51"></script>
-<script src="store.js?v=51"></script>
-<script src="divider-bg.js?v=51"></script>
-<script src="edm-masters.js?v=51"></script>
-<script src="hero-bg.js?v=51"></script>
-<script src="app.js?v=51"></script>
-<script src="roster.js?v=51"></script>
+<script src="firebase-config.js?v=52"></script>
+<script src="specialties.js?v=52"></script>
+<script src="members.js?v=52"></script>
+<script src="store.js?v=52"></script>
+<script src="divider-bg.js?v=52"></script>
+<script src="edm-masters.js?v=52"></script>
+<script src="hero-bg.js?v=52"></script>
+<script src="app.js?v=52"></script>
+<script src="roster.js?v=52"></script>
 </body>
 </html>
