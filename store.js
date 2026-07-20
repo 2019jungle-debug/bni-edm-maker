@@ -3,6 +3,18 @@
    - 否則 → 使用本機 localStorage（單機，可匯出/匯入 JSON 分享）
    對外 API 皆走記憶體快取 _members，寫入後 _notify() 觸發畫面更新。
 ============================================================================= */
+function stripUndefined(value){
+  if (Array.isArray(value)) return value.map(v => v === undefined ? null : stripUndefined(v));
+  if (value && typeof value === 'object'){
+    const out = {};
+    Object.keys(value).forEach(k => {
+      if (value[k] !== undefined) out[k] = stripUndefined(value[k]);
+    });
+    return out;
+  }
+  return value;
+}
+
 const Store = {
   _members: [],
   _listeners: [],
@@ -57,7 +69,7 @@ const Store = {
     const batch = this._db.batch();
     seed.forEach(m => {
       const ref = this._col.doc(m.id);
-      const data = Object.assign({}, m); delete data.id;
+      const data = stripUndefined(Object.assign({}, m)); delete data.id;
       batch.set(ref, data);
     });
     await batch.commit();
@@ -85,7 +97,7 @@ const Store = {
     m.updatedAt = Date.now();
 
     if (this.mode === 'cloud'){
-      const data = Object.assign({}, m); delete data.id;
+      const data = stripUndefined(Object.assign({}, m)); delete data.id;
       await this._col.doc(m.id).set(data, { merge:true });
     } else {
       const i = this._members.findIndex(x => x.id === m.id);
@@ -139,7 +151,7 @@ const Store = {
       const batch = this._db.batch();
       arr.forEach(m => {
         if (!m.id) m.id = 'm_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
-        const data = Object.assign({}, m); delete data.id;
+        const data = stripUndefined(Object.assign({}, m)); delete data.id;
         batch.set(this._col.doc(m.id), data, { merge:true });
       });
       await batch.commit();

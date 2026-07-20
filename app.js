@@ -230,6 +230,14 @@ function blankDivider(){
   return { id:null, type:'divider', title:'', sub:'產業服務鏈', eng:'', present:true, order:null };
 }
 
+function formatSaveError(e){
+  if (e && e.message === 'MEMBER_DOC_TOO_LARGE'){
+    return '儲存失敗：圖片總量仍過大。請先移除非必要圖片，例如 QR Code、產品照或介紹頁輔助圖，再重新儲存。';
+  }
+  const detail = [e && e.code, e && e.message].filter(Boolean).join(' - ');
+  return '儲存失敗，系統已自動整理資料格式。請重新整理後再試一次。' + (detail ? '\n\n錯誤訊息：' + detail : '');
+}
+
 async function saveEditorToRoster(){
   const m = readEditorAsMember();
   if (!m.name.trim()){ alert('請先填寫姓名，才能儲存到名冊。'); return; }
@@ -249,7 +257,7 @@ async function saveEditorToRoster(){
     flashSaved('✓ 已儲存到名冊');
   } catch(e){
     console.error(e);
-    alert(e && e.message === 'MEMBER_DOC_TOO_LARGE' ? '儲存失敗：圖片總量仍過大。請先移除非必要圖片，例如 QR Code、產品照或介紹頁輔助圖，再重新儲存。' : '儲存失敗，請確認網路連線後再試一次。');
+    alert(formatSaveError(e));
   }
 }
 
