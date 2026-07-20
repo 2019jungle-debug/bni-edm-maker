@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
@@ -54,6 +54,17 @@
   }
   .field textarea{resize:vertical;min-height:44px;}
   .hint{font-size:11px;color:#999;margin-top:3px;}
+  .guide-card{background:#fff8ec;border:1px solid #e9d9b0;border-radius:8px;padding:12px;}
+  .mini-steps{display:grid;gap:8px;margin:8px 0 4px;padding:0;list-style:none;}
+  .mini-steps li{display:flex;gap:8px;align-items:flex-start;font-size:12px;line-height:1.45;color:#5f5144;}
+  .mini-steps b{color:#8f1c1c;font-size:12px;white-space:nowrap;}
+  .advanced-field{margin-top:10px;border:1px solid #eee2cc;border-radius:8px;background:#fffdf8;padding:9px 10px;}
+  .advanced-field summary{cursor:pointer;font-size:12px;font-weight:800;color:#8f1c1c;list-style:none;}
+  .advanced-field summary::-webkit-details-marker{display:none;}
+  .advanced-field summary::before{content:"＋";display:inline-block;width:18px;color:#b27409;font-weight:900;}
+  .advanced-field[open] summary::before{content:"－";}
+  .range-label{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;font-weight:700;color:#5f5144;}
+  .range-label span{font-family:"Montserrat",sans-serif;color:#8f1c1c;}
   .triple{display:grid;grid-template-columns:1fr;gap:6px;}
   .group-title{font-size:13px;font-weight:700;color:var(--gold);margin:18px 0 8px;border-bottom:1px dashed var(--line);padding-bottom:4px;}
   .photo-row{display:flex;align-items:center;gap:12px;}
@@ -613,32 +624,40 @@
 <div id="view-editor" class="layout">
   <!-- ================= FORM ================= -->
   <div class="panel">
-    <h2>① 基本資料</h2>
+    <h2>① 先帶入資料</h2>
 
-    <div class="field" style="background:#fff8ec;border:1px solid #e9d9b0;border-radius:8px;padding:12px;">
-      <label>⚡ 快速帶入會員資料（例會 PPT 資料庫）</label>
+    <div class="field guide-card">
+      <label>從名冊選擇您的名字</label>
       <select id="memberSelect"></select>
-      <div class="hint">選您的名字，姓名 / 專業別 / 引薦對象 / 口號會自動填入，再微調即可。</div>
+      <ul class="mini-steps">
+        <li><b>1 選名字</b><span>姓名、專業別、引薦需求會先自動帶入。</span></li>
+        <li><b>2 補照片</b><span>上傳形象照，必要時展開「照片位置微調」。</span></li>
+        <li><b>3 存名冊</b><span>確認右側預覽後，按「儲存到雲端名冊」。</span></li>
+      </ul>
+      <div class="hint">如果清單沒有您的名字，請聯絡管理者新增會員。</div>
     </div>
 
     <div class="actions" style="margin-bottom:4px;">
-      <button class="btn btn-save" id="saveTop" type="button" style="flex:1;">💾 儲存變更到名冊</button>
+      <button class="btn btn-save" id="saveTop" type="button" style="flex:1;">💾 儲存到雲端名冊</button>
       <span id="saveStatusTop" style="font-size:12px;color:#2e9e5b;opacity:0;transition:opacity .3s;align-self:center;">✓ 已儲存</span>
     </div>
 
     <div class="field">
-      <label>形象照上傳</label>
+      <label>形象照（建議上傳）</label>
       <div class="photo-row">
         <img id="thumb" class="thumb" alt="">
         <input type="file" id="photo" accept="image/*">
         <button type="button" id="removePhoto" class="btn-remove">移除</button>
       </div>
-      <div class="hint">建議直式、上半身、去背或純色背景效果最佳</div>
-      <label style="margin-top:8px;">照片焦點 上下：<span id="photoPosVal">18%</span></label>
-      <input type="range" id="photoPos" min="0" max="100" value="18" style="width:100%;">
-      <label style="margin-top:6px;">照片焦點 左右：<span id="photoPosXVal">50%</span></label>
-      <input type="range" id="photoPosX" min="0" max="100" value="50" style="width:100%;">
-      <div class="hint">照片沒對到臉時，用這兩條滑桿把照片挪到想露出的位置。</div>
+      <div class="hint">建議使用直式、上半身、去背 PNG；這張照片會同步套用到所有 EDM 與簡報頁。</div>
+      <details class="advanced-field">
+        <summary>照片位置微調</summary>
+        <div class="range-label"><label for="photoPos">上下位置</label><span id="photoPosVal">18%</span></div>
+        <input type="range" id="photoPos" min="0" max="100" value="18" style="width:100%;">
+        <div class="range-label"><label for="photoPosX">左右位置</label><span id="photoPosXVal">50%</span></div>
+        <input type="range" id="photoPosX" min="0" max="100" value="50" style="width:100%;">
+        <div class="hint">只有照片裁切到頭、身體或偏一邊時才需要調整；調整後會自動存入您的會員資料。</div>
+      </details>
     </div>
 
     <div class="field">
@@ -657,18 +676,18 @@
       <input id="specialty" type="text" placeholder="或自行輸入專業別" style="margin-top:6px;">
     </div>
 
-    <h2 style="margin-top:24px;">② EDM 標語</h2>
+    <h2 style="margin-top:24px;">② 寫一句讓人記住您的標語</h2>
     <div class="field">
-      <label>主標</label>
+      <label>主標（短句，建議 6-12 字）</label>
       <input id="sloganMain" type="text" value="職嚮生涯設計" maxlength="12">
     </div>
     <div class="field">
-      <label>副標</label>
+      <label>副標（補充說明，建議 10-20 字）</label>
       <input id="sloganSub" type="text" value="幫您找到職業生涯的心之所嚮" maxlength="20">
     </div>
 
-    <h2 style="margin-top:24px;">③ 引薦需求</h2>
-    <div class="hint" style="margin:-6px 0 8px;">每一類都可獨立勾選是否顯示在 EDM。</div>
+    <h2 style="margin-top:24px;">③ 填寫希望大家引薦的人</h2>
+    <div class="hint" style="margin:-6px 0 8px;">每格填一種對象即可；不想出現在 EDM 的類別，可以取消「顯示」。</div>
 
     <div class="group-title">合作對象<label class="gt-toggle"><input type="checkbox" class="showFlag" data-key="partners" checked>顯示</label></div>
     <div class="triple" id="partners"></div>
@@ -682,7 +701,7 @@
     <div class="group-title">夢幻引薦<label class="gt-toggle"><input type="checkbox" class="showFlag" data-key="dream" checked>顯示</label></div>
     <div class="triple" id="dream"></div>
 
-    <h2 style="margin-top:24px;">④ 客戶與主張</h2>
+    <h2 style="margin-top:24px;">④ 補充代表客戶與獨特主張</h2>
     <div class="group-title">代表性客戶<label class="gt-toggle"><input type="checkbox" class="showFlag" data-key="clients" checked>顯示</label></div>
     <div class="triple" id="clients"></div>
 
@@ -691,7 +710,7 @@
       <textarea id="usp" placeholder="用一兩句話說明您與眾不同之處">結合心理諮商專業與職涯設計，用科學方法幫助每個人找到職業生涯的心之所嚮。</textarea>
     </div>
 
-    <h2 style="margin-top:24px;">⑤ 活動資訊</h2>
+    <h2 style="margin-top:24px;">⑤ 確認本週活動資訊</h2>
     <div class="field two-col">
       <div><label>日期（選日曆）</label><input id="evDate" type="date" value="2026-06-26"></div>
       <div><label>星期（自動帶出）</label><input id="evDayDisplay" type="text" readonly style="background:#f0f0f0;color:#555;"></div>
@@ -701,13 +720,13 @@
     <div class="field"><label>備註二</label><input id="evNote2" type="text" value="入席費 NT.800 元 / 請準備名片50張"></div>
     <div class="field"><label>地點</label><input id="evPlace" type="text" value="高雄福華飯店7F金龍廳"></div>
 
-    <h2 style="margin-top:24px;">⑥ 形象頁／介紹頁素材</h2>
+    <h2 style="margin-top:24px;">⑥ 進階素材（可先略過）</h2>
     <div class="field">
-      <label>公司 Logo（形象頁用，建議去背 PNG）</label>
+      <label>公司 Logo（形象頁用，可選填）</label>
       <div class="photo-row"><img id="logoThumb" class="thumb" alt=""><input type="file" id="logoUpload" accept="image/*"><button type="button" id="logoRemove" class="btn-remove">移除</button></div>
     </div>
     <div class="field">
-      <label>產品／服務形象照（形象頁用，方形最佳）</label>
+      <label>產品／服務形象照（形象頁用，可選填）</label>
       <div class="photo-row"><img id="productThumb" class="thumb" alt=""><input type="file" id="productUpload" accept="image/*"><button type="button" id="productRemove" class="btn-remove">移除</button></div>
     </div>
     <div class="field">
@@ -716,7 +735,7 @@
       <div class="hint">請自行設計已合併好的圖片後上傳。<b>圖片尺寸建議 1920×1080 px（16:9）</b>。若有影片要播放，請另外傳到雲端，影片檔請勿超過 25 秒。</div>
     </div>
 
-    <h2 style="margin-top:24px;">⑦ 宣傳文（依上方資料自動生成，≤500 字）</h2>
+    <h2 style="margin-top:24px;">⑦ 產生宣傳文（可選填）</h2>
     <div class="field" style="margin-bottom:8px;">
       <label>AI 潤飾金鑰（選填，Anthropic API Key）</label>
       <input id="aiKey" type="password" placeholder="填入後按生成即用 AI 潤飾；留空則用套版格式" autocomplete="off">
@@ -732,13 +751,13 @@
     <div id="editingBanner" class="editing-banner"></div>
 
     <div class="actions">
-      <button class="btn btn-primary" id="download">⬇ 下載 EDM (PNG)</button>
-      <button class="btn btn-save" id="saveToRoster">💾 儲存到名冊</button>
+      <button class="btn btn-primary" id="download">⬇ 下載目前版型 (PNG)</button>
+      <button class="btn btn-save" id="saveToRoster">💾 儲存到雲端名冊</button>
       <button class="btn btn-promo" id="openPromoBtn" type="button">✨ 宣傳文</button>
       <button class="btn btn-ghost" id="reset">清空重填</button>
       <span id="saveStatus" style="font-size:12px;color:#2e9e5b;opacity:0;transition:opacity .3s;align-self:center;">✓ 已自動儲存</span>
     </div>
-    <div class="hint" style="margin-top:6px;">✏️ 個人內容會自動存在本裝置瀏覽器；按「儲存到名冊」則會存入共享名冊，供本週例會簡報使用。</div>
+    <div class="hint" style="margin-top:6px;">提示：左側欄位會即時更新右側預覽；完成後請先儲存到雲端名冊，再下載 PNG。</div>
   </div>
 
   <!-- ================= PREVIEW ================= -->
@@ -1043,8 +1062,8 @@
         <h3>三步驟開始</h3>
         <ol class="hsteps">
           <li><b>登入</b><span>點右上「🔑 登入」→ 輸入分會給你的會員密碼。忘記請聯絡管理者。</span></li>
-          <li><b>填寫或校對個人資料</b><span>左側表單依序填：形象照、姓名、專業別、標語、四類引薦、獨特銷售主張、公司 LOGO、25 秒輔助圖。</span></li>
-          <li><b>選版型並下載</b><span>右上頁籤選版型（12 種 EDM ＋ 形象頁 ＋ 介紹頁）→「⬇ 下載」存成 A4 300dpi PNG。</span></li>
+          <li><b>依步驟檢查資料</b><span>先選名字，再補形象照、標語、引薦需求與活動資訊；進階素材可先略過。</span></li>
+          <li><b>儲存並下載</b><span>右側選版型看預覽，確認後按「儲存到雲端名冊」，再下載目前版型 PNG。</span></li>
         </ol>
 
         <h3>圖片規格建議</h3>
@@ -1069,7 +1088,7 @@
           <li>光線均勻打在臉上</li>
           <li>身著正式服裝</li>
         </ul>
-        <p class="hp">上傳後構圖不理想，用左側「照片焦點 上下 / 左右」滑桿微調，不必重上傳。</p>
+        <p class="hp">「照片位置微調」仍然有用：當人物臉部被裁掉、身體太靠邊或不同母片位置不理想時，展開它調整上下／左右位置，不必重上傳照片。</p>
 
         <h3>版型使用注意</h3>
         <ul class="hp">
@@ -1170,7 +1189,7 @@
 <script src="divider-bg.js?v=58"></script>
 <script src="edm-masters.js?v=60"></script>
 <script src="hero-bg.js?v=58"></script>
-<script src="app.js?v=58"></script>
+<script src="app.js?v=59"></script>
 <script src="roster.js?v=58"></script>
 </body>
 </html>
