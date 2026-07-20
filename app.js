@@ -61,6 +61,34 @@ function buildSpecialtySelect(){
   if (prev) sel.value = prev;
 }
 
+function getIndustryChainNames(){
+  const names = [];
+  Store.getAllSorted().forEach(m => {
+    if (m.type !== 'divider') return;
+    const name = (m.title || '').trim();
+    if (name && !names.includes(name)) names.push(name);
+  });
+  return names;
+}
+
+function buildIndustryChainSelect(){
+  const sel = document.getElementById('industryChain');
+  if (!sel) return;
+  const prev = sel.value;
+  const names = getIndustryChainNames();
+  sel.innerHTML = '';
+  const blank = document.createElement('option');
+  blank.value = '';
+  blank.textContent = '▼ 選擇產業鏈組別';
+  sel.appendChild(blank);
+  names.forEach(name => {
+    const o = document.createElement('option');
+    o.value = name;
+    o.textContent = name;
+    sel.appendChild(o);
+  });
+  if (prev && names.includes(prev)) sel.value = prev;
+}
 document.getElementById('specialtySelect').addEventListener('change', function(){
   const spec = this.value;
   if (!spec){ return; }
@@ -126,6 +154,8 @@ function loadMemberIntoEditor(m){
   document.getElementById('name').value = m.name || '';
   document.getElementById('role').value = m.role || m.specialty || '';
   document.getElementById('specialty').value = m.specialty || '';
+  const chainSel = document.getElementById('industryChain');
+  if (chainSel) chainSel.value = m.industryChain || '';
   document.getElementById('sloganMain').value = m.sloganMain || '';
   document.getElementById('sloganSub').value = m.sloganSub || m.slogan || '';
   document.getElementById('usp').value = m.usp || '';
@@ -166,6 +196,7 @@ function readEditorAsMember(){
     name: val('name'),
     role: val('role'),
     specialty: val('specialty'),
+    industryChain: val('industryChain'),
     sloganMain: val('sloganMain'),
     sloganSub: val('sloganSub'),
     usp: val('usp'),
@@ -185,7 +216,7 @@ function readEditorAsMember(){
 }
 
 function blankMember(){
-  return Object.assign({ id:null, name:'', role:'', specialty:'', sloganMain:'', sloganSub:'', usp:'',
+  return Object.assign({ id:null, name:'', role:'', specialty:'', industryChain:'', sloganMain:'', sloganSub:'', usp:'',
            partners:['','',''], general:['','',''], ideal:['','',''], dream:['','',''],
            clients:['','',''], photo:'', logo:'', product:'', introImg:'', photoPos:18, photoPosX:50, present:true,
            show:{ partners:true, general:true, ideal:true, dream:true, clients:true, usp:true } }, EV_DEFAULT);
@@ -708,7 +739,7 @@ document.querySelectorAll('.showFlag').forEach(cb =>
 /* ============ 範本自動儲存（存在瀏覽器 localStorage） ============ */
 const STORE_KEY = 'bni_edm_data_v1';
 
-const SINGLE_FIELDS = ['name','role','specialty','sloganMain','sloganSub','usp',
+const SINGLE_FIELDS = ['name','role','specialty','industryChain','sloganMain','sloganSub','usp',
                        'evDate','evTime','evNote1','evNote2','evPlace','photoPos','photoPosX'];
 
 function collectData(){
@@ -842,6 +873,8 @@ function scheduleSave(){
 }
 document.addEventListener('input', scheduleSave);
 document.getElementById('specialtySelect').addEventListener('change', scheduleSave);
+const industryChainEl = document.getElementById('industryChain');
+if (industryChainEl) industryChainEl.addEventListener('change', () => { render(); scheduleSave(); autoSaveMember(); });
 
 // ---- 照片上傳 ----
 document.getElementById('photo').addEventListener('change', e => {
@@ -1040,6 +1073,7 @@ document.getElementById('reset').addEventListener('click', () => {
   if (!confirm('確定要清空所有欄位嗎？（也會清除瀏覽器中儲存的範本）')) return;
   document.querySelectorAll('input[type=text], textarea').forEach(i => i.value = '');
   document.getElementById('specialtySelect').value = '';
+  const chainSel = document.getElementById('industryChain'); if (chainSel) chainSel.value = '';
   photoDataUrl = '';
   document.getElementById('thumb').removeAttribute('src');
   setExtraImg('logo',''); setExtraImg('product',''); setExtraImg('introImg','');
@@ -1073,9 +1107,11 @@ if (saveTopBtn) saveTopBtn.addEventListener('click', saveEditorToRoster);
   await Store.init();
   buildMemberSelect();
   buildSpecialtySelect();
+  buildIndustryChainSelect();
   Store.onChange(() => {
     buildMemberSelect();
     buildSpecialtySelect();
+    buildIndustryChainSelect();
     if (currentView === 'roster' && typeof renderRoster === 'function') renderRoster();
     // 若正在編輯的會員被雲端更新，同步 currentMember 參照
     if (currentMember && currentMember.id){
