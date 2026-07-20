@@ -242,13 +242,14 @@ async function saveEditorToRoster(){
     return;
   }
   try {
+    await prepareMemberForCloudSave(m);
     const id = await Store.upsert(m);
     currentMember = Store.getById(id) || m;
     updateEditingBanner();
     flashSaved('✓ 已儲存到名冊');
   } catch(e){
     console.error(e);
-    alert('儲存失敗，請確認網路連線或圖片是否過大後再試一次。');
+    alert(e && e.message === 'MEMBER_DOC_TOO_LARGE' ? '儲存失敗：圖片總量仍過大。請先移除非必要圖片，例如 QR Code、產品照或介紹頁輔助圖，再重新儲存。' : '儲存失敗，請確認網路連線後再試一次。');
   }
 }
 
@@ -850,13 +851,13 @@ function compressImage(dataUrl, maxW, quality){
         if (isPng){
           // 嘗試 PNG（保留透明）；若太大再退回 JPEG
           const png = cv.toDataURL('image/png');
-          if (png.length < 900 * 1024) return resolve(png);   // <900KB 直接用
+          if (png.length < 420 * 1024) return resolve(png);   // 留給雲端文件足夠空間
           // PNG 太大 → 縮小到 500px 寬再試
           if (w > 500){
             const cv2 = document.createElement('canvas'); cv2.width = 500; cv2.height = Math.round(h * 500 / w);
             cv2.getContext('2d').drawImage(img, 0, 0, cv2.width, cv2.height);
             const png2 = cv2.toDataURL('image/png');
-            if (png2.length < 900 * 1024) return resolve(png2);
+            if (png2.length < 420 * 1024) return resolve(png2);
           }
           // 還是太大 → 用 JPEG（會失去透明，但至少能存）
           console.warn('PNG 太大，退回 JPEG（會失去透明）');
@@ -886,7 +887,7 @@ document.getElementById('photo').addEventListener('change', e => {
   if (!f) return;
   const r = new FileReader();
   r.onload = async ev => {
-    photoDataUrl = await compressImage(ev.target.result, 640, 0.82);
+    photoDataUrl = await compressImage(ev.target.result, 520, 0.72);
     document.getElementById('thumb').src = photoDataUrl;
     render();
     saveData(); autoSaveMember();
@@ -928,13 +929,60 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // 編輯名冊會員時，自動把目前內容存回雲端（避免圖片沒存就不見）
+const CLOUD_DOC_SOFT_LIMIT = 720 * 1024;
+const CLOUD_DOC_HARD_LIMIT = 850 * 1024;
+function approxDocSize(m){
+  try { return JSON.stringify(m).length; }
+  catch(e){ return CLOUD_DOC_HARD_LIMIT + 1; }
+}
+function setImageFieldForSave(key, value){
+  if (key === 'photo'){
+    photoDataUrl = value || '';
+    const th = document.getElementById('thumb');
+    if (th){ if (value) th.src = value; else th.removeAttribute('src'); }
+    return;
+  }
+  setExtraImg(key, value || '');
+}
+async function shrinkImageFieldForSave(m, key, maxW, fmt, quality){
+  if (!m[key]) return false;
+  const before = m[key];
+  const next = await compressImageAs(before, maxW, fmt, quality);
+  if (next && next.length < before.length){
+    m[key] = next;
+    setImageFieldForSave(key, next);
+    return true;
+  }
+  return false;
+}
+async function prepareMemberForCloudSave(m){
+  let changed = false;
+  const heavy = approxDocSize(m) > CLOUD_DOC_SOFT_LIMIT;
+  if (heavy || (m.photo || '').length > 420 * 1024) changed = await shrinkImageFieldForSave(m, 'photo', 520, 'image/jpeg', 0.72) || changed;
+  if (heavy || (m.logo || '').length > 180 * 1024) changed = await shrinkImageFieldForSave(m, 'logo', 260, 'image/png', 0.9) || changed;
+  if (heavy || (m.product || '').length > 260 * 1024) changed = await shrinkImageFieldForSave(m, 'product', 420, 'image/jpeg', 0.76) || changed;
+  if (heavy || (m.introImg || '').length > 360 * 1024) changed = await shrinkImageFieldForSave(m, 'introImg', 760, 'image/jpeg', 0.72) || changed;
+  if (heavy || (m.qrCode || '').length > 220 * 1024) changed = await shrinkImageFieldForSave(m, 'qrCode', 360, 'image/png', 0.9) || changed;
+
+  if (approxDocSize(m) > CLOUD_DOC_SOFT_LIMIT){
+    changed = await shrinkImageFieldForSave(m, 'photo', 420, 'image/jpeg', 0.66) || changed;
+    changed = await shrinkImageFieldForSave(m, 'introImg', 620, 'image/jpeg', 0.68) || changed;
+    changed = await shrinkImageFieldForSave(m, 'product', 340, 'image/jpeg', 0.7) || changed;
+    changed = await shrinkImageFieldForSave(m, 'qrCode', 280, 'image/png', 0.9) || changed;
+  }
+  if (changed){ render(); saveData(); }
+  if (approxDocSize(m) > CLOUD_DOC_HARD_LIMIT){
+    throw new Error('MEMBER_DOC_TOO_LARGE');
+  }
+  return m;
+}
 async function autoSaveMember(){
   if (!currentMember || !currentMember.id) return false;
   if (!canSaveMember()) return false;   // 沒權限就不自動存雲端
   const m = readEditorAsMember();
   if (!m.name.trim()) return false;
-  try { await Store.upsert(m); currentMember = Store.getById(m.id) || m; flashSaved('☁ 已存回雲端'); return true; }
-  catch(e){ flashSaved('⚠ 內容太大未能存雲端，請減小圖片'); return false; }
+  try { await prepareMemberForCloudSave(m); await Store.upsert(m); currentMember = Store.getById(m.id) || m; flashSaved('☁ 已存回雲端'); return true; }
+  catch(e){ flashSaved(e && e.message === 'MEMBER_DOC_TOO_LARGE' ? '⚠ 圖片總量仍過大' : '⚠ 未能存回雲端'); return false; }
 }
 function compressImageAs(dataUrl, maxW, fmt, quality){
   return new Promise(resolve => {
