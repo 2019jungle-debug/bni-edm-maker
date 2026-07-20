@@ -198,17 +198,24 @@ function blankDivider(){
 
 async function saveEditorToRoster(){
   const m = readEditorAsMember();
-  if (!m.name.trim()){ alert('請先填寫姓名，才能儲存到名冊'); return; }
-  // 權限：管理者可存任何人；會員只能存自己
-  if (m.id && !isAdmin && ownerMemberId !== m.id){
-    alert('您沒有此會員的編輯權限。請用「🔑 登入」以您的會員密碼登入，才能儲存自己的頁面。');
+  if (!m.name.trim()){ alert('請先填寫姓名，才能儲存到名冊。'); return; }
+  if (!canWriteCurrentMember(m)){
+    if (!ownerMemberId && !isAdmin){
+      alert('請先登入後再儲存到雲端名冊。管理者可編輯所有會員；會員只能儲存自己的資料。');
+    } else {
+      alert('您只能編輯自己的資料。若要修改其他會員，請用管理者身分登入。');
+    }
     return;
   }
-  const id = await Store.upsert(m);
-  currentMember = Store.getById(id) || m;
-  if (!ownerMemberId && !isAdmin) ownerMemberId = id;   // 新建者視為擁有者
-  updateEditingBanner();
-  flashSaved('✓ 已儲存到名冊');
+  try {
+    const id = await Store.upsert(m);
+    currentMember = Store.getById(id) || m;
+    updateEditingBanner();
+    flashSaved('✓ 已儲存到名冊');
+  } catch(e){
+    console.error(e);
+    alert('儲存失敗，請確認網路連線或圖片是否過大後再試一次。');
+  }
 }
 
 /* ============ 權限：管理者 / 會員登入 ============ */
@@ -216,7 +223,13 @@ let isAdmin = false;
 let ownerMemberId = null;
 function genPw(){ const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s=''; for (let i=0;i<6;i++) s+=c[Math.floor(Math.random()*c.length)]; return s; }
 function getConfigDoc(){ return Store.getById('_config') || {}; }
-function canSaveMember(){ return isAdmin || (currentMember && currentMember.id && ownerMemberId === currentMember.id); }
+function canWriteCurrentMember(m){
+  const targetId = (m && m.id) || (currentMember && currentMember.id) || null;
+  if (isAdmin) return true;
+  if (!ownerMemberId) return false;
+  return !!targetId && ownerMemberId === targetId;
+}
+function canSaveMember(){ return canWriteCurrentMember(currentMember); }
 
 async function unlockAdmin(){
   const cfg = getConfigDoc();
