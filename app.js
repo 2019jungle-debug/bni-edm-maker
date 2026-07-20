@@ -159,6 +159,8 @@ function loadMemberIntoEditor(m){
   document.getElementById('sloganMain').value = m.sloganMain || '';
   document.getElementById('sloganSub').value = m.sloganSub || m.slogan || '';
   document.getElementById('usp').value = m.usp || '';
+  const companyUrlEl = document.getElementById('companyUrl');
+  if (companyUrlEl) companyUrlEl.value = m.companyUrl || '';
   const spSel = document.getElementById('specialtySelect');
   const opt = [...spSel.options].find(o => o.value === m.specialty);
   spSel.value = opt ? m.specialty : '';
@@ -180,7 +182,7 @@ function loadMemberIntoEditor(m){
   photoDataUrl = m.photo || '';
   const thumb = document.getElementById('thumb');
   if (photoDataUrl) thumb.src = photoDataUrl; else thumb.removeAttribute('src');
-  setExtraImg('logo', m.logo); setExtraImg('product', m.product); setExtraImg('introImg', m.introImg);
+  setExtraImg('logo', m.logo); setExtraImg('product', m.product); setExtraImg('introImg', m.introImg); setExtraImg('qrCode', m.qrCode);
   updateEditingBanner();
   render();
 }
@@ -200,6 +202,7 @@ function readEditorAsMember(){
     sloganMain: val('sloganMain'),
     sloganSub: val('sloganSub'),
     usp: val('usp'),
+    companyUrl: val('companyUrl'),
     partners: readTriple('partners'),
     general:  readTriple('general'),
     ideal:    readTriple('ideal'),
@@ -211,14 +214,14 @@ function readEditorAsMember(){
     photoPos: document.getElementById('photoPos').value,
     photoPosX: document.getElementById('photoPosX').value,
     photo: photoDataUrl,
-    logo: logoDataUrl, product: productDataUrl, introImg: introImgDataUrl
+    logo: logoDataUrl, product: productDataUrl, introImg: introImgDataUrl, qrCode: qrCodeDataUrl
   };
 }
 
 function blankMember(){
-  return Object.assign({ id:null, name:'', role:'', specialty:'', industryChain:'', sloganMain:'', sloganSub:'', usp:'',
+  return Object.assign({ id:null, name:'', role:'', specialty:'', industryChain:'', sloganMain:'', sloganSub:'', usp:'', companyUrl:'',
            partners:['','',''], general:['','',''], ideal:['','',''], dream:['','',''],
-           clients:['','',''], photo:'', logo:'', product:'', introImg:'', photoPos:18, photoPosX:50, present:true,
+           clients:['','',''], photo:'', logo:'', product:'', introImg:'', qrCode:'', photoPos:18, photoPosX:50, present:true,
            show:{ partners:true, general:true, ideal:true, dream:true, clients:true, usp:true } }, EV_DEFAULT);
 }
 
@@ -739,7 +742,7 @@ document.querySelectorAll('.showFlag').forEach(cb =>
 /* ============ 範本自動儲存（存在瀏覽器 localStorage） ============ */
 const STORE_KEY = 'bni_edm_data_v1';
 
-const SINGLE_FIELDS = ['name','role','specialty','industryChain','sloganMain','sloganSub','usp',
+const SINGLE_FIELDS = ['name','role','specialty','industryChain','sloganMain','sloganSub','usp','companyUrl',
                        'evDate','evTime','evNote1','evNote2','evPlace','photoPos','photoPosX'];
 
 function collectData(){
@@ -756,7 +759,8 @@ function collectData(){
     photo:    photoDataUrl,
     logo:     logoDataUrl,
     product:  productDataUrl,
-    introImg: introImgDataUrl
+    introImg: introImgDataUrl,
+    qrCode:  qrCodeDataUrl
   };
 }
 
@@ -794,7 +798,7 @@ function loadData(){
     const t = document.getElementById('thumb');
     if (t) t.src = d.photo;
   }
-  setExtraImg('logo', d.logo); setExtraImg('product', d.product); setExtraImg('introImg', d.introImg);
+  setExtraImg('logo', d.logo); setExtraImg('product', d.product); setExtraImg('introImg', d.introImg); setExtraImg('qrCode', d.qrCode);
   return true;
 }
 
@@ -900,11 +904,12 @@ document.getElementById('removePhoto').addEventListener('click', () => {
 });
 
 /* ---- 額外素材圖：公司 Logo / 產品方形照 / 介紹頁圖 ---- */
-let logoDataUrl = '', productDataUrl = '', introImgDataUrl = '';
+let logoDataUrl = '', productDataUrl = '', introImgDataUrl = '', qrCodeDataUrl = '';
 const EXTRA_IMGS = [
   { key:'logo',     get:()=>logoDataUrl,     set:v=>logoDataUrl=v,     input:'logoUpload',    thumb:'logoThumb',    remove:'logoRemove',    maxW:340,  fmt:'image/png'  },
   { key:'product',  get:()=>productDataUrl,  set:v=>productDataUrl=v,  input:'productUpload', thumb:'productThumb', remove:'productRemove', maxW:500,  fmt:'image/jpeg' },
-  { key:'introImg', get:()=>introImgDataUrl, set:v=>introImgDataUrl=v, input:'introUpload',   thumb:'introThumb',   remove:'introRemove',   maxW:1100, fmt:'image/jpeg' }
+  { key:'introImg', get:()=>introImgDataUrl, set:v=>introImgDataUrl=v, input:'introUpload',   thumb:'introThumb',   remove:'introRemove',   maxW:1100, fmt:'image/jpeg' },
+  { key:'qrCode',   get:()=>qrCodeDataUrl,   set:v=>qrCodeDataUrl=v,   input:'qrUpload',      thumb:'qrThumb',      remove:'qrRemove',      maxW:500,  fmt:'image/png'  }
 ];
 
 // 形象頁母片：pink box 內建的上傳按鈕（同步到 introImgDataUrl）
@@ -1071,12 +1076,12 @@ document.getElementById('download').addEventListener('click', async () => {
 // ---- 清空 ----
 document.getElementById('reset').addEventListener('click', () => {
   if (!confirm('確定要清空所有欄位嗎？（也會清除瀏覽器中儲存的範本）')) return;
-  document.querySelectorAll('input[type=text], textarea').forEach(i => i.value = '');
+  document.querySelectorAll('input[type=text], input[type=url], textarea').forEach(i => i.value = '');
   document.getElementById('specialtySelect').value = '';
   const chainSel = document.getElementById('industryChain'); if (chainSel) chainSel.value = '';
   photoDataUrl = '';
   document.getElementById('thumb').removeAttribute('src');
-  setExtraImg('logo',''); setExtraImg('product',''); setExtraImg('introImg','');
+  setExtraImg('logo',''); setExtraImg('product',''); setExtraImg('introImg',''); setExtraImg('qrCode','');
   try { localStorage.removeItem(STORE_KEY); } catch(e){}
   render();
 });

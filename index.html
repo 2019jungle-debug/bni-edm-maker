@@ -716,6 +716,18 @@
       <textarea id="usp" placeholder="用一兩句話說明您與眾不同之處">結合心理諮商專業與職涯設計，用科學方法幫助每個人找到職業生涯的心之所嚮。</textarea>
     </div>
 
+    <div class="field">
+      <label>會員公司網址</label>
+      <input id="companyUrl" type="url" placeholder="https://example.com">
+      <div class="hint">可填公司官網、預約頁、品牌頁或粉絲專頁網址。</div>
+    </div>
+
+    <div class="field">
+      <label>公司／粉絲頁 QR Code（可選填）</label>
+      <div class="photo-row"><img id="qrThumb" class="thumb" alt=""><input type="file" id="qrUpload" accept="image/*"><button type="button" id="qrRemove" class="btn-remove">移除</button></div>
+      <div class="hint">建議上傳正方形 PNG 或 JPG，內容可連到公司官網、LINE、Facebook 粉絲頁或預約頁。</div>
+    </div>
+
     <h2 style="margin-top:24px;">⑤ 確認本週活動資訊</h2>
     <div class="field two-col">
       <div><label>日期（選日曆）</label><input id="evDate" type="date" value="2026-06-26"></div>
@@ -1195,7 +1207,7 @@
 <script src="divider-bg.js?v=58"></script>
 <script src="edm-masters.js?v=62"></script>
 <script src="hero-bg.js?v=58"></script>
-<script src="app.js?v=61"></script>
+<script src="app.js?v=62"></script>
 <script src="roster.js?v=58"></script>
 </body>
 </html>
