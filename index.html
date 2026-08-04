@@ -51,6 +51,7 @@
   .edit-section[open] summary::after{content:"收合";}
   .edit-section .section-body{padding:12px;}
   .edit-section h2{display:none;}
+  .edit-section .subhead{display:block;grid-column:1/-1;font-size:13px;font-weight:800;color:#8f1720;margin:6px 0 2px;border-left:3px solid var(--gold);padding-left:8px;}
   .quick-edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .quick-edit-grid .field,.quick-edit-grid .group-title,.quick-edit-grid .triple{margin-bottom:0;}
   .quick-edit-grid .field.full,.quick-edit-grid .group-title,.quick-edit-grid .triple,.quick-edit-grid details{grid-column:1/-1;}
@@ -728,7 +729,7 @@
       <div class="hint">管理者在「本週例會簡報」新增或改名產業鏈分隔頁後，這裡會自動出現，會員可挑選自己的組別。</div>
     </div>
 
-    <h2 style="margin-top:24px;">② 寫一句讓人記住您的標語</h2>
+    <h2 style="margin-top:24px;" data-compact-title="記憶標語">② 寫一句讓人記住您的標語</h2>
     <div class="field">
       <label>主標（短句，建議 6-12 字）</label>
       <input id="sloganMain" type="text" value="職嚮生涯設計" maxlength="12">
@@ -738,7 +739,7 @@
       <input id="sloganSub" type="text" value="幫您找到職業生涯的心之所嚮" maxlength="20">
     </div>
 
-    <h2 style="margin-top:24px;">③ 填寫希望大家引薦的人</h2>
+    <h2 style="margin-top:24px;" data-compact-title="引薦需求">③ 填寫希望大家引薦的人</h2>
     <div class="hint" style="margin:-6px 0 8px;">每格填一種對象即可；不想出現在 EDM 的類別，可以取消「顯示」。</div>
 
     <div class="group-title">合作對象<label class="gt-toggle"><input type="checkbox" class="showFlag" data-key="partners" checked>顯示</label></div>
@@ -753,7 +754,7 @@
     <div class="group-title">夢幻引薦<label class="gt-toggle"><input type="checkbox" class="showFlag" data-key="dream" checked>顯示</label></div>
     <div class="triple" id="dream"></div>
 
-    <h2 style="margin-top:24px;">④ 補充代表客戶與獨特主張</h2>
+    <h2 style="margin-top:24px;" data-compact-title="代表客戶與 USP">④ 補充代表客戶與獨特主張</h2>
     <div class="group-title">代表性客戶<label class="gt-toggle"><input type="checkbox" class="showFlag" data-key="clients" checked>顯示</label></div>
     <div class="triple" id="clients"></div>
 
@@ -1254,7 +1255,7 @@
 <script src="divider-bg.js?v=58"></script>
 <script src="edm-masters.js?v=62"></script>
 <script src="hero-bg.js?v=58"></script>
-<script src="app.js?v=67"></script>
+<script src="app.js?v=68"></script>
 <script src="roster.js?v=59"></script>
 </body>
 </html>

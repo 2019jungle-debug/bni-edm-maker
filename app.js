@@ -812,7 +812,16 @@ function setupEditorLayout(){
     details.innerHTML = '<summary>' + title + '</summary><div class="section-body quick-edit-grid"></div>';
     cleanNodes[0].insertAdjacentElement('beforebegin', details);
     const body = details.querySelector('.section-body');
-    cleanNodes.forEach(n => body.appendChild(n));
+    cleanNodes.forEach(n => {
+      if (n.tagName === 'H2' && n.dataset.compactTitle){
+        const sub = document.createElement('div');
+        sub.className = 'subhead';
+        sub.textContent = n.dataset.compactTitle;
+        body.appendChild(sub);
+      } else {
+        body.appendChild(n);
+      }
+    });
   }
 
   section('1 會員與照片', [
