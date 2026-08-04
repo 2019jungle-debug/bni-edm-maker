@@ -166,23 +166,50 @@ const Store = {
 // 由 members.js 的靜態清單建立初始名冊
 function seedRoster(){
   const src = window.BNI_MEMBERS || [];
-  return src.map((m, i) => ({
-    id: 'm_seed_' + i,
-    order: i + 1,
-    present: true,
-    name: m.name || '',
-    role: m.role || m.specialty || '',
-    specialty: m.specialty || '',
-    sloganMain: m.sloganMain || '',
-    sloganSub: m.sloganSub || m.slogan || '',
-    usp: m.usp || '',
-    partners: pad3(m.partners),
-    general: m.general ? pad3(m.general) : pad3(m.referrals),
-    ideal: pad3(m.ideal),
-    dream: pad3(m.dream),
-    clients: pad3(m.clients),
-    photo: ''
-  }));
+  return src.map((m, i) => {
+    if (m.type === 'divider'){
+      return {
+        id: m.id || 'divider_seed_' + i,
+        type: 'divider',
+        order: i + 1,
+        present: m.present !== false,
+        title: m.title || '',
+        sub: m.sub || '產業服務鏈',
+        eng: m.eng || ''
+      };
+    }
+    const base = Object.assign({}, m);
+    return Object.assign({
+      id: 'm_seed_' + i,
+      order: i + 1,
+      present: true,
+      name: '',
+      role: '',
+      specialty: '',
+      industryChain: '',
+      sloganMain: '',
+      sloganSub: '',
+      usp: '',
+      partners: ['', '', ''],
+      general: ['', '', ''],
+      ideal: ['', '', ''],
+      dream: ['', '', ''],
+      clients: ['', '', ''],
+      photo: ''
+    }, base, {
+      id: base.id || 'm_seed_' + i,
+      order: i + 1,
+      present: base.present !== false,
+      role: base.role || base.specialty || '',
+      sloganSub: base.sloganSub || base.slogan || '',
+      partners: pad3(base.partners),
+      general: base.general ? pad3(base.general) : pad3(base.referrals),
+      ideal: pad3(base.ideal),
+      dream: pad3(base.dream),
+      clients: pad3(base.clients),
+      photo: base.photo || ''
+    });
+  });
 }
 function pad3(arr){
   const a = (arr || []).slice(0, 3);
