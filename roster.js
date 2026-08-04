@@ -39,7 +39,7 @@ function renderRoster(){
   wrap.innerHTML = '';
   list.forEach((m, idx) => {
     const row = document.createElement('div');
-    row.draggable = admin;
+    row.draggable = false;
     row.dataset.id = m.id;
     const adminActs = admin ? (
         '<button data-act="up" title="上移">↑</button>' +
@@ -109,8 +109,19 @@ function renderRoster(){
     });
 
     if (admin){
-      row.addEventListener('dragstart', () => { dragId = m.id; row.classList.add('dragging'); });
-      row.addEventListener('dragend',   () => row.classList.remove('dragging'));
+      const dragHandle = row.querySelector('.drag');
+      if (dragHandle){
+        dragHandle.draggable = true;
+        dragHandle.addEventListener('dragstart', e => {
+          dragId = m.id;
+          row.classList.add('dragging');
+          if (e.dataTransfer){
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', m.id);
+          }
+        });
+        dragHandle.addEventListener('dragend', () => row.classList.remove('dragging'));
+      }
       row.addEventListener('dragover',  e => { e.preventDefault(); row.classList.add('drop-hint'); });
       row.addEventListener('dragleave', () => row.classList.remove('drop-hint'));
       row.addEventListener('drop', e => { e.preventDefault(); row.classList.remove('drop-hint'); onDrop(m.id); });

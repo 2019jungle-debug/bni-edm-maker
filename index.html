@@ -41,7 +41,23 @@
     background:#fff;border-radius:12px;padding:22px;
     box-shadow:0 4px 18px rgba(0,0,0,.08);
     flex:1 1 380px;max-width:460px;
+    max-height:calc(100vh - 48px);overflow:auto;
   }
+  .editor-sticky-actions{position:sticky;top:0;z-index:6;background:#fff;padding:0 0 10px;margin-bottom:8px;border-bottom:1px solid #f0e7d8;}
+  .edit-section{border:1px solid #eadfca;border-radius:10px;background:#fffdf8;margin:12px 0;overflow:hidden;}
+  .edit-section summary{cursor:pointer;list-style:none;padding:11px 12px;font-size:14px;font-weight:800;color:#8f1720;background:#fff8ec;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .edit-section summary::-webkit-details-marker{display:none;}
+  .edit-section summary::after{content:"展開";font-size:11px;color:#9a7a28;background:#fff;border:1px solid #eadfca;border-radius:999px;padding:2px 8px;white-space:nowrap;}
+  .edit-section[open] summary::after{content:"收合";}
+  .edit-section .section-body{padding:12px;}
+  .edit-section h2{display:none;}
+  .quick-edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .quick-edit-grid .field,.quick-edit-grid .group-title,.quick-edit-grid .triple{margin-bottom:0;}
+  .quick-edit-grid .field.full,.quick-edit-grid .group-title,.quick-edit-grid .triple,.quick-edit-grid details{grid-column:1/-1;}
+  .upload-split{display:grid;grid-template-columns:1fr;gap:10px;}
+  .upload-card{border:1px solid #eee;border-radius:9px;padding:10px;background:#fff;}
+  .upload-card label{font-size:13px;font-weight:800;color:#444;}
+  .upload-card .hint{margin-top:6px;}
   .panel h2{font-size:15px;margin:0 0 14px;color:var(--red);border-left:4px solid var(--gold);padding-left:8px;}
   .field{margin-bottom:14px;}
   .field label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:#444;}
@@ -69,6 +85,7 @@
   .group-title{font-size:13px;font-weight:700;color:var(--gold);margin:18px 0 8px;border-bottom:1px dashed var(--line);padding-bottom:4px;}
   .photo-row{display:flex;align-items:center;gap:12px;}
   .photo-row .thumb{width:56px;height:56px;border-radius:8px;object-fit:cover;border:1px solid var(--line);background:#f0f0f0;flex:0 0 auto;}
+  .photo-row input[type=file]{min-width:0;}
   .btn-remove{border:1px solid #d9534f;background:#fff;color:#d9534f;border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer;font-family:inherit;flex:0 0 auto;}
   .btn-remove:hover{background:#d9534f;color:#fff;}
   .btn{
@@ -189,7 +206,8 @@
   .roster-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fafafa;}
   .roster-row.dragging{opacity:.4;}
   .roster-row.drop-hint{border-color:var(--gold);background:#fff8ec;}
-  .roster-row .drag{cursor:grab;color:#bbb;font-size:16px;}
+  .roster-row .drag{cursor:grab;color:#8f1720;font-size:18px;line-height:1;border:1px solid #eadfca;background:#fff8ec;border-radius:6px;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .roster-row .drag:active{cursor:grabbing;}
   .roster-row .ord{width:26px;text-align:center;font-weight:800;color:var(--red);}
   .roster-row .present{display:flex;align-items:center;gap:3px;font-size:12px;color:#666;white-space:nowrap;}
   .roster-row .present.with-intro{color:#2e9e5b;}
@@ -198,6 +216,7 @@
   .roster-row .rspec{color:#777;font-size:13px;flex:1;}
   .roster-row .ract{display:flex;gap:4px;}
   .roster-row .ract button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:4px 9px;font-size:12px;cursor:pointer;font-family:inherit;}
+  .roster-row .ract button[data-act="up"],.roster-row .ract button[data-act="down"]{font-weight:900;color:#8f1720;background:#fff8ec;border-color:#eadfca;min-width:30px;}
   .roster-row .ract button.del{color:#d9534f;border-color:#eab;}
   .roster-row .ract button.del:hover{background:#d9534f;color:#fff;}
   .roster-row.divider-row{background:linear-gradient(90deg,#fdeef0,#fff8ec);border-color:#e9c9cf;}
@@ -1110,6 +1129,7 @@
 
         <h3>版型使用注意</h3>
         <ul class="hp">
+          <li><b>左側欄位分段</b>：先填「會員與照片」，其他標語、引薦、素材與 AI 文案可展開需要的區塊再編輯</li>
           <li><b>資料同步</b>：改一次表單，12 個版型全部同步更新</li>
           <li><b>引薦顯示切換</b>：不想在 EDM 顯示某項引薦，可在「引薦需求」勾掉「顯示」</li>
           <li><b>下載 PNG</b>：A4 300dpi 高解析，可印刷、可轉貼社群平台</li>
@@ -1117,7 +1137,7 @@
         </ul>
 
         <h3>介紹頁 25 秒輔助圖</h3>
-        <p class="hp">25 秒自我介紹時投影機顯示的輔助畫面。建議<b>把圖片內容自行設計好再上傳</b>（例：業務範圍圖、產品照拼貼、關鍵字重點）。系統僅支援圖片，影片檔請另傳雲端。</p>
+        <p class="hp">介紹頁現在有兩種圖片：「介紹頁人物照」只套用在介紹頁右上圓照，可與形象照不同；「介紹頁輔助圖」是 25 秒自我介紹時鋪滿畫面的投影圖。建議<b>把輔助圖內容自行設計好再上傳</b>（例：業務範圍圖、產品照拼貼、關鍵字重點）。</p>
 
         <h3>常見問題</h3>
         <dl class="hkv">
@@ -1144,10 +1164,10 @@
 
         <h3>本週例會簡報排序</h3>
         <ul class="hp">
-          <li><b>拖曳排序</b>：直接拖曳會員列調整出場順序</li>
+          <li><b>拖曳排序</b>：登入管理者後，拖曳每列左側「⠿」把手調整出場順序；也可用 ↑／↓ 微調</li>
           <li><b>出場勾選</b>：取消勾選則該會員不會加入 PPT</li>
           <li><b>+ 介紹頁勾選</b>：預設勾選 = 匯出「形象頁＋介紹頁」兩張；取消 = 只匯出形象頁</li>
-          <li><b>產業鏈分隔頁</b>：點「+ 產業鏈分隔頁」插入分段標題頁，可拖曳調整位置</li>
+          <li><b>產業鏈分隔頁</b>：點「+ 產業鏈分隔頁」插入分段標題頁，可用把手拖曳或 ↑／↓ 調整位置</li>
         </ul>
 
         <h3>PPT 下載</h3>
@@ -1207,7 +1227,7 @@
 <script src="divider-bg.js?v=58"></script>
 <script src="edm-masters.js?v=62"></script>
 <script src="hero-bg.js?v=58"></script>
-<script src="app.js?v=64"></script>
-<script src="roster.js?v=58"></script>
+<script src="app.js?v=65"></script>
+<script src="roster.js?v=59"></script>
 </body>
 </html>

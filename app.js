@@ -180,8 +180,11 @@ function loadMemberIntoEditor(m){
   updateDayDisplay();
   applyShowFlags(m.show);
   photoDataUrl = m.photo || '';
+  introPhotoDataUrl = m.introPhoto || '';
   const thumb = document.getElementById('thumb');
   if (photoDataUrl) thumb.src = photoDataUrl; else thumb.removeAttribute('src');
+  const introThumb = document.getElementById('introPhotoThumb');
+  if (introThumb){ if (introPhotoDataUrl) introThumb.src = introPhotoDataUrl; else introThumb.removeAttribute('src'); }
   setExtraImg('logo', m.logo); setExtraImg('product', m.product); setExtraImg('introImg', m.introImg); setExtraImg('qrCode', m.qrCode);
   updateEditingBanner();
   render();
@@ -214,6 +217,7 @@ function readEditorAsMember(){
     photoPos: document.getElementById('photoPos').value,
     photoPosX: document.getElementById('photoPosX').value,
     photo: photoDataUrl,
+    introPhoto: introPhotoDataUrl,
     logo: logoDataUrl, product: productDataUrl, introImg: introImgDataUrl, qrCode: qrCodeDataUrl
   };
 }
@@ -221,7 +225,7 @@ function readEditorAsMember(){
 function blankMember(){
   return Object.assign({ id:null, name:'', role:'', specialty:'', industryChain:'', sloganMain:'', sloganSub:'', usp:'', companyUrl:'',
            partners:['','',''], general:['','',''], ideal:['','',''], dream:['','',''],
-           clients:['','',''], photo:'', logo:'', product:'', introImg:'', qrCode:'', photoPos:18, photoPosX:50, present:true,
+           clients:['','',''], photo:'', introPhoto:'', logo:'', product:'', introImg:'', qrCode:'', photoPos:18, photoPosX:50, present:true,
            show:{ partners:true, general:true, ideal:true, dream:true, clients:true, usp:true } }, EV_DEFAULT);
 }
 
@@ -357,6 +361,7 @@ function fillList(ulId, values){
 
 // ---- 主渲染 ----
 let photoDataUrl = '';
+let introPhotoDataUrl = '';
 
 // 日期輔助：ISO(yyyy-mm-dd) → MM/DD 與 週X
 function mmdd(iso){
@@ -464,8 +469,8 @@ function render(){
   const ppxv = document.getElementById('photoPosXVal'); if (ppxv) ppxv.textContent = ppx + '%';
 
   // 16:9 版面照片
-  setPhoto('heroPhoto', '形象照');
-  setPhoto('introPhoto', '照片');
+  setPhoto('heroPhoto', '形象照', photoDataUrl);
+  setPhoto('introPhoto', '介紹頁人物照', introPhotoDataUrl);
 
   // ---- 形象頁 16:9 ----
   document.getElementById('hRole').textContent = val('role') || '職稱';
@@ -521,12 +526,13 @@ function unflattenObjectFit(root){
   });
 }
 
-function setPhoto(id, placeholder){
+function setPhoto(id, placeholder, url){
   const ph = document.getElementById(id);
   if (!ph) return;
-  if (photoDataUrl){
+  const src = url || '';
+  if (src){
     ph.classList.remove('empty');
-    ph.innerHTML = '<img src="' + photoDataUrl + '" alt="">';
+    ph.innerHTML = '<img src="' + src + '" alt="">';
   } else {
     ph.classList.add('empty');
     ph.innerHTML = '<span>' + placeholder + '</span>';
@@ -754,6 +760,83 @@ const STORE_KEY = 'bni_edm_data_v1';
 const SINGLE_FIELDS = ['name','role','specialty','industryChain','sloganMain','sloganSub','usp','companyUrl',
                        'evDate','evTime','evNote1','evNote2','evPlace','photoPos','photoPosX'];
 
+function setupEditorLayout(){
+  const panel = document.querySelector('#view-editor .panel');
+  if (!panel || panel.dataset.sectioned) return;
+  panel.dataset.sectioned = '1';
+
+  const saveTop = document.getElementById('saveTop');
+  if (saveTop && saveTop.parentElement){
+    saveTop.parentElement.classList.add('editor-sticky-actions');
+    const firstTitle = panel.querySelector('h2');
+    if (firstTitle) firstTitle.insertAdjacentElement('afterend', saveTop.parentElement);
+  }
+
+  const photoField = document.getElementById('photo') && document.getElementById('photo').closest('.field');
+  if (photoField) photoField.classList.add('upload-card', 'full');
+  if (photoField && !document.getElementById('introPhotoUpload')){
+    const introField = document.createElement('div');
+    introField.className = 'field upload-card full';
+    introField.innerHTML =
+      '<label>介紹頁人物照（可與形象照不同）</label>' +
+      '<div class="photo-row"><img id="introPhotoThumb" class="thumb" alt=""><input type="file" id="introPhotoUpload" accept="image/*"><button type="button" id="introPhotoRemove" class="btn-remove">移除</button></div>' +
+      '<div class="hint">只套用在「介紹頁 16:9」的人物圓照；形象頁仍使用上方形象照。</div>';
+    photoField.insertAdjacentElement('afterend', introField);
+  }
+
+  const fieldOf = id => {
+    const el = document.getElementById(id);
+    return el ? (el.closest('.field') || el) : null;
+  };
+  const tripleNodes = id => {
+    const box = document.getElementById(id);
+    return box ? [box.previousElementSibling, box].filter(Boolean) : [];
+  };
+  ['memberSelect','specialtySelect','industryChain','usp','companyUrl','qrUpload','evDate','evTime','evNote1','evNote2','evPlace','logoUpload','productUpload','introUpload','aiKey'].forEach(id => {
+    const node = fieldOf(id);
+    if (node) node.classList.add('full');
+  });
+  const h2Before = id => {
+    const node = fieldOf(id);
+    let prev = node && node.previousElementSibling;
+    while (prev && prev.tagName !== 'H2') prev = prev.previousElementSibling;
+    return prev && prev.tagName === 'H2' ? prev : null;
+  };
+  function section(title, nodes, open){
+    const cleanNodes = nodes.filter(Boolean).filter(n => !n.closest('.edit-section'));
+    if (!cleanNodes.length) return;
+    const details = document.createElement('details');
+    details.className = 'edit-section';
+    if (open) details.open = true;
+    details.innerHTML = '<summary>' + title + '</summary><div class="section-body quick-edit-grid"></div>';
+    cleanNodes[0].insertAdjacentElement('beforebegin', details);
+    const body = details.querySelector('.section-body');
+    cleanNodes.forEach(n => body.appendChild(n));
+  }
+
+  section('1 會員與照片', [
+    fieldOf('memberSelect'), photoField, fieldOf('introPhotoUpload'), fieldOf('name'),
+    fieldOf('role'), fieldOf('specialtySelect'), fieldOf('industryChain')
+  ], true);
+  section('2 標語與引薦', [
+    h2Before('sloganMain'), fieldOf('sloganMain'), fieldOf('sloganSub'),
+    ...tripleNodes('partners'), ...tripleNodes('general'), ...tripleNodes('ideal'),
+    ...tripleNodes('dream'), ...tripleNodes('clients'), fieldOf('usp'),
+    fieldOf('companyUrl'), fieldOf('qrUpload')
+  ], false);
+  section('3 例會資訊', [
+    h2Before('evDate'), fieldOf('evDate'), fieldOf('evTime'),
+    fieldOf('evNote1'), fieldOf('evNote2'), fieldOf('evPlace')
+  ], false);
+  section('4 形象頁與介紹頁素材', [
+    h2Before('logoUpload'), fieldOf('logoUpload'), fieldOf('productUpload'), fieldOf('introUpload')
+  ], false);
+  section('5 AI 文案工具', [
+    h2Before('aiKey'), fieldOf('aiKey'), document.getElementById('genPromoBtn') && document.getElementById('genPromoBtn').closest('.actions'),
+    document.getElementById('promoOut')
+  ], false);
+}
+
 function collectData(){
   const single = {};
   SINGLE_FIELDS.forEach(id => single[id] = document.getElementById(id).value);
@@ -766,6 +849,7 @@ function collectData(){
     clients:  readTriple('clients'),
     show:     readShowFlags(),
     photo:    photoDataUrl,
+    introPhoto: introPhotoDataUrl,
     logo:     logoDataUrl,
     product:  productDataUrl,
     introImg: introImgDataUrl,
@@ -806,6 +890,11 @@ function loadData(){
     photoDataUrl = d.photo;
     const t = document.getElementById('thumb');
     if (t) t.src = d.photo;
+  }
+  if (d.introPhoto){
+    introPhotoDataUrl = d.introPhoto;
+    const t = document.getElementById('introPhotoThumb');
+    if (t) t.src = d.introPhoto;
   }
   setExtraImg('logo', d.logo); setExtraImg('product', d.product); setExtraImg('introImg', d.introImg); setExtraImg('qrCode', d.qrCode);
   return true;
@@ -884,6 +973,7 @@ function scheduleSave(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(saveData, 400);
 }
+setupEditorLayout();
 document.addEventListener('input', scheduleSave);
 document.getElementById('specialtySelect').addEventListener('change', scheduleSave);
 const industryChainEl = document.getElementById('industryChain');
@@ -910,6 +1000,32 @@ document.getElementById('removePhoto').addEventListener('click', () => {
   document.getElementById('thumb').removeAttribute('src');
   render();
   saveData();
+});
+
+const introPhotoUpload = document.getElementById('introPhotoUpload');
+if (introPhotoUpload) introPhotoUpload.addEventListener('change', e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = async ev => {
+    introPhotoDataUrl = await compressImage(ev.target.result, 420, 0.72);
+    const th = document.getElementById('introPhotoThumb');
+    if (th) th.src = introPhotoDataUrl;
+    render();
+    saveData(); autoSaveMember();
+  };
+  r.readAsDataURL(f);
+});
+
+const introPhotoRemove = document.getElementById('introPhotoRemove');
+if (introPhotoRemove) introPhotoRemove.addEventListener('click', () => {
+  introPhotoDataUrl = '';
+  const inp = document.getElementById('introPhotoUpload');
+  if (inp) inp.value = '';
+  const th = document.getElementById('introPhotoThumb');
+  if (th) th.removeAttribute('src');
+  render();
+  saveData(); autoSaveMember();
 });
 
 /* ---- 額外素材圖：公司 Logo / 產品方形照 / 介紹頁圖 ---- */
@@ -950,6 +1066,12 @@ function setImageFieldForSave(key, value){
     if (th){ if (value) th.src = value; else th.removeAttribute('src'); }
     return;
   }
+  if (key === 'introPhoto'){
+    introPhotoDataUrl = value || '';
+    const th = document.getElementById('introPhotoThumb');
+    if (th){ if (value) th.src = value; else th.removeAttribute('src'); }
+    return;
+  }
   setExtraImg(key, value || '');
 }
 async function shrinkImageFieldForSave(m, key, maxW, fmt, quality){
@@ -967,6 +1089,7 @@ async function prepareMemberForCloudSave(m){
   let changed = false;
   const heavy = approxDocSize(m) > CLOUD_DOC_SOFT_LIMIT;
   if (heavy || (m.photo || '').length > 420 * 1024) changed = await shrinkImageFieldForSave(m, 'photo', 520, 'image/jpeg', 0.72) || changed;
+  if (heavy || (m.introPhoto || '').length > 300 * 1024) changed = await shrinkImageFieldForSave(m, 'introPhoto', 420, 'image/jpeg', 0.72) || changed;
   if (heavy || (m.logo || '').length > 180 * 1024) changed = await shrinkImageFieldForSave(m, 'logo', 260, 'image/png', 0.9) || changed;
   if (heavy || (m.product || '').length > 260 * 1024) changed = await shrinkImageFieldForSave(m, 'product', 420, 'image/jpeg', 0.76) || changed;
   if (heavy || (m.introImg || '').length > 360 * 1024) changed = await shrinkImageFieldForSave(m, 'introImg', 760, 'image/jpeg', 0.72) || changed;
@@ -974,6 +1097,7 @@ async function prepareMemberForCloudSave(m){
 
   if (approxDocSize(m) > CLOUD_DOC_SOFT_LIMIT){
     changed = await shrinkImageFieldForSave(m, 'photo', 420, 'image/jpeg', 0.66) || changed;
+    changed = await shrinkImageFieldForSave(m, 'introPhoto', 360, 'image/jpeg', 0.66) || changed;
     changed = await shrinkImageFieldForSave(m, 'introImg', 620, 'image/jpeg', 0.68) || changed;
     changed = await shrinkImageFieldForSave(m, 'product', 340, 'image/jpeg', 0.7) || changed;
     changed = await shrinkImageFieldForSave(m, 'qrCode', 280, 'image/png', 0.9) || changed;
@@ -1136,7 +1260,9 @@ document.getElementById('reset').addEventListener('click', () => {
   document.getElementById('specialtySelect').value = '';
   const chainSel = document.getElementById('industryChain'); if (chainSel) chainSel.value = '';
   photoDataUrl = '';
+  introPhotoDataUrl = '';
   document.getElementById('thumb').removeAttribute('src');
+  const introThumb = document.getElementById('introPhotoThumb'); if (introThumb) introThumb.removeAttribute('src');
   setExtraImg('logo',''); setExtraImg('product',''); setExtraImg('introImg',''); setExtraImg('qrCode','');
   try { localStorage.removeItem(STORE_KEY); } catch(e){}
   render();
