@@ -108,6 +108,33 @@
   .fmt-tab{border:1px solid var(--line);background:#fff;color:#555;border-radius:20px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
   .fmt-tab.active{background:var(--red);color:#fff;border-color:var(--red);}
 
+  @media(max-width:760px){
+    body{overflow-x:hidden;background:#f4f4f6;}
+    header{padding:10px 12px;gap:6px;}
+    header h1{font-size:15px;line-height:1.35;}
+    header .sub{font-size:11px;}
+    header .nav-actions{width:100%;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px;}
+    header .nav-actions .nav-btn,header .nav-actions button{white-space:nowrap;flex:0 0 auto;}
+    .layout{display:block;padding:10px;}
+    .panel{width:100%;max-width:none;max-height:none;border-radius:10px;padding:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);}
+    .editor-sticky-actions{top:0;padding:0 0 8px;margin-bottom:8px;}
+    .editor-sticky-actions .btn{flex:1 1 46%;padding:10px 8px;}
+    .quick-edit-grid{grid-template-columns:1fr;}
+    .edit-section{margin:10px 0;border-radius:9px;}
+    .edit-section summary{padding:10px 11px;font-size:14px;}
+    .edit-section .section-body{padding:10px;}
+    .field input,.field select,.field textarea{font-size:16px;padding:10px 11px;}
+    .photo-row{align-items:flex-start;gap:8px;}
+    .photo-row .thumb{width:50px;height:50px;}
+    .photo-row input[type=file]{font-size:13px;}
+    .preview-wrap{position:static;width:100%;margin-top:12px;}
+    .fmt-tabs{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;gap:8px;padding:8px 2px 10px;margin:0 -2px 8px;scroll-snap-type:x proximity;}
+    .fmt-tab{flex:0 0 auto;white-space:nowrap;padding:8px 14px;scroll-snap-align:start;}
+    .zoom-controls{position:sticky;top:0;z-index:5;background:#f4f4f6;padding:8px 0;margin-bottom:8px;}
+    .preview-scale{max-height:none;overflow-x:hidden;justify-content:center;padding-bottom:14px;}
+    #download{width:100%;margin-top:8px;}
+  }
+
   /* ---------- HERO 16:9 (960x540) ---------- */
   #hero{width:960px;height:540px;background:#fff;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18);transform-origin:top center;}
   /* ---------- 形象頁母片（BNI 官方紅金橫版） ---------- */
@@ -1227,7 +1254,7 @@
 <script src="divider-bg.js?v=58"></script>
 <script src="edm-masters.js?v=62"></script>
 <script src="hero-bg.js?v=58"></script>
-<script src="app.js?v=66"></script>
+<script src="app.js?v=67"></script>
 <script src="roster.js?v=59"></script>
 </body>
 </html>

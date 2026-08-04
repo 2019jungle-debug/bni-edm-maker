@@ -1184,6 +1184,16 @@ let zoom = FORMATS.themeBlack.zoom;
 
 function activeEl(){ return document.getElementById(FORMATS[activeFmt].el); }
 
+function isMobileViewport(){
+  return window.matchMedia && window.matchMedia('(max-width: 760px)').matches;
+}
+
+function fittedZoomFor(f){
+  if (!isMobileViewport()) return f.zoom;
+  const available = Math.max(280, window.innerWidth - 28);
+  return Math.max(0.28, Math.min(f.zoom, available / f.w));
+}
+
 function applyZoom(){
   const el = activeEl();
   el.style.zoom = zoom;
@@ -1216,7 +1226,7 @@ function switchFmt(fmt){
   document.querySelectorAll('.fmt-tab').forEach(b => {
     b.classList.toggle('active', b.dataset.fmt === fmt);
   });
-  zoom = f.zoom;
+  zoom = fittedZoomFor(f);
   applyZoom();
   document.getElementById('download').textContent = '⬇ 下載' + f.label + ' (PNG)';
 }
@@ -1227,6 +1237,11 @@ document.querySelectorAll('.fmt-tab').forEach(b => {
 
 document.getElementById('zoomIn').onclick  = () => { zoom = Math.min(1.5, zoom + 0.1); applyZoom(); };
 document.getElementById('zoomOut').onclick = () => { zoom = Math.max(0.3, zoom - 0.1); applyZoom(); };
+window.addEventListener('resize', () => {
+  if (!isMobileViewport()) return;
+  zoom = fittedZoomFor(FORMATS[activeFmt]);
+  applyZoom();
+});
 
 // ---- 下載目前版面 PNG ----
 document.getElementById('download').addEventListener('click', async () => {
