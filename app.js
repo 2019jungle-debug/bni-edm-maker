@@ -33,7 +33,7 @@ Object.keys(defaults).forEach(id => {
   defaults[id].forEach((v, i) => { if (inputs[i]) inputs[i].value = v; });
 });
 
-// ---- 專業別下拉（標註該專業別的會員，或「招募中」） ----
+// ---- 專業別下拉（只列出已有會員的專業別） ----
 function memberBySpecialty(spec){
   return Store.getAllSorted().find(m => m.type !== 'divider' && (m.specialty || '') === spec) || null;
 }
@@ -50,13 +50,14 @@ function buildSpecialtySelect(){
     const og = document.createElement('optgroup');
     og.label = g.group;
     g.items.forEach(it => {
+      const mem = memberBySpecialty(it);
+      if (!mem) return;
       const o = document.createElement('option');
       o.value = it;
-      const mem = memberBySpecialty(it);
-      o.textContent = it + (mem ? '（' + mem.name + '）' : '（招募中）');
+      o.textContent = it + '（' + mem.name + '）';
       og.appendChild(o);
     });
-    sel.appendChild(og);
+    if (og.children.length) sel.appendChild(og);
   });
   if (prev) sel.value = prev;
 }
@@ -98,7 +99,7 @@ document.getElementById('specialtySelect').addEventListener('change', function()
     loadMemberIntoEditor(mem);
     this.value = spec;   // 保持選取
   } else {
-    // 招募中：僅填入專業別，脫離目前會員，作為新增會員的起點
+    // 若選項沒有對應會員，僅填入專業別，作為新增會員的起點
     document.getElementById('specialty').value = spec;
     currentMember = null;
     updateEditingBanner();
