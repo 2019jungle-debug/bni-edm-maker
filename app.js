@@ -303,10 +303,23 @@ function loginMemberByPw(){
   const code = p.trim().toUpperCase();
   const m = Store.getAllSorted().find(x => x.type !== 'divider' && x.pw && String(x.pw).toUpperCase() === code);
   if (!m){ alert('查無此密碼，請確認或向管理者索取。'); return; }
-  ownerMemberId = m.id; isAdmin = false;
-  loadMemberIntoEditor(m); showView('editor');
-  updateAuthUI();
+  enterMemberEditor(m);
   alert('✓ 已登入：' + m.name + '\n您現在可以編輯並儲存自己的頁面（會自動存回雲端）。');
+}
+
+function enterMemberEditor(m){
+  if (!m) return;
+  ownerMemberId = m.id;
+  isAdmin = false;
+  updateAuthUI();
+  loadMemberIntoEditor(m);
+  showView('editor');
+  if (typeof render === 'function') render();
+  setTimeout(() => {
+    const editor = document.getElementById('view-editor');
+    if (editor) editor.style.display = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 0);
 }
 
 function logoutAuth(){ isAdmin = false; ownerMemberId = null; updateAuthUI(); if (typeof renderRoster === 'function') renderRoster(); }
@@ -326,7 +339,7 @@ function openAuthMenu(){
   const c = prompt('登入身分：\n輸入「A」→ 管理者登入\n或直接輸入您的「會員密碼」→ 會員登入');
   if (c == null) return;
   if (c.trim().toUpperCase() === 'A'){ unlockAdmin(); }
-  else if (c.trim()){ const code=c.trim().toUpperCase(); const m=Store.getAllSorted().find(x=>x.type!=='divider'&&x.pw&&String(x.pw).toUpperCase()===code); if(m){ ownerMemberId=m.id; isAdmin=false; loadMemberIntoEditor(m); showView('editor'); updateAuthUI(); alert('✓ 已登入：'+m.name); } else alert('查無此密碼（管理者請輸入 A）'); }
+  else if (c.trim()){ const code=c.trim().toUpperCase(); const m=Store.getAllSorted().find(x=>x.type!=='divider'&&x.pw&&String(x.pw).toUpperCase()===code); if(m){ enterMemberEditor(m); alert('✓ 已登入：'+m.name); } else alert('查無此密碼（管理者請輸入 A）'); }
 }
 const authBtnEl = document.getElementById('authBtn');
 if (authBtnEl) authBtnEl.addEventListener('click', openAuthMenu);
