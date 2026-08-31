@@ -26,10 +26,33 @@ function buildChainDatalist(){
   dl.dataset.filled = '1';
 }
 
+function buildSpecDatalist(){
+  const dl = document.getElementById('specDatalist');
+  if (!dl || dl.dataset.filled) return;
+  const seen = new Set();
+  (window.BNI_SPECIALTIES || []).forEach(g => (g.items || []).forEach(it => {
+    if (!it || seen.has(it)) return;
+    seen.add(it);
+    const o = document.createElement('option');
+    o.value = it;
+    dl.appendChild(o);
+  }));
+  Store.getAllSorted().forEach(m => {
+    const it = m && m.type !== 'divider' ? (m.specialty || '') : '';
+    if (!it || seen.has(it)) return;
+    seen.add(it);
+    const o = document.createElement('option');
+    o.value = it;
+    dl.appendChild(o);
+  });
+  dl.dataset.filled = '1';
+}
+
 function renderRoster(){
   const wrap = document.getElementById('rosterList');
   if (!wrap) return;
   buildChainDatalist();
+  buildSpecDatalist();
   const list = Store.getAllSorted();
   document.getElementById('rosterCount').textContent = list.filter(m => m.type !== 'divider').length;
   document.getElementById('presentCount').textContent = list.filter(m => m.type !== 'divider' && m.present !== false).length;
@@ -71,15 +94,42 @@ function renderRoster(){
     } else {
       row.className = 'roster-row';
       const withIntro = m.withIntro !== false;   // 預設含介紹頁
+      const nameCell = admin
+        ? '<input class="rname-input" value="' + escapeHtml(m.name || '') + '" placeholder="會員姓名" style="min-width:86px;max-width:140px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;font-weight:700;font-family:inherit;">'
+        : '<span class="rname">' + escapeHtml(m.name || '(未命名)') + '</span>';
+      const specCell = admin
+        ? '<input class="rspec-input" list="specDatalist" value="' + escapeHtml(m.specialty || '') + '" placeholder="專業別" style="min-width:120px;flex:1;padding:5px 8px;border:1px solid var(--line);border-radius:6px;color:#666;font-size:13px;font-family:inherit;">'
+        : '<span class="rspec">' + escapeHtml(m.specialty || '') + '</span>';
       row.innerHTML =
         '<span class="drag" title="拖曳調整順序">⠿</span>' +
         '<span class="ord">' + (idx+1) + '</span>' +
         '<label class="present"><input type="checkbox" ' + (m.present !== false ? 'checked' : '') + (admin?'':' disabled') + '><span>出場</span></label>' +
         '<label class="present with-intro" title="下載 PPT 時是否包含介紹頁"><input type="checkbox" class="withIntro" ' + (withIntro ? 'checked' : '') + (admin?'':' disabled') + '><span>+介紹</span></label>' +
-        '<span class="rname">' + escapeHtml(m.name || '(未命名)') + '</span>' +
-        '<span class="rspec">' + escapeHtml(m.specialty || '') + '</span>' +
+        '<span class="roster-edit-fields" style="display:flex;gap:6px;align-items:center;flex:1;min-width:220px;">' + nameCell + specCell + '</span>' +
         (admin ? '<span class="rspec pwcell" style="flex:0 0 auto;font-family:monospace;color:#7b52c4;">' + (m.pw ? escapeHtml(m.pw) : '—') + '</span>' : '') +
         '<span class="ract">' + adminActs + '</span>';
+      const ni = row.querySelector('.rname-input');
+      const si = row.querySelector('.rspec-input');
+      const saveInlineNameSpec = async () => {
+        const item = Store.getById(m.id); if (!item) return;
+        const nextName = ni ? ni.value.trim() : item.name;
+        const nextSpec = si ? si.value.trim() : item.specialty;
+        const prevSpec = item.specialty || '';
+        item.name = nextName || item.name || '';
+        item.specialty = nextSpec || '';
+        if (!item.role || item.role === prevSpec) item.role = item.specialty;
+        await Store.upsert(item);
+        if (currentMember && currentMember.id === item.id){
+          currentMember = item;
+          updateEditingBanner();
+          render();
+        }
+        updateAuthUI();
+      };
+      [ni, si].filter(Boolean).forEach(input => {
+        input.addEventListener('change', saveInlineNameSpec);
+        input.addEventListener('keydown', e => { if (e.key === 'Enter') input.blur(); });
+      });
       const wi = row.querySelector('.withIntro');
       if (wi && admin) wi.addEventListener('change', async e => {
         const item = Store.getById(m.id); if (!item) return;
