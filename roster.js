@@ -12,6 +12,7 @@ function dateStamp(){
 function nextFrame(){ return new Promise(r => setTimeout(r, 30)); }
 
 let dragId = null;
+const collapsedRosterGroups = new Set();
 
 // 產業鏈名稱下拉清單（用富鼎既有團隊名，仍可自行輸入）
 function buildChainDatalist(){
@@ -60,7 +61,13 @@ function renderRoster(){
   const admin = (typeof isAdmin !== 'undefined') && isAdmin;   // 僅管理者可編輯
 
   wrap.innerHTML = '';
+  let hiddenByCollapsedGroup = null;
   list.forEach((m, idx) => {
+    if (m.type === 'divider'){
+      hiddenByCollapsedGroup = collapsedRosterGroups.has(m.id) ? m.id : null;
+    } else if (hiddenByCollapsedGroup){
+      return;
+    }
     const row = document.createElement('div');
     row.draggable = false;
     row.dataset.id = m.id;
@@ -73,6 +80,8 @@ function renderRoster(){
 
     if (m.type === 'divider'){
       row.className = 'roster-row divider-row';
+      const collapsed = collapsedRosterGroups.has(m.id);
+      const toggleBtn = '<button data-act="toggleGroup" title="' + (collapsed ? '展開此組會員' : '收合此組會員') + '">' + (collapsed ? '展開' : '收合') + '</button>';
       const viewBtn = '<button data-act="view" title="檢視分隔頁">👁 檢視</button>';
       row.innerHTML =
         '<span class="drag" title="拖曳調整順序">⠿</span>' +
@@ -86,9 +95,15 @@ function renderRoster(){
           : '<span class="dv-fields" style="flex:1;">' +
               '<span class="rspec" style="font-weight:700;color:var(--red-dark);">' + escapeHtml(m.title || '(未命名產業鏈)') + '</span>' +
             '</span>') +
-        '<span class="ract">' + viewBtn + adminActs + '</span>';
+        '<span class="ract">' + toggleBtn + viewBtn + adminActs + '</span>';
       const ti = row.querySelector('.dv-title-input');
       if (ti) ti.addEventListener('change', e => { const item = Store.getById(m.id); if (item){ item.title = e.target.value; Store.upsert(item); } });
+      const tb = row.querySelector('[data-act=toggleGroup]');
+      if (tb) tb.addEventListener('click', () => {
+        if (collapsedRosterGroups.has(m.id)) collapsedRosterGroups.delete(m.id);
+        else collapsedRosterGroups.add(m.id);
+        renderRoster();
+      });
       const vb = row.querySelector('[data-act=view]');
       if (vb) vb.addEventListener('click', () => previewDivider(m.id));
     } else {
@@ -151,8 +166,8 @@ function renderRoster(){
 
     const pc = row.querySelector('.present input');
     if (pc && admin) pc.addEventListener('change', e => Store.setPresent(m.id, e.target.checked));
-    const ub = row.querySelector('[data-act=up]');   if (ub) ub.addEventListener('click', () => moveMember(m.id, -1));
-    const db = row.querySelector('[data-act=down]'); if (db) db.addEventListener('click', () => moveMember(m.id, +1));
+    const ub = row.querySelector('[data-act=up]');   if (ub) ub.addEventListener('click', () => m.type === 'divider' ? moveGroup(m.id, -1) : moveMember(m.id, -1));
+    const db = row.querySelector('[data-act=down]'); if (db) db.addEventListener('click', () => m.type === 'divider' ? moveGroup(m.id, +1) : moveMember(m.id, +1));
     const xb = row.querySelector('[data-act=del]');
     if (xb) xb.addEventListener('click', () => {
       const label = m.type === 'divider' ? ('分隔頁「' + (m.title || '') + '」') : ('「' + (m.name || '此會員') + '」');
@@ -192,11 +207,61 @@ function moveMember(id, dir){
 
 function onDrop(targetId){
   if (!dragId || dragId === targetId) return;
-  const ids = Store.getAllSorted().map(m => m.id);
-  ids.splice(ids.indexOf(dragId), 1);
-  ids.splice(ids.indexOf(targetId), 0, dragId);
-  Store.reorder(ids);
+  const dragged = Store.getById(dragId);
+  if (dragged && dragged.type === 'divider'){
+    dropGroupBefore(dragId, targetId);
+  } else {
+    const ids = Store.getAllSorted().map(m => m.id);
+    ids.splice(ids.indexOf(dragId), 1);
+    ids.splice(ids.indexOf(targetId), 0, dragId);
+    Store.reorder(ids);
+  }
   dragId = null;
+}
+
+function groupRange(list, dividerId){
+  const start = list.findIndex(m => m.id === dividerId);
+  if (start < 0 || list[start].type !== 'divider') return null;
+  let end = list.length;
+  for (let i = start + 1; i < list.length; i++){
+    if (list[i].type === 'divider'){ end = i; break; }
+  }
+  return { start, end };
+}
+
+function moveGroup(dividerId, dir){
+  const list = Store.getAllSorted();
+  const range = groupRange(list, dividerId);
+  if (!range) return;
+  const group = list.slice(range.start, range.end);
+  const remaining = list.slice(0, range.start).concat(list.slice(range.end));
+  let insertAt = range.start;
+  if (dir < 0){
+    let prevStart = -1;
+    for (let i = range.start - 1; i >= 0; i--){
+      if (list[i].type === 'divider'){ prevStart = i; break; }
+    }
+    if (prevStart < 0) return;
+    insertAt = prevStart;
+  } else {
+    const nextRange = groupRange(list, list[range.end] && list[range.end].id);
+    if (!nextRange) return;
+    insertAt = nextRange.end - group.length;
+  }
+  const next = remaining.slice(0, insertAt).concat(group, remaining.slice(insertAt));
+  Store.reorder(next.map(m => m.id));
+}
+
+function dropGroupBefore(dividerId, targetId){
+  const list = Store.getAllSorted();
+  const range = groupRange(list, dividerId);
+  if (!range) return;
+  const group = list.slice(range.start, range.end);
+  const remaining = list.slice(0, range.start).concat(list.slice(range.end));
+  const insertAt = remaining.findIndex(m => m.id === targetId);
+  if (insertAt < 0) return;
+  const next = remaining.slice(0, insertAt).concat(group, remaining.slice(insertAt));
+  Store.reorder(next.map(m => m.id));
 }
 
 /* ---------- 進度遮罩 ---------- */
