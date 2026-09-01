@@ -354,7 +354,21 @@ function enterMemberEditor(m){
   }, 0);
 }
 
-function logoutAuth(){ isAdmin = false; ownerMemberId = null; updateAuthUI(); if (typeof renderRoster === 'function') renderRoster(); }
+function showVisitorBlankEditor(){
+  currentMember = null;
+  loadMemberIntoEditor(blankMember());
+  currentMember = null;
+  updateEditingBanner();
+  render();
+}
+
+function logoutAuth(){
+  isAdmin = false;
+  ownerMemberId = null;
+  showVisitorBlankEditor();
+  updateAuthUI();
+  if (typeof renderRoster === 'function') renderRoster();
+}
 
 function updateAuthUI(){
   const badge = document.getElementById('authBadge');
@@ -1377,7 +1391,8 @@ if (saveTopBtn) saveTopBtn.addEventListener('click', saveEditorToRoster);
     }
     updateCloudBadge();
   });
-  loadData();            // 還原個人草稿（個人卡片用途）
+  if (isAdmin || ownerMemberId) loadData();            // 已登入才還原個人草稿
+  else showVisitorBlankEditor();
   updateDayDisplay();
   render();
   switchFmt('themeBlack');
