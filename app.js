@@ -123,9 +123,9 @@ function buildMemberSelect(){
   sel.innerHTML = '';
   const blank = document.createElement('option');
   blank.value = '';
-  blank.textContent = isAdmin || ownerMemberId ? '— 選擇會員自動帶入 —' : '— 請先登入會員密碼 —';
+  blank.textContent = isAdmin || ownerMemberId ? '— 選擇會員自動帶入 —' : '— 點此輸入會員密碼 —';
   sel.appendChild(blank);
-  sel.disabled = !(isAdmin || ownerMemberId);
+  sel.disabled = false;
   Store.getAllSorted().forEach(m => {
     if (!canViewRosterMember(m)) return;
     const o = document.createElement('option');
@@ -137,9 +137,20 @@ function buildMemberSelect(){
 }
 
 document.getElementById('memberSelect').addEventListener('change', e => {
+  if (!isAdmin && !ownerMemberId){
+    e.target.value = '';
+    openAuthMenu();
+    return;
+  }
   const m = Store.getById(e.target.value);
   if (m && canViewRosterMember(m)) loadMemberIntoEditor(m);
   else e.target.value = '';
+});
+document.getElementById('memberSelect').addEventListener('mousedown', e => {
+  if (!isAdmin && !ownerMemberId){
+    e.preventDefault();
+    openAuthMenu();
+  }
 });
 
 // 活動資訊預設值（會員未填時沿用；日期用 ISO yyyy-mm-dd）
