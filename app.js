@@ -1265,8 +1265,8 @@ const FORMATS = {
   intro: { el:'intro', w:960, h:540, label:'介紹頁', zoom:1, exportScale:2 }
 };
 const CANVAS_ELS = ['edm', 'edmMaster', 'heroMaster', 'hero', 'intro'];
-let activeFmt = 'themeBlack';
-let zoom = FORMATS.themeBlack.zoom;
+let activeFmt = 'masterBlack';
+let zoom = FORMATS.masterBlack.zoom;
 
 function activeEl(){ return document.getElementById(FORMATS[activeFmt].el); }
 
@@ -1413,7 +1413,7 @@ if (saveTopBtn) saveTopBtn.addEventListener('click', saveEditorToRoster);
   else showVisitorBlankEditor();
   updateDayDisplay();
   render();
-  switchFmt('themeBlack');
+  switchFmt('masterBlack');
   updateEditingBanner();
   updateCloudBadge();
   updateAuthUI();
