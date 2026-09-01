@@ -126,12 +126,30 @@ function buildMemberSelect(){
   blank.textContent = isAdmin || ownerMemberId ? '— 選擇會員自動帶入 —' : '— 點此輸入會員密碼 —';
   sel.appendChild(blank);
   sel.disabled = false;
+  const groups = new Map();
+  const looseGroup = '未分組';
   Store.getAllSorted().forEach(m => {
+    if (m.type === 'divider'){
+      const title = (m.title || '').trim();
+      if (title && !groups.has(title)) groups.set(title, []);
+      return;
+    }
     if (!canViewRosterMember(m)) return;
-    const o = document.createElement('option');
-    o.value = m.id;
-    o.textContent = m.name + '（' + (m.specialty || '') + '）';
-    sel.appendChild(o);
+    const groupName = (m.industryChain || '').trim() || looseGroup;
+    if (!groups.has(groupName)) groups.set(groupName, []);
+    groups.get(groupName).push(m);
+  });
+  groups.forEach((members, groupName) => {
+    if (!members.length) return;
+    const og = document.createElement('optgroup');
+    og.label = groupName;
+    members.forEach(m => {
+      const o = document.createElement('option');
+      o.value = m.id;
+      o.textContent = m.name + '（' + (m.specialty || '') + '）';
+      og.appendChild(o);
+    });
+    sel.appendChild(og);
   });
   if (prev) sel.value = prev;
 }
