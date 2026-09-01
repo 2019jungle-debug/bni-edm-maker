@@ -38,6 +38,12 @@ function memberBySpecialty(spec){
   return Store.getAllSorted().find(m => m.type !== 'divider' && (m.specialty || '') === spec) || null;
 }
 
+function canViewRosterMember(m){
+  if (!m || m.type === 'divider') return false;
+  if (isAdmin) return true;
+  return !!ownerMemberId && m.id === ownerMemberId;
+}
+
 function buildSpecialtySelect(){
   const sel = document.getElementById('specialtySelect');
   if (!sel) return;
@@ -51,7 +57,7 @@ function buildSpecialtySelect(){
     og.label = g.group;
     g.items.forEach(it => {
       const mem = memberBySpecialty(it);
-      if (!mem) return;
+      if (!mem || !canViewRosterMember(mem)) return;
       const o = document.createElement('option');
       o.value = it;
       o.textContent = it + '（' + mem.name + '）';
@@ -94,7 +100,7 @@ document.getElementById('specialtySelect').addEventListener('change', function()
   const spec = this.value;
   if (!spec){ return; }
   const mem = memberBySpecialty(spec);
-  if (mem){
+  if (mem && canViewRosterMember(mem)){
     // 已有會員 → 直接帶出整位會員
     loadMemberIntoEditor(mem);
     this.value = spec;   // 保持選取
@@ -116,10 +122,12 @@ function buildMemberSelect(){
   const prev = sel.value;
   sel.innerHTML = '';
   const blank = document.createElement('option');
-  blank.value = ''; blank.textContent = '— 選擇會員自動帶入 —';
+  blank.value = '';
+  blank.textContent = isAdmin || ownerMemberId ? '— 選擇會員自動帶入 —' : '— 請先登入會員密碼 —';
   sel.appendChild(blank);
+  sel.disabled = !(isAdmin || ownerMemberId);
   Store.getAllSorted().forEach(m => {
-    if (m.type === 'divider') return;
+    if (!canViewRosterMember(m)) return;
     const o = document.createElement('option');
     o.value = m.id;
     o.textContent = m.name + '（' + (m.specialty || '') + '）';
@@ -130,7 +138,8 @@ function buildMemberSelect(){
 
 document.getElementById('memberSelect').addEventListener('change', e => {
   const m = Store.getById(e.target.value);
-  if (m) loadMemberIntoEditor(m);
+  if (m && canViewRosterMember(m)) loadMemberIntoEditor(m);
+  else e.target.value = '';
 });
 
 // 活動資訊預設值（會員未填時沿用；日期用 ISO yyyy-mm-dd）
@@ -269,7 +278,19 @@ async function saveEditorToRoster(){
 /* ============ 權限：管理者 / 會員登入 ============ */
 let isAdmin = false;
 let ownerMemberId = null;
-function genPw(){ const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s=''; for (let i=0;i<6;i++) s+=c[Math.floor(Math.random()*c.length)]; return s; }
+function genPw(){ return String(1000 + Math.floor(Math.random() * 9000)); }
+function groupPasswordFor(m){
+  const chain = m && m.industryChain ? String(m.industryChain) : '';
+  const peer = Store.getAllSorted().find(x =>
+    x.type !== 'divider' &&
+    x.id !== (m && m.id) &&
+    (x.industryChain || '') === chain &&
+    x.pw
+  );
+  if (peer) return String(peer.pw);
+  if (m && m.pw) return String(m.pw);
+  return genPw();
+}
 function getConfigDoc(){ return Store.getById('_config') || {}; }
 function canWriteCurrentMember(m){
   const targetId = (m && m.id) || (currentMember && currentMember.id) || null;

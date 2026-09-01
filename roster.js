@@ -141,9 +141,10 @@ function renderRoster(){
       const pb = row.querySelector('[data-act=pw]');
       if (pb) pb.addEventListener('click', async () => {
         const item = Store.getById(m.id); if (!item) return;
-        if (!item.pw || confirm('「' + item.name + '」目前密碼：' + item.pw + '\n要重新產生一組新密碼嗎？')){
-          item.pw = genPw(); await Store.upsert(item);
-          alert('「' + item.name + '」的會員密碼：' + item.pw + '\n請把這組密碼給該會員，他登入後只能編輯自己的頁面。');
+        const nextPw = groupPasswordFor(item);
+        if (!item.pw || item.pw !== nextPw || confirm('「' + item.name + '」目前同組密碼：' + item.pw + '\n要重新套用同組數字密碼嗎？')){
+          item.pw = nextPw; await Store.upsert(item);
+          alert('「' + item.name + '」的同組會員密碼：' + item.pw + '\n同一產業鏈組別會使用同一組數字密碼。');
         }
       });
     }
