@@ -563,12 +563,6 @@ function render(){
   paintImg('introImgLayer', introImgDataUrl);
   document.getElementById('iName').textContent = val('name') || '姓名';
   document.getElementById('iSpec').textContent = val('specialty') || '專業別';
-  fillList('iPartners', readTriple('partners'));
-  fillList('iGeneral',  readTriple('general'));
-  fillList('iIdeal',    readTriple('ideal'));
-  fillList('iDream',    readTriple('dream'));
-  fillList('iClients',  readTriple('clients'));
-  document.getElementById('iUsp').textContent = val('usp') || '—';
 }
 
 /* ---- html2canvas 不支援 object-fit，擷取前把圖片改成容器背景（cover/contain 對齊），擷取後還原 ---- */
