@@ -312,6 +312,12 @@ async function saveEditorToRoster(){
 /* ============ 權限：管理者 / 會員登入 ============ */
 let isAdmin = false;
 let ownerMemberId = null;
+const ADMIN_PASSWORD_HASH = '701e6d6f660af6ed4e5b401e854b6a3bf262c647d9a1cf989a54f9a1ee16f0dd';
+async function sha256Hex(text){
+  const bytes = new TextEncoder().encode(text);
+  const hash = await crypto.subtle.digest('SHA-256', bytes);
+  return [...new Uint8Array(hash)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
 function genPw(){ return String(1000 + Math.floor(Math.random() * 9000)); }
 function groupPasswordFor(m){
   const chain = m && m.industryChain ? String(m.industryChain) : '';
@@ -340,6 +346,12 @@ function refreshEditorChoices(){
 }
 
 async function unlockAdmin(){
+  const p = prompt('請輸入管理者密碼：');
+  if (p == null) return;
+  if (await sha256Hex(p.trim()) !== ADMIN_PASSWORD_HASH){
+    alert('管理者密碼錯誤');
+    return;
+  }
   isAdmin = true;
   ownerMemberId = null;
   refreshEditorChoices();
