@@ -72,14 +72,6 @@
   .field textarea{resize:vertical;min-height:44px;}
   .hint{font-size:11px;color:#999;margin-top:3px;}
   .guide-card{background:#fff8ec;border:1px solid #e9d9b0;border-radius:8px;padding:12px;}
-  .visitor-auth-note{display:none;margin-top:10px;padding:10px 12px;border-radius:8px;background:#fff;border:1px dashed #d8bb72;color:#7a4c08;font-size:13px;line-height:1.6;}
-  #view-editor.visitor-locked{justify-content:center;}
-  #view-editor.visitor-locked .panel{max-width:520px;}
-  #view-editor.visitor-locked .preview-wrap{display:none;}
-  #view-editor.visitor-locked .guide-card ~ *{display:none !important;}
-  #view-editor.visitor-locked .guide-card .mini-steps,
-  #view-editor.visitor-locked .guide-card > .hint{display:none;}
-  #view-editor.visitor-locked .visitor-auth-note{display:block;}
   .mini-steps{display:grid;gap:8px;margin:8px 0 4px;padding:0;list-style:none;}
   .mini-steps li{display:flex;gap:8px;align-items:flex-start;font-size:12px;line-height:1.45;color:#5f5144;}
   .mini-steps b{color:#8f1c1c;font-size:12px;white-space:nowrap;}
@@ -693,7 +685,6 @@
         <li><b>3 存名冊</b><span>確認右側預覽後，按「儲存到雲端名冊」。</span></li>
       </ul>
       <div class="hint">如果清單沒有您的名字，請聯絡管理者新增會員。</div>
-      <div class="visitor-auth-note">請先點選下拉選單輸入會員密碼，或按右上角「登入」。登入成功後，才會顯示您的編輯欄位與右側預覽。</div>
     </div>
 
     <div class="actions" style="margin-bottom:4px;">
@@ -1267,7 +1258,7 @@
 <script src="divider-bg.js?v=58"></script>
 <script src="edm-masters.js?v=62"></script>
 <script src="hero-bg.js?v=58"></script>
-<script src="app.js?v=78"></script>
+<script src="app.js?v=79"></script>
 <script src="roster.js?v=62"></script>
 </body>
 </html>
