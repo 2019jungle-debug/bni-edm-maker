@@ -123,7 +123,7 @@ function buildMemberSelect(){
   sel.innerHTML = '';
   const blank = document.createElement('option');
   blank.value = '';
-  blank.textContent = isAdmin || ownerMemberId ? '— 選擇會員自動帶入 —' : '— 點此輸入會員密碼 —';
+  blank.textContent = isAdmin || ownerMemberId ? '— 選擇會員自動帶入 —' : '— 點此輸入組別密碼 —';
   sel.appendChild(blank);
   sel.disabled = false;
   const groups = new Map();
@@ -410,10 +410,10 @@ function updateAuthUI(){
 
 function openAuthMenu(){
   if (isAdmin || ownerMemberId){ if (confirm('要登出目前身分嗎？')) logoutAuth(); return; }
-  const c = prompt('登入身分：\n輸入「A」→ 管理者登入\n或直接輸入您的「會員密碼」→ 會員登入');
+  const c = prompt('登入身分：\n輸入「A」→ 管理者登入\n輸入數字 → 該組別登入密碼');
   if (c == null) return;
   if (c.trim().toUpperCase() === 'A'){ unlockAdmin(); }
-  else if (c.trim()){ const code=c.trim().toUpperCase(); const m=Store.getAllSorted().find(x=>x.type!=='divider'&&x.pw&&String(x.pw).toUpperCase()===code); if(m){ enterMemberEditor(m); alert('✓ 已登入：'+m.name); } else alert('查無此密碼（管理者請輸入 A）'); }
+  else if (c.trim()){ const code=c.trim().toUpperCase(); const m=Store.getAllSorted().find(x=>x.type!=='divider'&&x.pw&&String(x.pw).toUpperCase()===code); if(m){ enterMemberEditor(m); alert('✓ 已登入：'+m.name); } else alert('查無此組別密碼（管理者請輸入 A）'); }
 }
 const authBtnEl = document.getElementById('authBtn');
 if (authBtnEl) authBtnEl.addEventListener('click', openAuthMenu);
