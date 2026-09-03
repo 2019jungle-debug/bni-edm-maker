@@ -328,6 +328,7 @@ function canWriteCurrentMember(m){
   return !!targetId && ownerMemberId === targetId;
 }
 function canSaveMember(){ return canWriteCurrentMember(currentMember); }
+function isAuthenticated(){ return isAdmin || !!ownerMemberId; }
 
 async function unlockAdmin(){
   const cfg = getConfigDoc();
@@ -391,6 +392,8 @@ function logoutAuth(){
 function updateAuthUI(){
   const badge = document.getElementById('authBadge');
   const btn = document.getElementById('authBtn');
+  const editorView = document.getElementById('view-editor');
+  if (editorView) editorView.classList.toggle('visitor-locked', !isAuthenticated());
   if (isAdmin){ if (badge){ badge.textContent = '🛠 管理者'; badge.style.color = '#c0202a'; } if (btn) btn.textContent = '登出'; }
   else if (ownerMemberId){ const m = Store.getById(ownerMemberId); if (badge){ badge.textContent = '👤 ' + (m ? m.name : '會員'); badge.style.color = '#2e9e5b'; } if (btn) btn.textContent = '登出'; }
   else { if (badge){ badge.textContent = '👤 訪客'; badge.style.color = '#555'; } if (btn) btn.textContent = '🔑 登入'; }
