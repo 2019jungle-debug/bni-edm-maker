@@ -355,12 +355,24 @@ async function unlockAdmin(){
   updateAuthUI(); if (typeof renderRoster === 'function') renderRoster();
 }
 
-function loginMemberByPw(){
-  const p = prompt('請輸入您的會員密碼（向管理者索取）：');
+function loginMemberByPw(presetCode){
+  const p = presetCode != null ? presetCode : prompt('請輸入您的組別登入密碼（向管理者索取）：');
   if (p == null) return;
   const code = p.trim().toUpperCase();
-  const m = Store.getAllSorted().find(x => x.type !== 'divider' && x.pw && String(x.pw).toUpperCase() === code);
-  if (!m){ alert('查無此密碼，請確認或向管理者索取。'); return; }
+  const matches = Store.getAllSorted().filter(x => x.type !== 'divider' && x.pw && String(x.pw).toUpperCase() === code);
+  if (!matches.length){ alert('查無此組別密碼，請確認或向管理者索取。'); return; }
+  let m = matches[0];
+  if (matches.length > 1){
+    const chain = (m.industryChain || '此組別').trim();
+    const name = prompt('已確認：' + chain + '\n請輸入您的姓名（需與名冊相同）：');
+    if (name == null) return;
+    const normalized = name.trim();
+    m = matches.find(x => (x.name || '').trim() === normalized);
+    if (!m){
+      alert('此組別找不到「' + normalized + '」。請確認姓名是否與名冊相同，或聯絡管理者。');
+      return;
+    }
+  }
   enterMemberEditor(m);
   alert('✓ 已登入：' + m.name + '\n您現在可以編輯並儲存自己的頁面（會自動存回雲端）。');
 }
@@ -413,7 +425,7 @@ function openAuthMenu(){
   const c = prompt('登入身分：\n輸入「A」→ 管理者登入\n輸入數字 → 該組別登入密碼');
   if (c == null) return;
   if (c.trim().toUpperCase() === 'A'){ unlockAdmin(); }
-  else if (c.trim()){ const code=c.trim().toUpperCase(); const m=Store.getAllSorted().find(x=>x.type!=='divider'&&x.pw&&String(x.pw).toUpperCase()===code); if(m){ enterMemberEditor(m); alert('✓ 已登入：'+m.name); } else alert('查無此組別密碼（管理者請輸入 A）'); }
+  else if (c.trim()){ loginMemberByPw(c); }
 }
 const authBtnEl = document.getElementById('authBtn');
 if (authBtnEl) authBtnEl.addEventListener('click', openAuthMenu);
