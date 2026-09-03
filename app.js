@@ -333,11 +333,8 @@ function isAuthenticated(){ return isAdmin || !!ownerMemberId; }
 async function unlockAdmin(){
   const cfg = getConfigDoc();
   if (!cfg.adminPw){
-    const np = prompt('尚未設定管理者密碼，請設定一組（供調整排序 / 查看會員密碼用）：');
-    if (!np || !np.trim()) return;
-    await Store.upsert({ id:'_config', type:'config', adminPw: np.trim(), order:99999 });
-    isAdmin = true;
-    alert('✓ 管理者密碼已設定為：' + np.trim() + '\n請記好，之後管理者登入用。');
+    alert('尚未建立管理者密碼，請聯絡網站管理者處理。');
+    return;
   } else {
     const p = prompt('請輸入管理者密碼：');
     if (p == null) return;
