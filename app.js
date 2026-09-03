@@ -190,6 +190,11 @@ function toISODate(v){
 // 把一位名冊會員載入左側編輯表單
 function loadMemberIntoEditor(m){
   currentMember = m;
+  const memberSel = document.getElementById('memberSelect');
+  if (memberSel){
+    const memberOpt = [...memberSel.options].find(o => o.value === m.id);
+    memberSel.value = memberOpt ? m.id : '';
+  }
   document.getElementById('name').value = m.name || '';
   document.getElementById('role').value = m.role || m.specialty || '';
   document.getElementById('specialty').value = m.specialty || '';
@@ -328,6 +333,11 @@ function canWriteCurrentMember(m){
   return !!targetId && ownerMemberId === targetId;
 }
 function canSaveMember(){ return canWriteCurrentMember(currentMember); }
+function refreshEditorChoices(){
+  buildMemberSelect();
+  buildSpecialtySelect();
+  buildIndustryChainSelect();
+}
 
 async function unlockAdmin(){
   const cfg = getConfigDoc();
@@ -341,6 +351,7 @@ async function unlockAdmin(){
     else { alert('密碼錯誤'); return; }
   }
   ownerMemberId = null;
+  refreshEditorChoices();
   updateAuthUI(); if (typeof renderRoster === 'function') renderRoster();
 }
 
@@ -358,6 +369,7 @@ function enterMemberEditor(m){
   if (!m) return;
   ownerMemberId = m.id;
   isAdmin = false;
+  refreshEditorChoices();
   updateAuthUI();
   loadMemberIntoEditor(m);
   showView('editor');
@@ -381,6 +393,7 @@ function logoutAuth(){
   isAdmin = false;
   ownerMemberId = null;
   showVisitorBlankEditor();
+  refreshEditorChoices();
   updateAuthUI();
   if (typeof renderRoster === 'function') renderRoster();
 }
