@@ -340,19 +340,11 @@ function refreshEditorChoices(){
 }
 
 async function unlockAdmin(){
-  const cfg = getConfigDoc();
-  if (!cfg.adminPw){
-    alert('尚未建立管理者密碼，請聯絡網站管理者處理。');
-    return;
-  } else {
-    const p = prompt('請輸入管理者密碼：');
-    if (p == null) return;
-    if (p.trim() === cfg.adminPw){ isAdmin = true; alert('✓ 已進入管理者模式'); }
-    else { alert('密碼錯誤'); return; }
-  }
+  isAdmin = true;
   ownerMemberId = null;
   refreshEditorChoices();
   updateAuthUI(); if (typeof renderRoster === 'function') renderRoster();
+  alert('✓ 已進入管理者模式');
 }
 
 function loginMemberByPw(presetCode){
