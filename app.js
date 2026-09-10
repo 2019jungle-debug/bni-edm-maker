@@ -40,8 +40,7 @@ function memberBySpecialty(spec){
 
 function canViewRosterMember(m){
   if (!m || m.type === 'divider') return false;
-  if (isAdmin) return true;
-  return !!ownerMemberId && m.id === ownerMemberId;
+  return true;
 }
 
 function buildSpecialtySelect(){
@@ -123,7 +122,7 @@ function buildMemberSelect(){
   sel.innerHTML = '';
   const blank = document.createElement('option');
   blank.value = '';
-  blank.textContent = isAdmin || ownerMemberId ? '— 選擇會員自動帶入 —' : '— 點此輸入組別密碼 —';
+  blank.textContent = '— 選擇會員查看 EDM —';
   sel.appendChild(blank);
   sel.disabled = false;
   const groups = new Map();
@@ -155,20 +154,9 @@ function buildMemberSelect(){
 }
 
 document.getElementById('memberSelect').addEventListener('change', e => {
-  if (!isAdmin && !ownerMemberId){
-    e.target.value = '';
-    openAuthMenu();
-    return;
-  }
   const m = Store.getById(e.target.value);
   if (m && canViewRosterMember(m)) loadMemberIntoEditor(m);
   else e.target.value = '';
-});
-document.getElementById('memberSelect').addEventListener('mousedown', e => {
-  if (!isAdmin && !ownerMemberId){
-    e.preventDefault();
-    openAuthMenu();
-  }
 });
 
 // 活動資訊預設值（會員未填時沿用；日期用 ISO yyyy-mm-dd）
@@ -318,19 +306,9 @@ async function sha256Hex(text){
   const hash = await crypto.subtle.digest('SHA-256', bytes);
   return [...new Uint8Array(hash)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
-function genPw(){ return String(1000 + Math.floor(Math.random() * 9000)); }
-function groupPasswordFor(m){
-  const chain = m && m.industryChain ? String(m.industryChain) : '';
-  const peer = Store.getAllSorted().find(x =>
-    x.type !== 'divider' &&
-    x.id !== (m && m.id) &&
-    (x.industryChain || '') === chain &&
-    x.pw
-  );
-  if (peer) return String(peer.pw);
-  if (m && m.pw) return String(m.pw);
-  return genPw();
-}
+const MEMBER_PASSWORD = '888888';
+function genPw(){ return MEMBER_PASSWORD; }
+function groupPasswordFor(){ return MEMBER_PASSWORD; }
 function getConfigDoc(){ return Store.getById('_config') || {}; }
 function canWriteCurrentMember(m){
   const targetId = (m && m.id) || (currentMember && currentMember.id) || null;
@@ -360,20 +338,20 @@ async function unlockAdmin(){
 }
 
 function loginMemberByPw(presetCode){
-  const p = presetCode != null ? presetCode : prompt('請輸入您的組別登入密碼（向管理者索取）：');
+  const p = presetCode != null ? presetCode : prompt('請輸入會員共用密碼（888888）：');
   if (p == null) return;
   const code = p.trim().toUpperCase();
-  const matches = Store.getAllSorted().filter(x => x.type !== 'divider' && x.pw && String(x.pw).toUpperCase() === code);
-  if (!matches.length){ alert('查無此組別密碼，請確認或向管理者索取。'); return; }
+  if (code !== MEMBER_PASSWORD){ alert('會員密碼錯誤，請輸入 888888。'); return; }
+  const matches = Store.getAllSorted().filter(x => x.type !== 'divider');
+  if (!matches.length){ alert('名冊尚未載入或沒有會員，請稍後再試或聯絡管理者。'); return; }
   let m = matches[0];
   if (matches.length > 1){
-    const chain = (m.industryChain || '此組別').trim();
-    const name = prompt('已確認：' + chain + '\n請輸入您的姓名（需與名冊相同）：');
+    const name = prompt('會員密碼正確。\n請輸入您的姓名（需與名冊相同）：');
     if (name == null) return;
     const normalized = name.trim();
     m = matches.find(x => (x.name || '').trim() === normalized);
     if (!m){
-      alert('此組別找不到「' + normalized + '」。請確認姓名是否與名冊相同，或聯絡管理者。');
+      alert('名冊找不到「' + normalized + '」。請確認姓名是否與名冊相同，或聯絡管理者。');
       return;
     }
   }
@@ -420,13 +398,14 @@ function updateAuthUI(){
   if (isAdmin){ if (badge){ badge.textContent = '🛠 管理者'; badge.style.color = '#c0202a'; } if (btn) btn.textContent = '登出'; }
   else if (ownerMemberId){ const m = Store.getById(ownerMemberId); if (badge){ badge.textContent = '👤 ' + (m ? m.name : '會員'); badge.style.color = '#2e9e5b'; } if (btn) btn.textContent = '登出'; }
   else { if (badge){ badge.textContent = '👤 訪客'; badge.style.color = '#555'; } if (btn) btn.textContent = '🔑 登入'; }
+  updateEditingBanner();
   const note = document.getElementById('rosterViewNote'); if (note) note.style.display = isAdmin ? 'none' : '';
   const tools = document.getElementById('rosterTools'); if (tools) tools.style.display = isAdmin ? '' : 'none';
 }
 
 function openAuthMenu(){
   if (isAdmin || ownerMemberId){ if (confirm('要登出目前身分嗎？')) logoutAuth(); return; }
-  const c = prompt('登入身分：\n輸入「A」→ 管理者登入\n輸入數字 → 該組別登入密碼');
+  const c = prompt('登入身分：\n輸入「A」→ 管理者登入\n輸入 888888 → 會員登入，再輸入自己的姓名');
   if (c == null) return;
   if (c.trim().toUpperCase() === 'A'){ unlockAdmin(); }
   else if (c.trim()){ loginMemberByPw(c); }
@@ -438,7 +417,7 @@ function updateEditingBanner(){
   const el = document.getElementById('editingBanner');
   if (!el) return;
   if (currentMember && currentMember.id){
-    el.innerHTML = '正在編輯名冊會員：<b>' + (currentMember.name || '(未命名)') + '</b>';
+    el.textContent = (canSaveMember() ? '正在編輯名冊會員：' : '正在檢視 EDM（無法儲存他人資料）：') + (currentMember.name || '(未命名)');
     el.style.display = '';
   } else {
     el.innerHTML = '目前為草稿（尚未存入名冊）';

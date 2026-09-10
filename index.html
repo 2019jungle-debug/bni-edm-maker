@@ -1054,7 +1054,7 @@
       </div>
     </div>
     <div id="rosterViewNote" class="hint" style="display:none;background:#fff8ec;border:1px solid #e9d9b0;border-radius:8px;padding:8px 12px;margin-bottom:12px;">
-      🔒 檢視模式：僅管理者可調整出場順序、新增/刪除會員、查看密碼。請點右上「🔑 登入 → 管理者」。
+      👁 所有人皆可檢視會員 EDM。會員以 888888 登入後只能儲存自己的資料；出場排序與新增／刪除由管理者操作。
     </div>
     <div id="rosterList" class="roster-list"></div>
     <datalist id="chainDatalist"></datalist>
@@ -1130,11 +1130,12 @@
       <section class="help-panel" data-hpanel="member">
         <h3>三步驟開始</h3>
         <ol class="hsteps">
-          <li><b>登入</b><span>點右上「🔑 登入」→ 輸入分會給你的組別數字密碼；同組多人時，系統會再請你輸入自己的姓名。</span></li>
-          <li><b>依步驟檢查資料</b><span>先選名字，再補形象照、標語、引薦需求與活動資訊；進階素材可先略過。</span></li>
+          <li><b>登入</b><span>點右上「🔑 登入」→ 輸入共用密碼 <code>888888</code> → 輸入自己的姓名（需與名冊相同）。管理者使用原有密碼。</span></li>
+          <li><b>依步驟檢查資料</b><span>登入後會載入自己的資料；補上形象照、標語、引薦需求與活動資訊，進階素材可先略過。</span></li>
           <li><b>儲存並下載</b><span>右側選版型看預覽，確認後按「儲存到雲端名冊」，再下載目前版型 PNG。</span></li>
         </ol>
 
+        <h3>查看所有人的 EDM</h3><p class="hp">所有人（含未登入訪客）都可由「會員」下拉選單選擇任何會員，或在「本週例會簡報」點「👁 檢視 EDM」，查看對方作品並切換版型。會員只能儲存自己的資料；查看他人作品時不會自動存回對方名冊。要修改自己的作品，請切回自己的姓名。</p>
         <h3>圖片規格建議</h3>
         <p class="hp">系統會自動壓縮上傳的圖片。單一會員資料（含所有照片）<b>總大小不能超過 1MB</b>。</p>
         <table class="hspec">
@@ -1173,8 +1174,8 @@
 
         <h3>常見問題</h3>
         <dl class="hkv">
-          <dt>忘記密碼</dt><dd>聯絡分會管理者查詢或重新套用該組的數字密碼。</dd>
-          <dt>存不進去</dt><dd>檢查是否登入。若已登入仍失敗，多是照片超過 1MB → 換小張或用 PNG 去背版。</dd>
+          <dt>忘記密碼</dt><dd>所有會員密碼統一為 <code>888888</code>，再輸入自己的姓名即可登入。</dd>
+          <dt>存不進去</dt><dd>確認已登入且目前選擇的是自己。若仍失敗，檢查網路與圖片總大小；圖片過大請先縮小。</dd>
           <dt>PNG 上傳仍是白底</dt><dd>你的 PNG 沒有做去背，只是用了 PNG 格式。用 remove.bg 或手機修圖 App 去背後再上傳。</dd>
           <dt>看不到自己資料</dt><dd>頂部「會員」下拉選單選你的名字。名字不在裡面，聯絡管理者新增。</dd>
         </dl>
@@ -1183,14 +1184,14 @@
       <!-- 管理者版 -->
       <section class="help-panel" data-hpanel="admin" style="display:none;">
         <h3>管理者權限</h3>
-        <p class="hp">管理者可執行會員無法做的操作：新增／刪除會員、產生組別密碼、調整例會出場順序、插入產業鏈分隔頁、下載整份例會 PPT。</p>
-        <div class="hnote"><b>登入方式</b>：點右上「🔑 登入」→ 輸入 <code>A</code> → 再輸入管理者密碼；輸入其他數字則是組別登入密碼。</div>
+        <p class="hp">管理者可執行會員無法做的操作：新增／刪除會員、編輯所有會員資料、調整例會出場順序、插入產業鏈分隔頁、下載整份例會 PPT。</p>
+        <div class="hnote"><b>登入方式</b>：點右上「🔑 登入」→ 輸入 <code>A</code> → 再輸入管理者密碼；會員則輸入 <code>888888</code>，再輸入自己的姓名。管理者密碼維持原設定。</div>
 
-        <h3>組別密碼管理</h3>
+        <h3>會員共用密碼</h3>
         <ol class="hsteps">
           <li><b>進入名冊</b><span>點頂部「本週例會簡報」。</span></li>
-          <li><b>套用密碼</b><span>每位會員列後的 🔑 按鈕 → 套用該產業鏈組別共用的數字密碼。</span></li>
-          <li><b>轉發給會員</b><span>透過 LINE 或分會群組傳給該組會員。會員登入後需再輸入自己的姓名，系統只會載入該會員資料。</span></li>
+          <li><b>統一密碼</b><span>所有既有與新增會員均使用 <code>888888</code>，不分產業鏈，無須逐人設定。🔑 按鈕可查看登入說明。</span></li>
+          <li><b>轉發給會員</b><span>告知會員以 888888 與自己的姓名登入。所有人可查看彼此 EDM，會員只能儲存本人資料。</span></li>
         </ol>
         <div class="hwarn"><b>密碼系統為前端 UX 保護，非伺服器強驗證。</b>本工具主打「防止誤改」而非「防惡意破解」。</div>
 
@@ -1212,7 +1213,7 @@
 
         <h3>新增／刪除會員</h3>
         <ul class="hp">
-          <li><b>新增</b>：名冊頁「+ 新增會員」→ 填姓名、專業別與產業鏈組別 → 儲存後套用該組密碼</li>
+          <li><b>新增</b>：名冊頁「+ 新增會員」→ 填姓名、專業別與產業鏈組別 → 儲存後即可使用共用密碼 888888 登入</li>
           <li><b>刪除</b>：會員列後「刪除」按鈕（會二次確認）</li>
           <li><b>批次匯入</b>：「匯入 JSON」可從檔案一次匯入多位</li>
         </ul>
@@ -1259,7 +1260,7 @@
 <script src="divider-bg.js?v=58"></script>
 <script src="edm-masters.js?v=62"></script>
 <script src="hero-bg.js?v=58"></script>
-<script src="app.js?v=84"></script>
-<script src="roster.js?v=62"></script>
+<script src="app.js?v=85"></script>
+<script src="roster.js?v=63"></script>
 </body>
 </html>

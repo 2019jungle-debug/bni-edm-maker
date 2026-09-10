@@ -121,8 +121,8 @@ function renderRoster(){
         '<label class="present"><input type="checkbox" ' + (m.present !== false ? 'checked' : '') + (admin?'':' disabled') + '><span>出場</span></label>' +
         '<label class="present with-intro" title="下載 PPT 時是否包含介紹頁"><input type="checkbox" class="withIntro" ' + (withIntro ? 'checked' : '') + (admin?'':' disabled') + '><span>+介紹</span></label>' +
         '<span class="roster-edit-fields" style="display:flex;gap:6px;align-items:center;flex:1;min-width:220px;">' + nameCell + specCell + '</span>' +
-        (admin ? '<span class="rspec pwcell" style="flex:0 0 auto;font-family:monospace;color:#7b52c4;">' + (m.pw ? escapeHtml(m.pw) : '—') + '</span>' : '') +
-        '<span class="ract">' + adminActs + '</span>';
+        (admin ? '<span class="rspec pwcell" style="flex:0 0 auto;font-family:monospace;color:#7b52c4;">' + MEMBER_PASSWORD + '</span>' : '') +
+        '<span class="ract"><button data-act="viewMember">👁 檢視 EDM</button>' + adminActs + '</span>';
       const ni = row.querySelector('.rname-input');
       const si = row.querySelector('.rspec-input');
       const saveInlineNameSpec = async () => {
@@ -151,16 +151,13 @@ function renderRoster(){
         item.withIntro = e.target.checked;
         await Store.upsert(item);
       });
+      const viewMemberBtn = row.querySelector('[data-act=viewMember]');
+      if (viewMemberBtn) viewMemberBtn.addEventListener('click', () => { loadMemberIntoEditor(Store.getById(m.id)); showView('editor'); });
       const eb = row.querySelector('[data-act=edit]');
       if (eb) eb.addEventListener('click', () => { loadMemberIntoEditor(Store.getById(m.id)); showView('editor'); });
       const pb = row.querySelector('[data-act=pw]');
-      if (pb) pb.addEventListener('click', async () => {
-        const item = Store.getById(m.id); if (!item) return;
-        const nextPw = groupPasswordFor(item);
-        if (!item.pw || item.pw !== nextPw || confirm('「' + item.name + '」目前同組密碼：' + item.pw + '\n要重新套用同組數字密碼嗎？')){
-          item.pw = nextPw; await Store.upsert(item);
-          alert('「' + item.name + '」的同組會員密碼：' + item.pw + '\n同一產業鏈組別會使用同一組數字密碼。');
-        }
+      if (pb) pb.addEventListener('click', () => {
+        alert('所有會員共用密碼：' + MEMBER_PASSWORD + '\n登入後輸入自己的姓名；管理者密碼維持原設定。');
       });
     }
 
