@@ -709,7 +709,7 @@
         <input type="range" id="photoPosX" min="0" max="100" value="50" style="width:100%;">
         <div class="range-label"><label for="photoScale">照片縮放</label><span id="photoScaleVal">100%</span></div>
         <input type="range" id="photoScale" min="50" max="200" value="100" step="1" style="width:100%;">
-        <div class="hint">上下／左右可實際移動照片；縮放可調整為 50%～200%。超出照片框的部分會裁切。調整自己的資料後會自動儲存，下載也會保留位置與大小。</div>
+        <div class="hint">上下／左右可實際移動照片；縮放可調整為 50%～200%。超出照片框的部分會裁切。登入後調整會員資料會自動儲存，下載也會保留位置與大小。</div>
       </details>
     </div>
 
@@ -1056,7 +1056,7 @@
       </div>
     </div>
     <div id="rosterViewNote" class="hint" style="display:none;background:#fff8ec;border:1px solid #e9d9b0;border-radius:8px;padding:8px 12px;margin-bottom:12px;">
-      👁 所有人皆可檢視會員 EDM。會員以 888888 登入後只能儲存自己的資料；出場排序與新增／刪除由管理者操作。
+      👁 所有人皆可檢視會員 EDM。會員以 888888 登入後可編輯並儲存所有會員資料；出場排序與新增／刪除由管理者操作。
     </div>
     <div id="rosterList" class="roster-list"></div>
     <datalist id="chainDatalist"></datalist>
@@ -1132,12 +1132,12 @@
       <section class="help-panel" data-hpanel="member">
         <h3>三步驟開始</h3>
         <ol class="hsteps">
-          <li><b>登入</b><span>點右上「🔑 登入」→ 輸入共用密碼 <code>888888</code> → 登入成功後從會員下拉選單選擇自己（不需輸入姓名）。管理者使用原有密碼。</span></li>
-          <li><b>依步驟檢查資料</b><span>登入後首次從會員選單選擇自己，即可載入自己的資料；補上形象照、標語、引薦需求與活動資訊，進階素材可先略過。</span></li>
+          <li><b>登入</b><span>點右上「🔑 登入」→ 輸入共用密碼 <code>888888</code> → 登入成功後從會員下拉選單選擇要編輯的會員（不需輸入姓名）。管理者使用原有密碼。</span></li>
+          <li><b>依步驟檢查資料</b><span>登入後從會員選單選擇任何會員，即可載入對方資料；補上形象照、標語、引薦需求與活動資訊，進階素材可先略過。</span></li>
           <li><b>儲存並下載</b><span>右側選版型看預覽，確認後按「儲存到雲端名冊」，再下載目前版型 PNG。</span></li>
         </ol>
 
-        <h3>查看所有人的 EDM</h3><p class="hp">所有人（含未登入訪客）都可由「會員」下拉選單選擇任何會員，或在「本週例會簡報」點「👁 檢視 EDM」，查看對方作品並切換版型。會員只能儲存自己的資料；查看他人作品時不會自動存回對方名冊。登入後第一次選擇的會員即為本次編輯身分；之後可查看其他人。要修改自己的作品，請切回自己的姓名；若首次選錯，請登出後重新登入再選擇。</p>
+        <h3>查看所有人的 EDM</h3><p class="hp">所有人（含未登入訪客）都可由「會員」下拉選單選擇任何會員，或在「本週例會簡報」點「👁 檢視 EDM」，查看對方作品並切換版型。使用 888888 登入後，每個人都可編輯並儲存任何會員資料。從下拉選單切換會員即可，不需重新登入；修改會自動儲存，也可按「儲存到雲端名冊」。</p>
         <h3>圖片規格建議</h3>
         <p class="hp">系統會自動壓縮上傳的圖片。單一會員資料（含所有照片）<b>總大小不能超過 1MB</b>。</p>
         <table class="hspec">
@@ -1176,8 +1176,8 @@
 
         <h3>常見問題</h3>
         <dl class="hkv">
-          <dt>忘記密碼</dt><dd>所有會員密碼統一為 <code>888888</code>，不需輸入姓名，登入後從會員下拉選單選擇自己即可登入。</dd>
-          <dt>存不進去</dt><dd>確認已登入且目前選擇的是自己。若仍失敗，檢查網路與圖片總大小；圖片過大請先縮小。</dd>
+          <dt>忘記密碼</dt><dd>所有會員密碼統一為 <code>888888</code>，不需輸入姓名，登入後從會員下拉選單選擇要編輯的會員即可登入。</dd>
+          <dt>存不進去</dt><dd>確認已登入並已從名冊選擇會員。若仍失敗，檢查網路與圖片總大小；圖片過大請先縮小。</dd>
           <dt>PNG 上傳仍是白底</dt><dd>你的 PNG 沒有做去背，只是用了 PNG 格式。用 remove.bg 或手機修圖 App 去背後再上傳。</dd>
           <dt>看不到自己資料</dt><dd>頂部「會員」下拉選單選你的名字。名字不在裡面，聯絡管理者新增。</dd>
         </dl>
@@ -1187,13 +1187,13 @@
       <section class="help-panel" data-hpanel="admin" style="display:none;">
         <h3>管理者權限</h3>
         <p class="hp">管理者可執行會員無法做的操作：新增／刪除會員、編輯所有會員資料、調整例會出場順序、插入產業鏈分隔頁、下載整份例會 PPT。</p>
-        <div class="hnote"><b>登入方式</b>：點右上「🔑 登入」→ 輸入 <code>A</code> → 再輸入管理者密碼；會員則輸入 <code>888888</code>，不需輸入姓名，登入後從會員下拉選單選擇自己。管理者密碼維持原設定。</div>
+        <div class="hnote"><b>登入方式</b>：點右上「🔑 登入」→ 輸入 <code>A</code> → 再輸入管理者密碼；會員則輸入 <code>888888</code>，不需輸入姓名，登入後從會員下拉選單選擇要編輯的會員。管理者密碼維持原設定。</div>
 
         <h3>會員共用密碼</h3>
         <ol class="hsteps">
           <li><b>進入名冊</b><span>點頂部「本週例會簡報」。</span></li>
           <li><b>統一密碼</b><span>所有既有與新增會員均使用 <code>888888</code>，不分產業鏈，無須逐人設定。🔑 按鈕可查看登入說明。</span></li>
-          <li><b>轉發給會員</b><span>告知會員以 888888 登入，再從會員下拉選單選擇自己。所有人可查看彼此 EDM，會員只能儲存本人資料。</span></li>
+          <li><b>轉發給會員</b><span>告知會員以 888888 登入，再從會員下拉選單選擇要編輯的會員。所有人可查看彼此 EDM，會員可編輯並儲存所有會員資料。</span></li>
         </ol>
         <div class="hwarn"><b>密碼系統為前端 UX 保護，非伺服器強驗證。</b>本工具主打「防止誤改」而非「防惡意破解」。</div>
 
@@ -1262,7 +1262,7 @@
 <script src="divider-bg.js?v=58"></script>
 <script src="edm-masters.js?v=62"></script>
 <script src="hero-bg.js?v=58"></script>
-<script src="app.js?v=87"></script>
-<script src="roster.js?v=64"></script>
+<script src="app.js?v=88"></script>
+<script src="roster.js?v=65"></script>
 </body>
 </html>

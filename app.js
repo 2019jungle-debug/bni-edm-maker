@@ -177,10 +177,6 @@ function toISODate(v){
 
 // 把一位名冊會員載入左側編輯表單
 function loadMemberIntoEditor(m){
-  if (memberLoggedIn && !ownerMemberId && m && m.id && m.type !== 'divider'){
-    ownerMemberId = m.id;
-    updateAuthUI();
-  }
   currentMember = m;
   const memberSel = document.getElementById('memberSelect');
   if (memberSel){
@@ -284,11 +280,7 @@ async function saveEditorToRoster(){
   const m = readEditorAsMember();
   if (!m.name.trim()){ alert('請先填寫姓名，才能儲存到名冊。'); return; }
   if (!canWriteCurrentMember(m)){
-    if (!ownerMemberId && !isAdmin){
-      alert('請先登入後再儲存到雲端名冊。管理者可編輯所有會員；會員只能儲存自己的資料。');
-    } else {
-      alert('您只能編輯自己的資料。若要修改其他會員，請用管理者身分登入。');
-    }
+    alert(memberLoggedIn ? '請先從會員下拉選單選擇要編輯的會員。' : '請先以 888888 登入，即可編輯並儲存所有會員資料。');
     return;
   }
   try {
@@ -320,8 +312,7 @@ function getConfigDoc(){ return Store.getById('_config') || {}; }
 function canWriteCurrentMember(m){
   const targetId = (m && m.id) || (currentMember && currentMember.id) || null;
   if (isAdmin) return true;
-  if (!ownerMemberId) return false;
-  return !!targetId && ownerMemberId === targetId;
+  return memberLoggedIn && !!targetId;
 }
 function canSaveMember(){ return canWriteCurrentMember(currentMember); }
 function refreshEditorChoices(){
@@ -401,7 +392,7 @@ function updateAuthUI(){
   const btn = document.getElementById('authBtn');
   if (isAdmin){ if (badge){ badge.textContent = '🛠 管理者'; badge.style.color = '#c0202a'; } if (btn) btn.textContent = '登出'; }
   else if (ownerMemberId){ const m = Store.getById(ownerMemberId); if (badge){ badge.textContent = '👤 ' + (m ? m.name : '會員'); badge.style.color = '#2e9e5b'; } if (btn) btn.textContent = '登出'; }
-  else if (memberLoggedIn){ if (badge){ badge.textContent = '👤 已登入，請從下拉選單選擇自己'; badge.style.color = '#2e9e5b'; } if (btn) btn.textContent = '登出'; }
+  else if (memberLoggedIn){ if (badge){ badge.textContent = '👤 會員登入｜可編輯所有會員'; badge.style.color = '#2e9e5b'; } if (btn) btn.textContent = '登出'; }
   else { if (badge){ badge.textContent = '👤 訪客'; badge.style.color = '#555'; } if (btn) btn.textContent = '🔑 登入'; }
   updateEditingBanner();
   const note = document.getElementById('rosterViewNote'); if (note) note.style.display = isAdmin ? 'none' : '';
@@ -422,10 +413,10 @@ function updateEditingBanner(){
   const el = document.getElementById('editingBanner');
   if (!el) return;
   if (currentMember && currentMember.id){
-    el.textContent = (canSaveMember() ? '正在編輯名冊會員：' : '正在檢視 EDM（無法儲存他人資料）：') + (currentMember.name || '(未命名)');
+    el.textContent = (canSaveMember() ? '正在編輯名冊會員：' : '正在檢視 EDM（登入後可編輯）：') + (currentMember.name || '(未命名)');
     el.style.display = '';
   } else {
-    el.textContent = memberLoggedIn && !ownerMemberId ? '已登入：請先從會員下拉選單選擇自己；之後可查看所有人的 EDM。' : '目前為草稿（尚未存入名冊）';
+    el.textContent = memberLoggedIn && !ownerMemberId ? '已登入：請從會員下拉選單選擇要編輯的會員，可編輯並儲存所有會員資料。' : '目前為草稿（尚未存入名冊）';
     el.style.display = '';
   }
 }
