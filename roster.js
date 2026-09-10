@@ -157,7 +157,7 @@ function renderRoster(){
       if (eb) eb.addEventListener('click', () => { loadMemberIntoEditor(Store.getById(m.id)); showView('editor'); });
       const pb = row.querySelector('[data-act=pw]');
       if (pb) pb.addEventListener('click', () => {
-        alert('所有會員共用密碼：' + MEMBER_PASSWORD + '\n登入後輸入自己的姓名；管理者密碼維持原設定。');
+        alert('所有會員共用密碼：' + MEMBER_PASSWORD + '\n登入後從會員下拉選單選擇自己，不需輸入姓名；管理者密碼維持原設定。');
       });
     }
 

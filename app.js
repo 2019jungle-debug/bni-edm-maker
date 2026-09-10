@@ -177,6 +177,10 @@ function toISODate(v){
 
 // 把一位名冊會員載入左側編輯表單
 function loadMemberIntoEditor(m){
+  if (memberLoggedIn && !ownerMemberId && m && m.id && m.type !== 'divider'){
+    ownerMemberId = m.id;
+    updateAuthUI();
+  }
   currentMember = m;
   const memberSel = document.getElementById('memberSelect');
   if (memberSel){
@@ -300,6 +304,7 @@ async function saveEditorToRoster(){
 /* ============ 權限：管理者 / 會員登入 ============ */
 let isAdmin = false;
 let ownerMemberId = null;
+let memberLoggedIn = false;
 const ADMIN_PASSWORD_HASH = '701e6d6f660af6ed4e5b401e854b6a3bf262c647d9a1cf989a54f9a1ee16f0dd';
 async function sha256Hex(text){
   const bytes = new TextEncoder().encode(text);
@@ -331,6 +336,7 @@ async function unlockAdmin(){
     return;
   }
   isAdmin = true;
+  memberLoggedIn = false;
   ownerMemberId = null;
   refreshEditorChoices();
   updateAuthUI(); if (typeof renderRoster === 'function') renderRoster();
@@ -342,26 +348,21 @@ function loginMemberByPw(presetCode){
   if (p == null) return;
   const code = p.trim().toUpperCase();
   if (code !== MEMBER_PASSWORD){ alert('會員密碼錯誤，請輸入 888888。'); return; }
-  const matches = Store.getAllSorted().filter(x => x.type !== 'divider');
-  if (!matches.length){ alert('名冊尚未載入或沒有會員，請稍後再試或聯絡管理者。'); return; }
-  let m = matches[0];
-  if (matches.length > 1){
-    const name = prompt('會員密碼正確。\n請輸入您的姓名（需與名冊相同）：');
-    if (name == null) return;
-    const normalized = name.trim();
-    m = matches.find(x => (x.name || '').trim() === normalized);
-    if (!m){
-      alert('名冊找不到「' + normalized + '」。請確認姓名是否與名冊相同，或聯絡管理者。');
-      return;
-    }
-  }
-  enterMemberEditor(m);
-  alert('✓ 已登入：' + m.name + '\n您現在可以編輯並儲存自己的頁面（會自動存回雲端）。');
+  memberLoggedIn = true;
+  isAdmin = false;
+  ownerMemberId = null;
+  showVisitorBlankEditor();
+  refreshEditorChoices();
+  updateAuthUI();
+  showView('editor');
+  if (typeof renderRoster === 'function') renderRoster();
+
 }
 
 function enterMemberEditor(m){
   if (!m) return;
   ownerMemberId = m.id;
+  memberLoggedIn = true;
   isAdmin = false;
   refreshEditorChoices();
   updateAuthUI();
@@ -384,6 +385,7 @@ function showVisitorBlankEditor(){
 }
 
 function logoutAuth(){
+  memberLoggedIn = false;
   isAdmin = false;
   ownerMemberId = null;
   showVisitorBlankEditor();
@@ -397,6 +399,7 @@ function updateAuthUI(){
   const btn = document.getElementById('authBtn');
   if (isAdmin){ if (badge){ badge.textContent = '🛠 管理者'; badge.style.color = '#c0202a'; } if (btn) btn.textContent = '登出'; }
   else if (ownerMemberId){ const m = Store.getById(ownerMemberId); if (badge){ badge.textContent = '👤 ' + (m ? m.name : '會員'); badge.style.color = '#2e9e5b'; } if (btn) btn.textContent = '登出'; }
+  else if (memberLoggedIn){ if (badge){ badge.textContent = '👤 已登入，請從下拉選單選擇自己'; badge.style.color = '#2e9e5b'; } if (btn) btn.textContent = '登出'; }
   else { if (badge){ badge.textContent = '👤 訪客'; badge.style.color = '#555'; } if (btn) btn.textContent = '🔑 登入'; }
   updateEditingBanner();
   const note = document.getElementById('rosterViewNote'); if (note) note.style.display = isAdmin ? 'none' : '';
@@ -404,8 +407,8 @@ function updateAuthUI(){
 }
 
 function openAuthMenu(){
-  if (isAdmin || ownerMemberId){ if (confirm('要登出目前身分嗎？')) logoutAuth(); return; }
-  const c = prompt('登入身分：\n輸入「A」→ 管理者登入\n輸入 888888 → 會員登入，再輸入自己的姓名');
+  if (isAdmin || memberLoggedIn || ownerMemberId){ if (confirm('要登出目前身分嗎？')) logoutAuth(); return; }
+  const c = prompt('登入身分：\n輸入「A」→ 管理者登入\n輸入 888888 → 會員登入（不需輸入姓名）');
   if (c == null) return;
   if (c.trim().toUpperCase() === 'A'){ unlockAdmin(); }
   else if (c.trim()){ loginMemberByPw(c); }
@@ -420,7 +423,7 @@ function updateEditingBanner(){
     el.textContent = (canSaveMember() ? '正在編輯名冊會員：' : '正在檢視 EDM（無法儲存他人資料）：') + (currentMember.name || '(未命名)');
     el.style.display = '';
   } else {
-    el.innerHTML = '目前為草稿（尚未存入名冊）';
+    el.textContent = memberLoggedIn && !ownerMemberId ? '已登入：請先從會員下拉選單選擇自己；之後可查看所有人的 EDM。' : '目前為草稿（尚未存入名冊）';
     el.style.display = '';
   }
 }
