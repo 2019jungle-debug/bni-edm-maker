@@ -213,6 +213,7 @@ function loadMemberIntoEditor(m){
   document.getElementById('evPlace').value = m.evPlace != null ? m.evPlace : EV_DEFAULT.evPlace;
   document.getElementById('photoPos').value = (m.photoPos != null ? m.photoPos : 18);
   document.getElementById('photoPosX').value = (m.photoPosX != null ? m.photoPosX : 50);
+  document.getElementById('photoScale').value = m.photoScale != null ? m.photoScale : 100;
   updateDayDisplay();
   applyShowFlags(m.show);
   photoDataUrl = m.photo || '';
@@ -252,6 +253,7 @@ function readEditorAsMember(){
     show: readShowFlags(),
     photoPos: document.getElementById('photoPos').value,
     photoPosX: document.getElementById('photoPosX').value,
+    photoScale: document.getElementById('photoScale').value,
     photo: photoDataUrl,
     introPhoto: introPhotoDataUrl,
     logo: logoDataUrl, product: productDataUrl, introImg: introImgDataUrl, qrCode: qrCodeDataUrl
@@ -261,7 +263,7 @@ function readEditorAsMember(){
 function blankMember(){
   return Object.assign({ id:null, name:'', role:'', specialty:'', industryChain:'', sloganMain:'', sloganSub:'', usp:'', companyUrl:'',
            partners:['','',''], general:['','',''], ideal:['','',''], dream:['','',''],
-           clients:['','',''], photo:'', introPhoto:'', logo:'', product:'', introImg:'', qrCode:'', photoPos:18, photoPosX:50, present:true,
+           clients:['','',''], photo:'', introPhoto:'', logo:'', product:'', introImg:'', qrCode:'', photoPos:18, photoPosX:50, photoScale:100, present:true,
            show:{ partners:true, general:true, ideal:true, dream:true, clients:true, usp:true } }, EV_DEFAULT);
 }
 
@@ -553,6 +555,16 @@ function render(){
   ['edm','edmMaster','heroMaster','hero','intro'].forEach(id => { const e = document.getElementById(id); if (e){ e.style.setProperty('--pp', pp + '%'); e.style.setProperty('--ppx', ppx + '%'); } });
   const ppv = document.getElementById('photoPosVal'); if (ppv) ppv.textContent = pp + '%';
   const ppxv = document.getElementById('photoPosXVal'); if (ppxv) ppxv.textContent = ppx + '%';
+  const scale = Number(document.getElementById('photoScale').value) / 100;
+  document.getElementById('photoScaleVal').textContent = Math.round(scale * 100) + '%';
+  ['edm','edmMaster','heroMaster','hero','intro'].forEach(id => {
+    const root = document.getElementById(id);
+    if (root){
+      root.style.setProperty('--photo-x', (Number(ppx) - 50) + '%');
+      root.style.setProperty('--photo-y', (Number(pp) - 18) + '%');
+      root.style.setProperty('--photo-scale', scale);
+    }
+  });
 
   // 16:9 版面照片
   setPhoto('heroPhoto', '形象照', photoDataUrl);
@@ -589,7 +601,18 @@ function flattenObjectFit(root){
     box.style.backgroundImage   = 'url("' + src + '")';
     box.style.backgroundSize     = fit;                 // 'cover' 或 'contain'
     box.style.backgroundRepeat   = 'no-repeat';
-    box.style.backgroundPosition = isPerson ? (ppx + '% ' + pp + '%') : 'center';
+    box.style.backgroundPosition = 'center';
+    if (isPerson && img.naturalWidth && img.naturalHeight){
+      // Match the preview's cover crop, center zoom, and actual translation.
+      const w = img.clientWidth, h = img.clientHeight;
+      const zoom = Number(document.getElementById('photoScale').value) / 100;
+      const cover = Math.max(w / img.naturalWidth, h / img.naturalHeight);
+      const iw = img.naturalWidth * cover, ih = img.naturalHeight * cover;
+      const x = (w - iw) * .5 * zoom + (1 - zoom) * w / 2 + (Number(ppx) - 50) * w / 100;
+      const y = (h - ih) * .18 * zoom + (1 - zoom) * h / 2 + (Number(pp) - 18) * h / 100;
+      box.style.backgroundSize = (iw * zoom) + 'px ' + (ih * zoom) + 'px';
+      box.style.backgroundPosition = x + 'px ' + y + 'px';
+    }
     box.setAttribute('data-flat', '1');
     img.style.visibility = 'hidden';
   });
@@ -830,6 +853,7 @@ document.getElementById('evDate').addEventListener('change', () => { updateDayDi
 // 照片焦點滑桿（上下 / 左右）
 document.getElementById('photoPos').addEventListener('input', () => { render(); scheduleSave(); });
 document.getElementById('photoPosX').addEventListener('input', () => { render(); scheduleSave(); });
+document.getElementById('photoScale').addEventListener('input', () => { render(); scheduleSave(); });
 // 各類「顯示」勾選
 document.querySelectorAll('.showFlag').forEach(cb =>
   cb.addEventListener('change', () => { render(); scheduleSave(); }));
@@ -838,7 +862,7 @@ document.querySelectorAll('.showFlag').forEach(cb =>
 const STORE_KEY = 'bni_edm_data_v1';
 
 const SINGLE_FIELDS = ['name','role','specialty','industryChain','sloganMain','sloganSub','usp','companyUrl',
-                       'evDate','evTime','evNote1','evNote2','evPlace','photoPos','photoPosX'];
+                       'evDate','evTime','evNote1','evNote2','evPlace','photoPos','photoPosX','photoScale'];
 
 function setupEditorLayout(){
   const panel = document.querySelector('#view-editor .panel');

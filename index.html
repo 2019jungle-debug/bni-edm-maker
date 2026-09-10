@@ -145,7 +145,7 @@
   /* 座標依 PPT 原始 XML 換算（1600x900 → 960x540） */
   #heroMaster .hm-photoFrame{position:absolute;left:41px;top:29px;width:278px;height:360px;z-index:3;overflow:hidden;background:transparent;}
   #heroMaster .hm-photo{position:absolute;inset:0;overflow:hidden;}
-  #heroMaster .hm-photo img{width:100%;height:100%;object-fit:cover;object-position:var(--ppx,50%) var(--pp,18%);display:block;}
+  #heroMaster .hm-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;transform:translate(var(--photo-x,0%),var(--photo-y,0%)) scale(var(--photo-scale,1));transform-origin:center;display:block;}
   #heroMaster .hm-photo.empty{display:flex;align-items:center;justify-content:center;color:#c8b98a;font-size:14px;background:transparent;}
   #heroMaster .hm-logo{position:absolute;left:351px;top:54px;width:80px;height:79px;z-index:4;background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#c8a97a;font-size:11px;text-align:center;border:2px dashed rgba(178,116,9,.4);background-color:rgba(255,250,240,.5);}
   #heroMaster .hm-logo::before{content:"LOGO";}
@@ -171,7 +171,7 @@
   .hero-brand .fd small{display:block;font-size:12px;letter-spacing:5px;opacity:.8;margin-top:4px;}
   .hero-brand .bni{margin-top:8px;font-size:12px;background:var(--red);color:#fff;display:inline-block;padding:3px 10px;border-radius:3px;font-weight:700;}
   .hero-photo{position:absolute;top:60px;left:56px;width:300px;height:390px;z-index:4;border-radius:8px;overflow:hidden;border:4px solid rgba(255,255,255,.6);background:#ccc;}
-  .hero-photo img{width:100%;height:100%;object-fit:cover;object-position:var(--ppx,50%) var(--pp,18%);display:block;}
+  .hero-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;transform:translate(var(--photo-x,0%),var(--photo-y,0%)) scale(var(--photo-scale,1));transform-origin:center;display:block;}
   .hero-photo.empty{display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;background:rgba(255,255,255,.18);}
   .hero-info{position:absolute;left:470px;right:44px;top:150px;z-index:6;}
   .hero-info .hRole{font-size:22px;font-weight:700;color:var(--gold);}
@@ -198,7 +198,7 @@
   #intro{width:960px;height:540px;background:#fff;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18);transform-origin:top center;}
   .intro-head{position:absolute;top:0;left:0;right:0;height:118px;background:linear-gradient(90deg,var(--red-dark),var(--red));display:flex;align-items:center;padding:0 36px;z-index:5;}
   .intro-photo{width:82px;height:82px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,.7);background:#ccc;flex:0 0 auto;}
-  .intro-photo img{width:100%;height:100%;object-fit:cover;object-position:var(--ppx,50%) var(--pp,18%);display:block;}
+  .intro-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;transform:translate(var(--photo-x,0%),var(--photo-y,0%)) scale(var(--photo-scale,1));transform-origin:center;display:block;}
   .intro-photo.empty{display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;background:rgba(255,255,255,.2);}
   .intro-headtext{margin-left:20px;color:#fff;}
   .intro-headtext .iName{font-size:40px;font-weight:800;line-height:1;}
@@ -275,7 +275,7 @@
   .edm-brand .fd small{display:block;font-family:"Montserrat",sans-serif;font-size:10px;letter-spacing:6px;opacity:.85;margin-top:4px;font-weight:600;}
   .edm-brand .bni{margin-top:8px;font-size:10.5px;background:var(--bni-bg,#c60c30);color:#fff;display:inline-block;padding:2px 8px;border-radius:3px;font-weight:700;letter-spacing:1px;}
   .edm-photo{position:absolute;top:34px;right:16px;width:266px;height:566px;z-index:2;overflow:hidden;border-radius:var(--photo-radius,4px);}
-  .edm-photo img{width:100%;height:100%;object-fit:cover;object-position:var(--ppx,50%) var(--pp,18%);display:block;}
+  .edm-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;transform:translate(var(--photo-x,0%),var(--photo-y,0%)) scale(var(--photo-scale,1));transform-origin:center;display:block;}
   .edm-photo.empty{display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--muted);background:var(--photo-empty,rgba(0,0,0,.05));border:1px dashed var(--line,#ccc);}
   .edm-role{position:absolute;top:196px;left:40px;z-index:6;font-size:19px;font-weight:700;letter-spacing:3px;color:var(--accent);}
   .edm-name{position:absolute;top:224px;left:40px;z-index:6;font-family:"Noto Serif TC",serif;font-weight:900;font-size:48px;line-height:1;color:var(--name);letter-spacing:4px;}
@@ -471,7 +471,7 @@
     font-family:"Noto Sans TC",sans-serif;background:#fff;background-size:600px 849px;background-repeat:no-repeat;
     box-shadow:0 20px 60px rgba(0,0,0,.18);}
   #edmMaster *{box-sizing:border-box;}
-  #edmMaster .em-photo img{width:100%;height:100%;object-fit:cover;object-position:var(--ppx,50%) var(--pp,18%);display:block;}
+  #edmMaster .em-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;transform:translate(var(--photo-x,0%),var(--photo-y,0%)) scale(var(--photo-scale,1));transform-origin:center;display:block;}
   #edmMaster .em-photo.empty{display:flex;align-items:center;justify-content:center;color:#bbb;font-size:14px;border:1px dashed rgba(180,180,180,.5);background:transparent;}
   /* 共用預設欄位樣式 */
   #edmMaster .em-spec, #edmMaster .em-name, #edmMaster .em-slogan,
@@ -707,7 +707,9 @@
         <input type="range" id="photoPos" min="0" max="100" value="18" style="width:100%;">
         <div class="range-label"><label for="photoPosX">左右位置</label><span id="photoPosXVal">50%</span></div>
         <input type="range" id="photoPosX" min="0" max="100" value="50" style="width:100%;">
-        <div class="hint">只有照片裁切到頭、身體或偏一邊時才需要調整；調整後會自動存入您的會員資料。</div>
+        <div class="range-label"><label for="photoScale">照片縮放</label><span id="photoScaleVal">100%</span></div>
+        <input type="range" id="photoScale" min="50" max="200" value="100" step="1" style="width:100%;">
+        <div class="hint">上下／左右可實際移動照片；縮放可調整為 50%～200%。超出照片框的部分會裁切。調整自己的資料後會自動儲存，下載也會保留位置與大小。</div>
       </details>
     </div>
 
@@ -1158,7 +1160,7 @@
           <li>光線均勻打在臉上</li>
           <li>身著正式服裝</li>
         </ul>
-        <p class="hp">「照片位置微調」仍然有用：當人物臉部被裁掉、身體太靠邊或不同母片位置不理想時，展開它調整上下／左右位置，不必重上傳照片。</p>
+        <p class="hp">「照片位置微調」仍然有用：當人物臉部被裁掉、身體太靠邊或不同母片位置不理想時，展開它調整上下／左右位置及 50%～200% 縮放，不必重上傳照片；下載 PNG 與例會簡報會保留調整效果。</p>
 
         <h3>版型使用注意</h3>
         <ul class="hp">
@@ -1260,7 +1262,7 @@
 <script src="divider-bg.js?v=58"></script>
 <script src="edm-masters.js?v=62"></script>
 <script src="hero-bg.js?v=58"></script>
-<script src="app.js?v=86"></script>
+<script src="app.js?v=87"></script>
 <script src="roster.js?v=64"></script>
 </body>
 </html>
